@@ -606,7 +606,7 @@ namespace WingProcedural
                 // Has to be done through a special method that overrides their cached values, preventing feedback loop
                 // Also, a somewhat strange check for attachment after detachment, seems to help in a certain case
 
-                if (updateRequiredOnGeometry || updateRequiredOnTextures) updateCounterparts = true;
+                if (updateRequiredOnMeshes || updateRequiredOnGeometry || updateRequiredOnTextures) updateCounterparts = true;
                 else if (justDetached)
                 {
                     justDetached = false;
@@ -707,8 +707,11 @@ namespace WingProcedural
 
         // Geometry
 
+        private int geometryUpdateCounterDebug = 0;
+
         public void UpdateGeometry ()
         {
+            geometryUpdateCounterDebug += 1;
             if (!isCtrlSrf)
             {
                 if (meshFilterWingSection != null)
@@ -718,7 +721,7 @@ namespace WingProcedural
                     Array.Copy (meshReferenceWingSection.vp, vp, length);
                     Vector2[] uv = new Vector2[length];
                     Array.Copy (meshReferenceWingSection.uv, uv, length);
-                    Debug.Log ("WP | UG | Wing section | Passed array setup");
+                    Debug.Log ("WP | UG-" + geometryUpdateCounterDebug.ToString ("000") + " | Wing section | Passed array setup");
 
                     float wingThicknessTipBasedOffset = wingThicknessTip / 2f;
                     float wingWidthTipBasedOffsetTrailing = wingWidthTip / 2f + wingOffset;
@@ -758,7 +761,7 @@ namespace WingProcedural
                     meshCollider.sharedMesh = null;
                     meshCollider.sharedMesh = meshFilterWingSection.mesh;
                     meshCollider.convex = true;
-                    Debug.Log ("WP | UG | Wing section | Finished");
+                    Debug.Log ("WP | UG-" + geometryUpdateCounterDebug.ToString ("000") + " | Wing section | Finished");
                 }
                 if (meshFilterWingSurfaceTop != null)
                 {
@@ -770,7 +773,7 @@ namespace WingProcedural
                     Array.Copy (meshReferenceWingSurfaceTop.vp, vp, length);
                     Vector2[] uv = new Vector2[length];
                     Array.Copy (meshReferenceWingSurfaceTop.uv, uv, length);
-                    Debug.Log ("WP | UG | Wing surface top | Passed array setup");
+                    Debug.Log ("WP | UG-" + geometryUpdateCounterDebug.ToString ("000") + " | Wing surface top | Passed array setup");
 
                     vp[0] = new Vector3 (-wingSpan, wingThicknessTip / 2f, wingWidthTip / 2f + wingOffset);
                     uv[0] = new Vector2 (wingSpan / 4f, 0f + 0.5f - wingWidthTip / 8f - wingOffset / 4f);
@@ -787,7 +790,7 @@ namespace WingProcedural
                     meshFilterWingSurfaceTop.sharedMesh.vertices = vp;
                     meshFilterWingSurfaceTop.sharedMesh.uv = uv;
                     meshFilterWingSurfaceTop.sharedMesh.RecalculateBounds ();
-                    Debug.Log ("WP | UG | Wing surface top | Finished");
+                    Debug.Log ("WP | UG-" + geometryUpdateCounterDebug.ToString ("000") + " | Wing surface top | Finished");
                 }
                 if (meshFilterWingSurfaceBottom != null)
                 {
@@ -799,7 +802,7 @@ namespace WingProcedural
                     Array.Copy (meshReferenceWingSurfaceBottom.vp, vp, length);
                     Vector2[] uv = new Vector2[length];
                     Array.Copy (meshReferenceWingSurfaceBottom.uv, uv, length);
-                    Debug.Log ("WP | UG | Wing surface bottom | Passed array setup");
+                    Debug.Log ("WP | UG-" + geometryUpdateCounterDebug.ToString ("000") + " | Wing surface bottom | Passed array setup");
 
                     vp[0] = new Vector3 (-wingSpan, wingThicknessTip / 2f, wingWidthTip / 2f - wingOffset);
                     uv[0] = new Vector2 (wingSpan / 4f, 0f + 0.5f - wingWidthTip / 8f + wingOffset / 4f);
@@ -816,7 +819,7 @@ namespace WingProcedural
                     meshFilterWingSurfaceBottom.sharedMesh.vertices = vp;
                     meshFilterWingSurfaceBottom.sharedMesh.uv = uv;
                     meshFilterWingSurfaceBottom.sharedMesh.RecalculateBounds ();
-                    Debug.Log ("WP | UG | Wing surface bottom | Finished");
+                    Debug.Log ("WP | UG-" + geometryUpdateCounterDebug.ToString ("000") + " | Wing surface bottom | Finished");
                 }
                 if (meshFilterWingEdgeA != null && meshFilterWingEdgeB != null && meshFilterWingEdgeC != null)
                 {
@@ -833,7 +836,7 @@ namespace WingProcedural
                         Array.Copy (meshReference.nm, nm, length);
                         Vector2[] uv = new Vector2[length];
                         Array.Copy (meshReference.uv, uv, length);
-                        Debug.Log ("WP | UG | Wing edge trailing | Passed array setup | Edge type: " + wingEdgeTypeTrailing + " | Reference length: " + length + " | Mesh length: " + meshFilterWingEdgeTrailing.sharedMesh.vertices.Length);
+                        Debug.Log ("WP | UG-" + geometryUpdateCounterDebug.ToString ("000") + " | Wing edge trailing | Passed array setup | Edge type: " + wingEdgeTypeTrailing + " | Reference length: " + length + " | Mesh length: " + meshFilterWingEdgeTrailing.sharedMesh.vertices.Length);
 
                         float wingThicknessDeviationRoot = wingThicknessRoot / wingThicknessLimits.y;
                         float wingThicknessDeviationTip = wingThicknessTip / wingThicknessLimits.y;
@@ -856,7 +859,7 @@ namespace WingProcedural
                         meshFilterWingEdgeTrailing.sharedMesh.vertices = vp;
                         meshFilterWingEdgeTrailing.sharedMesh.uv = uv;
                         meshFilterWingEdgeTrailing.sharedMesh.RecalculateBounds ();
-                        Debug.Log ("WP | UG | Wing edge trailing | Finished");
+                        Debug.Log ("WP | UG-" + geometryUpdateCounterDebug.ToString ("000") + " | Wing edge trailing | Finished");
                     }
                     if (meshFilterWingEdgeLeading != null)
                     {
@@ -871,7 +874,7 @@ namespace WingProcedural
                         Array.Copy (meshReference.nm, nm, length);
                         Vector2[] uv = new Vector2[length];
                         Array.Copy (meshReference.uv, uv, length);
-                        Debug.Log ("WP | UG | Wing edge leading | Passed array setup | Edge type: " + wingEdgeTypeLeading + " | Reference length: " + length + " | Mesh length: " + meshFilterWingEdgeLeading.sharedMesh.vertices.Length);
+                        Debug.Log ("WP | UG-" + geometryUpdateCounterDebug.ToString ("000") + " | Wing edge leading | Passed array setup | Edge type: " + wingEdgeTypeLeading + " | Reference length: " + length + " | Mesh length: " + meshFilterWingEdgeLeading.sharedMesh.vertices.Length);
 
                         float wingThicknessDeviationRoot = wingThicknessRoot / wingThicknessLimits.y;
                         float wingThicknessDeviationTip = wingThicknessTip / wingThicknessLimits.y;
@@ -894,7 +897,7 @@ namespace WingProcedural
                         meshFilterWingEdgeLeading.sharedMesh.vertices = vp;
                         meshFilterWingEdgeLeading.sharedMesh.uv = uv;
                         meshFilterWingEdgeLeading.sharedMesh.RecalculateBounds ();
-                        Debug.Log ("WP | UG | Wing edge leading | Finished");
+                        Debug.Log ("WP | UG-" + geometryUpdateCounterDebug.ToString ("000") + " | Wing edge leading | Finished");
                     }
                 }
             }
@@ -909,7 +912,7 @@ namespace WingProcedural
                     Array.Copy (meshReferenceCtrlEdge.nm, nm, length);
                     Vector2[] uv = new Vector2[length];
                     Array.Copy (meshReferenceCtrlEdge.uv, uv, length);
-                    Debug.Log ("WP | UG | Control surface edge | Passed array setup");
+                    Debug.Log ("WP | UG-" + geometryUpdateCounterDebug.ToString ("000") + " | Control surface edge | Passed array setup");
 
                     float ctrlThicknessDeviation = ctrlThickness / ctrlThicknessLimits.y;
 
@@ -963,7 +966,7 @@ namespace WingProcedural
                     meshCollider.sharedMesh = null;
                     meshCollider.sharedMesh = meshFilterCtrlEdge.mesh;
                     meshCollider.convex = true;
-                    Debug.Log ("WP | UG | Control surface edge | Finished");
+                    Debug.Log ("WP | UG-" + geometryUpdateCounterDebug.ToString ("000") + " | Control surface edge | Finished");
                 }
                 if (meshFilterCtrlSurfaceTop != null)
                 {
@@ -972,7 +975,7 @@ namespace WingProcedural
                     Array.Copy (meshReferenceCtrlSurfaceTop.vp, vp, length);
                     Vector2[] uv = new Vector2[length];
                     Array.Copy (meshReferenceCtrlSurfaceTop.uv, uv, length);
-                    Debug.Log ("WP | UG | Control surface top | Passed array setup");
+                    Debug.Log ("WP | UG-" + geometryUpdateCounterDebug.ToString ("000") + " | Control surface top | Passed array setup");
 
                     for (int i = 0; i < vp.Length; ++i)
                     {
@@ -1002,7 +1005,7 @@ namespace WingProcedural
                     meshFilterCtrlSurfaceTop.sharedMesh.vertices = vp;
                     meshFilterCtrlSurfaceTop.sharedMesh.uv = uv;
                     meshFilterCtrlSurfaceTop.sharedMesh.RecalculateBounds ();
-                    Debug.Log ("WP | UG | Control surface top | Finished");
+                    Debug.Log ("WP | UG-" + geometryUpdateCounterDebug.ToString ("000") + " | Control surface top | Finished");
                 }
                 if (meshFilterCtrlSurfaceBottom != null)
                 {
@@ -1011,7 +1014,7 @@ namespace WingProcedural
                     Array.Copy (meshReferenceCtrlSurfaceBottom.vp, vp, length);
                     Vector2[] uv = new Vector2[length];
                     Array.Copy (meshReferenceCtrlSurfaceBottom.uv, uv, length);
-                    Debug.Log ("WP | UG | Control surface bottom | Passed array setup");
+                    Debug.Log ("WP | UG-" + geometryUpdateCounterDebug.ToString ("000") + " | Control surface bottom | Passed array setup");
 
                     for (int i = 0; i < vp.Length; ++i)
                     {
@@ -1041,7 +1044,7 @@ namespace WingProcedural
                     meshFilterCtrlSurfaceBottom.sharedMesh.vertices = vp;
                     meshFilterCtrlSurfaceBottom.sharedMesh.uv = uv;
                     meshFilterCtrlSurfaceBottom.sharedMesh.RecalculateBounds ();
-                    Debug.Log ("WP | UG | Control surface bottom | Finished");
+                    Debug.Log ("WP | UG-" + geometryUpdateCounterDebug.ToString ("000") + " | Control surface bottom | Finished");
                 }
             }
             CalculateAerodynamicValues ();

@@ -229,14 +229,6 @@ namespace WingProcedural
 
         // Edge meshes
 
-        [KSPEvent (guiActiveEditor = true, guiName = "Edge T: Round  | Next")]
-        public void SelectNextEdgeTrailing ()
-        {
-            if (wingEdgeTypeTrailing == 0) wingEdgeTypeTrailing = 1;
-            else if (wingEdgeTypeTrailing == 1) wingEdgeTypeTrailing = 2;
-            else wingEdgeTypeTrailing = 0;
-            SelectNextEdgeGeneric (wingEdgeTypeTrailing, "Trailing", "T", true);
-        }
 
         [KSPEvent (guiActiveEditor = true, guiName = "Edge L: Round  | Next")]
         public void SelectNextEdgeLeading ()
@@ -245,6 +237,15 @@ namespace WingProcedural
             else if (wingEdgeTypeLeading == 1) wingEdgeTypeLeading = 2;
             else wingEdgeTypeLeading = 0;
             SelectNextEdgeGeneric (wingEdgeTypeLeading, "Leading", "L", true);
+        }
+
+        [KSPEvent (guiActiveEditor = true, guiName = "Edge T: Round  | Next")]
+        public void SelectNextEdgeTrailing ()
+        {
+            if (wingEdgeTypeTrailing == 0) wingEdgeTypeTrailing = 1;
+            else if (wingEdgeTypeTrailing == 1) wingEdgeTypeTrailing = 2;
+            else wingEdgeTypeTrailing = 0;
+            SelectNextEdgeGeneric (wingEdgeTypeTrailing, "Trailing", "T", true);
         }
 
         private void SelectNextEdgeGeneric (int target, string side, string letter, bool forceUpdates)
@@ -1109,11 +1110,21 @@ namespace WingProcedural
 
         public void UpdateMeshes ()
         {
-            if (meshFilterWingEdgeTrailing.sharedMesh != null) DestroyImmediate (meshFilterWingEdgeTrailing.sharedMesh);
+            if (meshFilterWingEdgeTrailing.sharedMesh != null)
+            {
+                Debug.Log ("WP | UM | Wing trailing edge | Mesh present | Length: " + meshFilterWingEdgeTrailing.sharedMesh.vertices.Length + " | Removing");
+                DestroyImmediate (meshFilterWingEdgeTrailing.sharedMesh);
+            }
             meshFilterWingEdgeTrailing.sharedMesh = Instantiate (GetWingEdgeFilter (wingEdgeTypeTrailing).sharedMesh) as Mesh;
+            Debug.Log ("WP | UM | Wing trailing edge | Mesh created | Length: " + meshFilterWingEdgeTrailing.sharedMesh.vertices.Length);
 
-            if (meshFilterWingEdgeLeading.sharedMesh != null) DestroyImmediate (meshFilterWingEdgeLeading.sharedMesh);
+            if (meshFilterWingEdgeLeading.sharedMesh != null)
+            {
+                Debug.Log ("WP | UM | Wing trailing edge | Mesh present | Length: " + meshFilterWingEdgeLeading.sharedMesh.vertices.Length + " | Removing");
+                DestroyImmediate (meshFilterWingEdgeLeading.sharedMesh);
+            }
             meshFilterWingEdgeLeading.sharedMesh = Instantiate (GetWingEdgeFilter (wingEdgeTypeLeading).sharedMesh) as Mesh;
+            Debug.Log ("WP | UM | Wing trailing edge | Mesh created | Length: " + meshFilterWingEdgeLeading.sharedMesh.vertices.Length);
         }
 
 

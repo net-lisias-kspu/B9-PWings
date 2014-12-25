@@ -748,9 +748,9 @@ namespace WingProcedural
                     vp[7] = new Vector3 (0f, wingThicknessRoot / 2f, -wingWidthRootBasedOffset);
                     uv[7] = new Vector2 (0f, uv[7].y);
 
-                    meshFilterWingSection.mesh.vertices = vp;
-                    meshFilterWingSection.mesh.uv = uv;
-                    meshFilterWingSection.mesh.RecalculateBounds ();
+                    meshFilterWingSection.sharedMesh.vertices = vp;
+                    meshFilterWingSection.sharedMesh.uv = uv;
+                    meshFilterWingSection.sharedMesh.RecalculateBounds ();
 
                     MeshCollider meshCollider = meshFilterWingSection.gameObject.GetComponent<MeshCollider> ();
                     if (meshCollider == null) meshCollider = meshFilterWingSection.gameObject.AddComponent<MeshCollider> ();
@@ -832,7 +832,7 @@ namespace WingProcedural
                         Array.Copy (meshReference.nm, nm, length);
                         Vector2[] uv = new Vector2[length];
                         Array.Copy (meshReference.uv, uv, length);
-                        Debug.Log ("WP | UG | Wing edge trailing | Passed array setup");
+                        Debug.Log ("WP | UG | Wing edge trailing | Passed array setup | Edge type: " + wingEdgeTypeTrailing + " | Reference length: " + length + " | Mesh length: " + meshFilterWingEdgeTrailing.sharedMesh.vertices.Length);
 
                         float wingThicknessDeviationRoot = wingThicknessRoot / wingThicknessLimits.y;
                         float wingThicknessDeviationTip = wingThicknessTip / wingThicknessLimits.y;
@@ -852,9 +852,9 @@ namespace WingProcedural
                             }
                         }
 
-                        meshFilterWingEdgeTrailing.mesh.vertices = vp;
-                        meshFilterWingEdgeTrailing.mesh.uv = uv;
-                        meshFilterWingEdgeTrailing.mesh.RecalculateBounds ();
+                        meshFilterWingEdgeTrailing.sharedMesh.vertices = vp;
+                        meshFilterWingEdgeTrailing.sharedMesh.uv = uv;
+                        meshFilterWingEdgeTrailing.sharedMesh.RecalculateBounds ();
                         Debug.Log ("WP | UG | Wing edge trailing | Finished");
                     }
                     if (meshFilterWingEdgeLeading != null)
@@ -870,7 +870,7 @@ namespace WingProcedural
                         Array.Copy (meshReference.nm, nm, length);
                         Vector2[] uv = new Vector2[length];
                         Array.Copy (meshReference.uv, uv, length);
-                        Debug.Log ("WP | UG | Wing edge leading | Passed array setup");
+                        Debug.Log ("WP | UG | Wing edge leading | Passed array setup | Edge type: " + wingEdgeTypeLeading + " | Reference length: " + length + " | Mesh length: " + meshFilterWingEdgeLeading.sharedMesh.vertices.Length);
 
                         float wingThicknessDeviationRoot = wingThicknessRoot / wingThicknessLimits.y;
                         float wingThicknessDeviationTip = wingThicknessTip / wingThicknessLimits.y;
@@ -890,9 +890,9 @@ namespace WingProcedural
                             }
                         }
 
-                        meshFilterWingEdgeLeading.mesh.vertices = vp;
-                        meshFilterWingEdgeLeading.mesh.uv = uv;
-                        meshFilterWingEdgeLeading.mesh.RecalculateBounds ();
+                        meshFilterWingEdgeLeading.sharedMesh.vertices = vp;
+                        meshFilterWingEdgeLeading.sharedMesh.uv = uv;
+                        meshFilterWingEdgeLeading.sharedMesh.RecalculateBounds ();
                         Debug.Log ("WP | UG | Wing edge leading | Finished");
                     }
                 }
@@ -953,9 +953,9 @@ namespace WingProcedural
                         }
                     }
 
-                    meshFilterCtrlEdge.mesh.vertices = vp;
-                    meshFilterCtrlEdge.mesh.uv = uv;
-                    meshFilterCtrlEdge.mesh.RecalculateBounds ();
+                    meshFilterCtrlEdge.sharedMesh.vertices = vp;
+                    meshFilterCtrlEdge.sharedMesh.uv = uv;
+                    meshFilterCtrlEdge.sharedMesh.RecalculateBounds ();
 
                     MeshCollider meshCollider = meshFilterCtrlEdge.gameObject.GetComponent<MeshCollider> ();
                     if (meshCollider == null) meshCollider = meshFilterCtrlEdge.gameObject.AddComponent<MeshCollider> ();
@@ -998,9 +998,9 @@ namespace WingProcedural
                             uv[i] = new Vector2 (uv[i].x, 0f);
                         }
                     }
-                    meshFilterCtrlSurfaceTop.mesh.vertices = vp;
-                    meshFilterCtrlSurfaceTop.mesh.uv = uv;
-                    meshFilterCtrlSurfaceTop.mesh.RecalculateBounds ();
+                    meshFilterCtrlSurfaceTop.sharedMesh.vertices = vp;
+                    meshFilterCtrlSurfaceTop.sharedMesh.uv = uv;
+                    meshFilterCtrlSurfaceTop.sharedMesh.RecalculateBounds ();
                     Debug.Log ("WP | UG | Control surface top | Finished");
                 }
                 if (meshFilterCtrlSurfaceBottom != null)
@@ -1037,9 +1037,9 @@ namespace WingProcedural
                             uv[i] = new Vector2 (uv[i].x, 0f);
                         }
                     }
-                    meshFilterCtrlSurfaceBottom.mesh.vertices = vp;
-                    meshFilterCtrlSurfaceBottom.mesh.uv = uv;
-                    meshFilterCtrlSurfaceBottom.mesh.RecalculateBounds ();
+                    meshFilterCtrlSurfaceBottom.sharedMesh.vertices = vp;
+                    meshFilterCtrlSurfaceBottom.sharedMesh.uv = uv;
+                    meshFilterCtrlSurfaceBottom.sharedMesh.RecalculateBounds ();
                     Debug.Log ("WP | UG | Control surface bottom | Finished");
                 }
             }

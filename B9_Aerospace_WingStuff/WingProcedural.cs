@@ -298,6 +298,7 @@ namespace WingProcedural
         // [KSPEvent (guiActiveEditor = true, guiName = "Force update")]
         public void ForceUpdate ()
         {
+            UpdateMeshes ();
             UpdateGeometry ();
             UpdateTextures ();
             UpdateWindow ();
@@ -334,6 +335,7 @@ namespace WingProcedural
         // As nothing like GUI.changed or per-KSPFields change delegates is available, we have to resort to dirty comparisons
         // Performance hit shouldn't be too bad as all KSPFields have snapped sliders that can't spam dozens of values per second
 
+        private bool updateRequiredOnMeshes = false;
         private bool updateRequiredOnGeometry = false;
         private bool updateRequiredOnTextures = false;
         private bool updateRequiredOnWindow = false;
@@ -438,7 +440,9 @@ namespace WingProcedural
 
         private void SetEventVisibility (string name, bool visible)
         {
-
+            BaseEvent basefield = Events[name];
+            basefield.guiActiveEditor = false;
+            basefield.guiActive = false;
         }
 
         public void Update ()
@@ -522,14 +526,14 @@ namespace WingProcedural
                     if (wingEdgeTypeTrailing != wingEdgeTypeTrailingCached)
                     {
                         Debug.Log ("WingProcedural | Update at " + timer.ToString ("F1") + " | Non-equal edgeGeometryTrailing");
-                        updateRequiredOnGeometry = true;
+                        updateRequiredOnMeshes = updateRequiredOnGeometry = true;
                         wingEdgeTypeTrailingCached = wingEdgeTypeTrailing;
                         if (syncEdge) wingEdgeTypeLeading = wingEdgeTypeLeadingCached = wingEdgeTypeTrailing;
                     }
                     if (wingEdgeTypeLeading != wingEdgeTypeLeadingCached)
                     {
                         Debug.Log ("WingProcedural | Update at " + timer.ToString ("F1") + " | Non-equal edgeGeometryLeading");
-                        updateRequiredOnGeometry = true;
+                        updateRequiredOnMeshes = updateRequiredOnGeometry = true;
                         wingEdgeTypeLeadingCached = wingEdgeTypeLeading;
                     }
                     if (wingSurfaceTextureTop != wingSurfaceTextureTopCached)
@@ -614,6 +618,12 @@ namespace WingProcedural
                 // If some updates were marked, execute them
                 // Updates are split into groups to prevent unnecessary use
 
+                if (updateRequiredOnMeshes)
+                {
+                    Debug.Log ("WingProcedural | Update required on meshes");
+                    updateRequiredOnMeshes = false;
+                    UpdateMeshes ();
+                }
                 if (updateRequiredOnGeometry)
                 {
                     Debug.Log ("WingProcedural | Update required on geometry");
@@ -766,9 +776,9 @@ namespace WingProcedural
                     vp[3] = new Vector3 (-wingSpan, wingThicknessTip / 2f, -wingWidthTip / 2f + wingOffset);
                     uv[3] = new Vector2 (wingSpan / 4f, 1f - 0.5f + wingWidthTip / 8f - wingOffset / 4f);
 
-                    meshFilterWingSurfaceTop.mesh.vertices = vp;
-                    meshFilterWingSurfaceTop.mesh.uv = uv;
-                    meshFilterWingSurfaceTop.mesh.RecalculateBounds ();
+                    meshFilterWingSurfaceTop.sharedMesh.vertices = vp;
+                    meshFilterWingSurfaceTop.sharedMesh.uv = uv;
+                    meshFilterWingSurfaceTop.sharedMesh.RecalculateBounds ();
                 }
                 if (meshFilterWingSurfaceBottom != null)
                 {
@@ -793,9 +803,9 @@ namespace WingProcedural
                     vp[3] = new Vector3 (-wingSpan, wingThicknessTip / 2f, -wingWidthTip / 2f - wingOffset);
                     uv[3] = new Vector2 (wingSpan / 4f, 1f - 0.5f + wingWidthTip / 8f + wingOffset / 4f);
 
-                    meshFilterWingSurfaceBottom.mesh.vertices = vp;
-                    meshFilterWingSurfaceBottom.mesh.uv = uv;
-                    meshFilterWingSurfaceBottom.mesh.RecalculateBounds ();
+                    meshFilterWingSurfaceBottom.sharedMesh.vertices = vp;
+                    meshFilterWingSurfaceBottom.sharedMesh.uv = uv;
+                    meshFilterWingSurfaceBottom.sharedMesh.RecalculateBounds ();
                 }
                 if (meshFilterWingEdgeA != null && meshFilterWingEdgeB != null && meshFilterWingEdgeC != null)
                 {
@@ -1056,6 +1066,13 @@ namespace WingProcedural
             else return meshReferenceWingEdgeC;
         }
 
+        public MeshFilter GetWingEdgeFilter (int selection)
+        {
+            if (selection == 0) return meshFilterWingEdgeA;
+            else if (selection == 1) return meshFilterWingEdgeB;
+            else return meshFilterWingEdgeC;
+        }
+
         public Vector3[] GetReferenceVertices (MeshFilter source)
         {
             Vector3[] positions = new Vector3[0];
@@ -1068,6 +1085,15 @@ namespace WingProcedural
                 }
             }
             return positions;
+        }
+
+        public void UpdateMeshes ()
+        {
+            if (meshFilterWingEdgeTrailing.sharedMesh != null) DestroyImmediate (meshFilterWingEdgeTrailing.sharedMesh);
+            meshFilterWingEdgeTrailing.sharedMesh = Instantiate (GetWingEdgeFilter (wingEdgeTypeTrailing).sharedMesh) as Mesh;
+
+            if (meshFilterWingEdgeLeading.sharedMesh != null) DestroyImmediate (meshFilterWingEdgeLeading.sharedMesh);
+            meshFilterWingEdgeLeading.sharedMesh = Instantiate (GetWingEdgeFilter (wingEdgeTypeLeading).sharedMesh) as Mesh;
         }
 
 

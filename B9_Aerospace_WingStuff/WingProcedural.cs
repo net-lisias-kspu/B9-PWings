@@ -86,18 +86,12 @@ namespace WingProcedural
         public MeshFilter meshFilterWingEdgeB;
         public MeshFilter meshFilterWingEdgeC;
 
-        // public Mesh meshWingSection;
-        // public Mesh meshWingSurfaceTop;
-        // public Mesh meshWingSurfaceBottom;
-        // public Mesh meshWingEdgeTrailing;
-        // public Mesh meshWingEdgeLeading;
-
-        public MeshReference meshWingSectionCache;
-        public MeshReference meshWingSurfaceTopCache;
-        public MeshReference meshWingSurfaceBottomCache;
-        public MeshReference meshWingEdgeACache;
-        public MeshReference meshWingEdgeBCache;
-        public MeshReference meshWingEdgeCCache;
+        public MeshReference meshReferenceWingSection;
+        public MeshReference meshReferenceWingSurfaceTop;
+        public MeshReference meshReferenceWingSurfaceBottom;
+        public MeshReference meshReferenceWingEdgeA;
+        public MeshReference meshReferenceWingEdgeB;
+        public MeshReference meshReferenceWingEdgeC;
 
         public Vector2 wingSpanLimits = new Vector2 (0.5f, 16f);
         public Vector2 wingWidthLimits = new Vector2 (0.5f, 16f);
@@ -149,11 +143,6 @@ namespace WingProcedural
         public MeshFilter meshFilterCtrlEdgeReference;
         public MeshFilter meshFilterCtrlSurfaceTop;
         public MeshFilter meshFilterCtrlSurfaceBottom;
-
-        // public Mesh meshCtrlEdge;
-        // public Mesh meshCtrlEdgeReference;
-        // public Mesh meshCtrlSurfaceTop;
-        // public Mesh meshCtrlSurfaceBottom;
 
         public MeshReference meshReferenceCtrlEdge;
         public MeshReference meshReferenceCtrlSurfaceTop;
@@ -266,7 +255,6 @@ namespace WingProcedural
 
             if (forceUpdates)
             {
-                UpdateMeshes ();
                 UpdateGeometry ();
                 Debug.Log ("WingProcedural | Changing " + side + " edge to " + target);
                 if (myWindow != null) myWindow.displayDirty = true;
@@ -310,7 +298,6 @@ namespace WingProcedural
         // [KSPEvent (guiActiveEditor = true, guiName = "Force update")]
         public void ForceUpdate ()
         {
-            UpdateMeshes ();
             UpdateGeometry ();
             UpdateTextures ();
             UpdateWindow ();
@@ -348,7 +335,6 @@ namespace WingProcedural
         // Performance hit shouldn't be too bad as all KSPFields have snapped sliders that can't spam dozens of values per second
 
         private bool updateRequiredOnGeometry = false;
-        private bool updateRequiredOnMeshes = false;
         private bool updateRequiredOnTextures = false;
         private bool updateRequiredOnWindow = false;
         private bool updateCounterparts = false;
@@ -372,12 +358,12 @@ namespace WingProcedural
                 meshFilterWingSurfaceB = CheckMeshFilter (meshFilterWingSurfaceB, "proxy_material_b", true);
                 meshFilterWingSurfaceC = CheckMeshFilter (meshFilterWingSurfaceC, "proxy_material_c", true);
 
-                meshWingSectionCache = FillMeshRefererence (meshFilterWingSection);
-                meshWingSurfaceTopCache = FillMeshRefererence (meshFilterWingSurfaceTop);
-                meshWingSurfaceBottomCache = FillMeshRefererence (meshFilterWingSurfaceBottom);
-                meshWingEdgeACache = FillMeshRefererence (meshFilterWingEdgeA);
-                meshWingEdgeBCache = FillMeshRefererence (meshFilterWingEdgeB);
-                meshWingEdgeCCache = FillMeshRefererence (meshFilterWingEdgeC);
+                meshReferenceWingSection = FillMeshRefererence (meshFilterWingSection);
+                meshReferenceWingSurfaceTop = FillMeshRefererence (meshFilterWingSurfaceTop);
+                meshReferenceWingSurfaceBottom = FillMeshRefererence (meshFilterWingSurfaceBottom);
+                meshReferenceWingEdgeA = FillMeshRefererence (meshFilterWingEdgeA);
+                meshReferenceWingEdgeB = FillMeshRefererence (meshFilterWingEdgeB);
+                meshReferenceWingEdgeC = FillMeshRefererence (meshFilterWingEdgeC);
 
                 wingSurfaceTextureA = CheckTexture (wingSurfaceTextureA, meshFilterWingSurfaceA);
                 wingSurfaceTextureB = CheckTexture (wingSurfaceTextureB, meshFilterWingSurfaceB);
@@ -398,10 +384,10 @@ namespace WingProcedural
                 SelectNextSurfaceGeneric (wingSurfaceTextureTop, "Top", "T", false);
                 SelectNextSurfaceGeneric (wingSurfaceTextureBottom, "Bottom", "B", false);
 
-                Fields["ctrlSpan"].uiControlEditor.controlEnabled = Fields["ctrlSpan"].guiActiveEditor = Fields["ctrlSpan"].guiActive = false;
-                Fields["ctrlWidthRoot"].uiControlEditor.controlEnabled = Fields["ctrlWidthRoot"].guiActiveEditor = Fields["ctrlWidthRoot"].guiActive = false;
-                Fields["ctrlWidthTip"].uiControlEditor.controlEnabled = Fields["ctrlWidthTip"].guiActiveEditor = Fields["ctrlWidthTip"].guiActive = false;
-                Fields["ctrlThickness"].uiControlEditor.controlEnabled = Fields["ctrlThickness"].guiActiveEditor = Fields["ctrlThickness"].guiActive = false;
+                SetFieldVisibility ("ctrlSpan", false);
+                SetFieldVisibility ("ctrlWidthRoot", false);
+                SetFieldVisibility ("ctrlWidthTip", false);
+                SetFieldVisibility ("ctrlThickness", false);
             }
             else
             {
@@ -421,23 +407,38 @@ namespace WingProcedural
                 ctrlWidthTip = Mathf.Clamp (ctrlWidthRoot, ctrlWidthLimits.x, ctrlWidthLimits.y);
                 ctrlThickness = Mathf.Clamp (ctrlThickness, ctrlThicknessLimits.x, ctrlThicknessLimits.y);
 
-                Fields["wingSpan"].uiControlEditor.controlEnabled = Fields["wingSpan"].guiActiveEditor = Fields["wingSpan"].guiActive = false;
-                Fields["wingWidthRoot"].uiControlEditor.controlEnabled = Fields["wingWidthRoot"].guiActiveEditor = Fields["wingWidthRoot"].guiActive = false;
-                Fields["wingWidthTip"].uiControlEditor.controlEnabled = Fields["wingWidthTip"].guiActiveEditor = Fields["wingWidthTip"].guiActive = false;
-                Fields["wingThicknessRoot"].uiControlEditor.controlEnabled = Fields["wingThicknessRoot"].guiActiveEditor = Fields["wingThicknessRoot"].guiActive = false;
-                Fields["wingThicknessTip"].uiControlEditor.controlEnabled = Fields["wingThicknessTip"].guiActiveEditor = Fields["wingThicknessTip"].guiActive = false;
-                Fields["wingOffset"].uiControlEditor.controlEnabled = Fields["wingOffset"].guiActiveEditor = Fields["wingOffset"].guiActive = false;
-                Fields["wingEdgeTrailing"].uiControlEditor.controlEnabled = Fields["wingEdgeTrailing"].guiActiveEditor = Fields["wingEdgeTrailing"].guiActive = false;
-                Fields["wingEdgeLeading"].uiControlEditor.controlEnabled = Fields["wingEdgeLeading"].guiActiveEditor = Fields["wingEdgeLeading"].guiActive = false;
-                Fields["syncWidth"].uiControlEditor.controlEnabled = Fields["syncWidth"].guiActiveEditor = Fields["syncWidth"].guiActive = false;
-                Fields["syncThickness"].uiControlEditor.controlEnabled = Fields["syncThickness"].guiActiveEditor = Fields["syncThickness"].guiActive = false;
-                Fields["syncEdge"].uiControlEditor.controlEnabled = Fields["syncEdge"].guiActiveEditor = Fields["syncEdge"].guiActive = false;
-                Events["SelectNextEdgeTrailing"].guiActiveEditor = Events["SelectNextEdgeTrailing"].guiActive = false;
-                Events["SelectNextEdgeLeading"].guiActiveEditor = Events["SelectNextEdgeLeading"].guiActive = false;
-                Events["SelectNextSurfaceBottom"].guiActiveEditor = Events["SelectNextSurfaceBottom"].guiActive = false;
-                Events["SelectNextSurfaceTop"].guiActiveEditor = Events["SelectNextSurfaceTop"].guiActive = false;
+                SetFieldVisibility ("wingSpan", false);
+                SetFieldVisibility ("wingWidthRoot", false);
+                SetFieldVisibility ("wingWidthTip", false);
+                SetFieldVisibility ("wingThicknessRoot", false);
+                SetFieldVisibility ("wingThicknessTip", false);
+                SetFieldVisibility ("wingOffset", false);
+                SetFieldVisibility ("wingEdgeTrailing", false);
+                SetFieldVisibility ("wingEdgeLeading", false);
+                SetFieldVisibility ("syncWidth", false);
+                SetFieldVisibility ("syncThickness", false);
+                SetFieldVisibility ("syncEdge", false);
+
+                SetEventVisibility ("SelectNextEdgeTrailing", false);
+                SetEventVisibility ("SelectNextEdgeLeading", false);
+                SetEventVisibility ("SelectNextSurfaceBottom", false);
+                SetEventVisibility ("SelectNextSurfaceTop", false);
             }
             ForceUpdate ();
+        }
+
+        private void SetFieldVisibility (string name, bool visible)
+        {
+            BaseField field = Fields[name];
+            field.uiControlEditor.controlEnabled = false;
+            field.uiControlFlight.controlEnabled = false;
+            field.guiActiveEditor = false;
+            field.guiActive = false;
+        }
+
+        private void SetEventVisibility (string name, bool visible)
+        {
+
         }
 
         public void Update ()
@@ -521,14 +522,14 @@ namespace WingProcedural
                     if (wingEdgeTypeTrailing != wingEdgeTypeTrailingCached)
                     {
                         Debug.Log ("WingProcedural | Update at " + timer.ToString ("F1") + " | Non-equal edgeGeometryTrailing");
-                        updateRequiredOnMeshes = updateRequiredOnGeometry = true;
+                        updateRequiredOnGeometry = true;
                         wingEdgeTypeTrailingCached = wingEdgeTypeTrailing;
                         if (syncEdge) wingEdgeTypeLeading = wingEdgeTypeLeadingCached = wingEdgeTypeTrailing;
                     }
                     if (wingEdgeTypeLeading != wingEdgeTypeLeadingCached)
                     {
                         Debug.Log ("WingProcedural | Update at " + timer.ToString ("F1") + " | Non-equal edgeGeometryLeading");
-                        updateRequiredOnMeshes = updateRequiredOnGeometry = true;
+                        updateRequiredOnGeometry = true;
                         wingEdgeTypeLeadingCached = wingEdgeTypeLeading;
                     }
                     if (wingSurfaceTextureTop != wingSurfaceTextureTopCached)
@@ -600,7 +601,7 @@ namespace WingProcedural
                 // Has to be done through a special method that overrides their cached values, preventing feedback loop
                 // Also, a somewhat strange check for attachment after detachment, seems to help in a certain case
 
-                if (updateRequiredOnGeometry || updateRequiredOnMeshes || updateRequiredOnTextures) updateCounterparts = true;
+                if (updateRequiredOnGeometry || updateRequiredOnTextures) updateCounterparts = true;
                 else if (justDetached)
                 {
                     justDetached = false;
@@ -613,12 +614,6 @@ namespace WingProcedural
                 // If some updates were marked, execute them
                 // Updates are split into groups to prevent unnecessary use
 
-                if (updateRequiredOnMeshes)
-                {
-                    Debug.Log ("WingProcedural | Update required on meshes");
-                    updateRequiredOnMeshes = false;
-                    UpdateMeshes ();
-                }
                 if (updateRequiredOnGeometry)
                 {
                     Debug.Log ("WingProcedural | Update required on geometry");
@@ -703,104 +698,104 @@ namespace WingProcedural
             {
                 if (meshFilterWingSection != null)
                 {
-                    if (meshWingSection == null) meshWingSection = meshFilterWingSection.mesh;
-                    if (meshWingSection != null)
-                    {
-                        Vector3[] vp = meshWingSection.vertices;
-                        Vector2[] uv = meshWingSection.uv;
+                    int length = meshReferenceWingSection.vp.Length;
+                    Vector3[] vp = new Vector3[length];
+                    Array.Copy (meshReferenceWingSection.vp, vp, length);
+                    Vector2[] uv = new Vector2[length];
+                    Array.Copy (meshReferenceWingSection.uv, uv, length);
 
-                        float wingThicknessTipBasedOffset = wingThicknessTip / 2f;
-                        float wingWidthTipBasedOffsetTrailing = wingWidthTip / 2f + wingOffset;
-                        float wingWidthTipBasedOffsetLeading = -wingWidthTip / 2f + wingOffset;
-                        float wingWidthRootBasedOffset = wingWidthRoot / 2f;
+                    float wingThicknessTipBasedOffset = wingThicknessTip / 2f;
+                    float wingWidthTipBasedOffsetTrailing = wingWidthTip / 2f + wingOffset;
+                    float wingWidthTipBasedOffsetLeading = -wingWidthTip / 2f + wingOffset;
+                    float wingWidthRootBasedOffset = wingWidthRoot / 2f;
 
-                        vp[0] = new Vector3 (-wingSpan, -wingThicknessTipBasedOffset, wingWidthTipBasedOffsetLeading);
-                        uv[0] = new Vector2 (wingWidthTip, uv[0].y);
+                    vp[0] = new Vector3 (-wingSpan, -wingThicknessTipBasedOffset, wingWidthTipBasedOffsetLeading);
+                    uv[0] = new Vector2 (wingWidthTip, uv[0].y);
 
-                        vp[1] = new Vector3 (-wingSpan, -wingThicknessTipBasedOffset, wingWidthTipBasedOffsetTrailing);
-                        uv[1] = new Vector2 (0f, uv[1].y);
+                    vp[1] = new Vector3 (-wingSpan, -wingThicknessTipBasedOffset, wingWidthTipBasedOffsetTrailing);
+                    uv[1] = new Vector2 (0f, uv[1].y);
 
-                        vp[2] = new Vector3 (-wingSpan, wingThicknessTipBasedOffset, wingWidthTipBasedOffsetTrailing);
-                        uv[2] = new Vector2 (0f, uv[2].y);
+                    vp[2] = new Vector3 (-wingSpan, wingThicknessTipBasedOffset, wingWidthTipBasedOffsetTrailing);
+                    uv[2] = new Vector2 (0f, uv[2].y);
 
-                        vp[3] = new Vector3 (-wingSpan, wingThicknessTipBasedOffset, wingWidthTipBasedOffsetLeading);
-                        uv[3] = new Vector2 (wingWidthTip, uv[3].y);
+                    vp[3] = new Vector3 (-wingSpan, wingThicknessTipBasedOffset, wingWidthTipBasedOffsetLeading);
+                    uv[3] = new Vector2 (wingWidthTip, uv[3].y);
 
-                        vp[4] = new Vector3 (0f, wingThicknessRoot / 2f, wingWidthRootBasedOffset);
-                        uv[4] = new Vector2 (wingWidthRoot, uv[4].y);
+                    vp[4] = new Vector3 (0f, wingThicknessRoot / 2f, wingWidthRootBasedOffset);
+                    uv[4] = new Vector2 (wingWidthRoot, uv[4].y);
 
-                        vp[5] = new Vector3 (0f, -wingThicknessRoot / 2f, wingWidthRootBasedOffset);
-                        uv[5] = new Vector2 (wingWidthRoot, uv[5].y);
+                    vp[5] = new Vector3 (0f, -wingThicknessRoot / 2f, wingWidthRootBasedOffset);
+                    uv[5] = new Vector2 (wingWidthRoot, uv[5].y);
 
-                        vp[6] = new Vector3 (0f, -wingThicknessRoot / 2f, -wingWidthRootBasedOffset);
-                        uv[6] = new Vector2 (0f, uv[6].y);
+                    vp[6] = new Vector3 (0f, -wingThicknessRoot / 2f, -wingWidthRootBasedOffset);
+                    uv[6] = new Vector2 (0f, uv[6].y);
 
-                        vp[7] = new Vector3 (0f, wingThicknessRoot / 2f, -wingWidthRootBasedOffset);
-                        uv[7] = new Vector2 (0f, uv[7].y);
+                    vp[7] = new Vector3 (0f, wingThicknessRoot / 2f, -wingWidthRootBasedOffset);
+                    uv[7] = new Vector2 (0f, uv[7].y);
 
-                        meshWingSection.vertices = vp;
-                        meshWingSection.uv = uv;
+                    meshFilterWingSection.mesh.vertices = vp;
+                    meshFilterWingSection.mesh.uv = uv;
+                    meshFilterWingSection.mesh.RecalculateBounds ();
 
-                        MeshCollider meshCollider = meshFilterWingSection.gameObject.GetComponent<MeshCollider> ();
-                        if (meshCollider == null) meshCollider = meshFilterWingSection.gameObject.AddComponent<MeshCollider> ();
-                        meshCollider.sharedMesh = null;
-                        meshCollider.sharedMesh = meshWingSection;
-                        meshCollider.convex = true;
-                    }
+                    MeshCollider meshCollider = meshFilterWingSection.gameObject.GetComponent<MeshCollider> ();
+                    if (meshCollider == null) meshCollider = meshFilterWingSection.gameObject.AddComponent<MeshCollider> ();
+                    meshCollider.sharedMesh = null;
+                    meshCollider.sharedMesh = meshFilterWingSection.mesh;
+                    meshCollider.convex = true;
                 }
                 if (meshFilterWingSurfaceTop != null)
                 {
                     meshFilterWingSurfaceTop.transform.localPosition = Vector3.zero;
                     meshFilterWingSurfaceTop.transform.localRotation = Quaternion.Euler (0f, 0f, 0f);
-                    if (meshWingSurfaceTop == null) meshWingSurfaceTop = meshFilterWingSurfaceTop.mesh;
-                    if (meshWingSurfaceTop != null)
-                    {
-                        Vector3[] vp = meshWingSurfaceTop.vertices;
-                        Vector2[] uv = meshWingSurfaceTop.uv;
 
-                        vp[0] = new Vector3 (-wingSpan, wingThicknessTip / 2f, wingWidthTip / 2f + wingOffset);
-                        uv[0] = new Vector2 (wingSpan / 4f, 0f + 0.5f - wingWidthTip / 8f - wingOffset / 4f);
+                    int length = meshReferenceWingSurfaceTop.vp.Length;
+                    Vector3[] vp = new Vector3[length];
+                    Array.Copy (meshReferenceWingSurfaceTop.vp, vp, length);
+                    Vector2[] uv = new Vector2[length];
+                    Array.Copy (meshReferenceWingSurfaceTop.uv, uv, length);
 
-                        vp[1] = new Vector3 (0f, wingThicknessRoot / 2f, wingWidthRoot / 2f);
-                        uv[1] = new Vector2 (0f, 0f + 0.5f - wingWidthRoot / 8f);
+                    vp[0] = new Vector3 (-wingSpan, wingThicknessTip / 2f, wingWidthTip / 2f + wingOffset);
+                    uv[0] = new Vector2 (wingSpan / 4f, 0f + 0.5f - wingWidthTip / 8f - wingOffset / 4f);
 
-                        vp[2] = new Vector3 (0f, wingThicknessRoot / 2f, -wingWidthRoot / 2f);
-                        uv[2] = new Vector2 (0.0f, 1f - 0.5f + wingWidthRoot / 8f);
+                    vp[1] = new Vector3 (0f, wingThicknessRoot / 2f, wingWidthRoot / 2f);
+                    uv[1] = new Vector2 (0f, 0f + 0.5f - wingWidthRoot / 8f);
 
-                        vp[3] = new Vector3 (-wingSpan, wingThicknessTip / 2f, -wingWidthTip / 2f + wingOffset);
-                        uv[3] = new Vector2 (wingSpan / 4f, 1f - 0.5f + wingWidthTip / 8f - wingOffset / 4f);
+                    vp[2] = new Vector3 (0f, wingThicknessRoot / 2f, -wingWidthRoot / 2f);
+                    uv[2] = new Vector2 (0.0f, 1f - 0.5f + wingWidthRoot / 8f);
 
-                        meshWingSurfaceTop.vertices = vp;
-                        meshWingSurfaceTop.uv = uv;
-                        meshWingSurfaceTop.RecalculateBounds ();
-                    }
+                    vp[3] = new Vector3 (-wingSpan, wingThicknessTip / 2f, -wingWidthTip / 2f + wingOffset);
+                    uv[3] = new Vector2 (wingSpan / 4f, 1f - 0.5f + wingWidthTip / 8f - wingOffset / 4f);
+
+                    meshFilterWingSurfaceTop.mesh.vertices = vp;
+                    meshFilterWingSurfaceTop.mesh.uv = uv;
+                    meshFilterWingSurfaceTop.mesh.RecalculateBounds ();
                 }
                 if (meshFilterWingSurfaceBottom != null)
                 {
                     meshFilterWingSurfaceBottom.transform.localPosition = Vector3.zero;
                     meshFilterWingSurfaceBottom.transform.localRotation = Quaternion.Euler (180f, 0f, 0f);
-                    if (meshWingSurfaceBottom == null) meshWingSurfaceBottom = meshFilterWingSurfaceBottom.mesh;
-                    if (meshWingSurfaceBottom != null)
-                    {
-                        Vector3[] vp = meshWingSurfaceBottom.vertices;
-                        Vector2[] uv = meshWingSurfaceBottom.uv;
 
-                        vp[0] = new Vector3 (-wingSpan, wingThicknessTip / 2f, wingWidthTip / 2f - wingOffset);
-                        uv[0] = new Vector2 (wingSpan / 4f, 0f + 0.5f - wingWidthTip / 8f + wingOffset / 4f);
+                    int length = meshReferenceWingSurfaceBottom.vp.Length;
+                    Vector3[] vp = new Vector3[length];
+                    Array.Copy (meshReferenceWingSurfaceBottom.vp, vp, length);
+                    Vector2[] uv = new Vector2[length];
+                    Array.Copy (meshReferenceWingSurfaceBottom.uv, uv, length);
 
-                        vp[1] = new Vector3 (0f, wingThicknessRoot / 2f, wingWidthRoot / 2f);
-                        uv[1] = new Vector2 (0f, 0f + 0.5f - wingWidthRoot / 8f);
+                    vp[0] = new Vector3 (-wingSpan, wingThicknessTip / 2f, wingWidthTip / 2f - wingOffset);
+                    uv[0] = new Vector2 (wingSpan / 4f, 0f + 0.5f - wingWidthTip / 8f + wingOffset / 4f);
 
-                        vp[2] = new Vector3 (0f, wingThicknessRoot / 2f, -wingWidthRoot / 2f);
-                        uv[2] = new Vector2 (0f, 1f - 0.5f + wingWidthRoot / 8f);
+                    vp[1] = new Vector3 (0f, wingThicknessRoot / 2f, wingWidthRoot / 2f);
+                    uv[1] = new Vector2 (0f, 0f + 0.5f - wingWidthRoot / 8f);
 
-                        vp[3] = new Vector3 (-wingSpan, wingThicknessTip / 2f, -wingWidthTip / 2f - wingOffset);
-                        uv[3] = new Vector2 (wingSpan / 4f, 1f - 0.5f + wingWidthTip / 8f + wingOffset / 4f);
+                    vp[2] = new Vector3 (0f, wingThicknessRoot / 2f, -wingWidthRoot / 2f);
+                    uv[2] = new Vector2 (0f, 1f - 0.5f + wingWidthRoot / 8f);
 
-                        meshWingSurfaceBottom.vertices = vp;
-                        meshWingSurfaceBottom.uv = uv;
-                        meshWingSurfaceBottom.RecalculateBounds ();
-                    }
+                    vp[3] = new Vector3 (-wingSpan, wingThicknessTip / 2f, -wingWidthTip / 2f - wingOffset);
+                    uv[3] = new Vector2 (wingSpan / 4f, 1f - 0.5f + wingWidthTip / 8f + wingOffset / 4f);
+
+                    meshFilterWingSurfaceBottom.mesh.vertices = vp;
+                    meshFilterWingSurfaceBottom.mesh.uv = uv;
+                    meshFilterWingSurfaceBottom.mesh.RecalculateBounds ();
                 }
                 if (meshFilterWingEdgeA != null && meshFilterWingEdgeB != null && meshFilterWingEdgeC != null)
                 {
@@ -808,71 +803,73 @@ namespace WingProcedural
                     {
                         meshFilterWingEdgeTrailing.transform.localPosition = Vector3.zero;
                         meshFilterWingEdgeTrailing.transform.localRotation = Quaternion.Euler (0f, 0f, 0f);
-                        if (meshWingEdgeTrailing == null) meshWingEdgeTrailing = meshFilterWingEdgeTrailing.mesh;
-                        if (meshWingEdgeTrailing != null)
+
+                        MeshReference meshReference = GetWingEdgeReference (wingEdgeTypeTrailing);
+                        int length = meshReference.vp.Length;
+                        Vector3[] vp = new Vector3[length];
+                        Array.Copy (meshReference.vp, vp, length);
+                        Vector3[] nm = new Vector3[length];
+                        Array.Copy (meshReference.nm, nm, length);
+                        Vector2[] uv = new Vector2[length];
+                        Array.Copy (meshReference.uv, uv, length);
+
+                        float wingThicknessDeviationRoot = wingThicknessRoot / wingThicknessLimits.y;
+                        float wingThicknessDeviationTip = wingThicknessTip / wingThicknessLimits.y;
+
+                        for (int i = 0; i < vp.Length; ++i)
                         {
-                            Vector3[] vps = GetReferenceVertices (GetEdgeProxyFilter (wingEdgeTypeTrailing));
-                            Vector3[] vp = meshWingEdgeTrailing.vertices;
-                            Vector3[] nm = meshWingEdgeTrailing.normals;
-                            Vector2[] uv = meshWingEdgeTrailing.uv;
-
-                            float wingThicknessDeviationRoot = wingThicknessRoot / wingThicknessLimits.y;
-                            float wingThicknessDeviationTip = wingThicknessTip / wingThicknessLimits.y;
-
-                            for (int i = 0; i < vp.Length; ++i)
+                            if (nm[i].x == -1.0f) vp[i] = new Vector3 (-wingSpan, vp[i].y * wingThicknessDeviationTip, Mathf.Lerp (2f, vp[i].z, wingEdgeTrailing) - 2f + wingWidthTip / 2f + wingOffset); // Tip section
+                            else if (nm[i].x == 1.0f) vp[i] = new Vector3 (0f, vp[i].y * wingThicknessDeviationRoot, Mathf.Lerp (2f, vp[i].z, wingEdgeTrailing) - 2f + wingWidthRoot / 2f); // Root section
+                            else
                             {
-                                if (nm[i].x == -1.0f) vp[i] = new Vector3 (-wingSpan, vps[i].y * wingThicknessDeviationTip, Mathf.Lerp (2f, vps[i].z, wingEdgeTrailing) - 2f + wingWidthTip / 2f + wingOffset); // Tip section
-                                else if (nm[i].x == 1.0f) vp[i] = new Vector3 (0f, vps[i].y * wingThicknessDeviationRoot, Mathf.Lerp (2f, vps[i].z, wingEdgeTrailing) - 2f + wingWidthRoot / 2f); // Root section
-                                else
+                                if (vp[i].x < -0.1f)
                                 {
-                                    if (vp[i].x < -0.1f)
-                                    {
-                                        vp[i] = new Vector3 (-wingSpan, vps[i].y * wingThicknessDeviationTip, Mathf.Lerp (2f, vps[i].z, wingEdgeTrailing) - 2f + wingWidthTip / 2f + wingOffset); // Tip edge
-                                        uv[i] = new Vector2 (wingSpan, uv[i].y);
-                                    }
-                                    else vp[i] = new Vector3 (0f, vps[i].y * wingThicknessDeviationRoot, Mathf.Lerp (2f, vps[i].z, wingEdgeTrailing) - 2f + wingWidthRoot / 2f); // Root edge
+                                    vp[i] = new Vector3 (-wingSpan, vp[i].y * wingThicknessDeviationTip, Mathf.Lerp (2f, vp[i].z, wingEdgeTrailing) - 2f + wingWidthTip / 2f + wingOffset); // Tip edge
+                                    uv[i] = new Vector2 (wingSpan, uv[i].y);
                                 }
+                                else vp[i] = new Vector3 (0f, vp[i].y * wingThicknessDeviationRoot, Mathf.Lerp (2f, vp[i].z, wingEdgeTrailing) - 2f + wingWidthRoot / 2f); // Root edge
                             }
-
-                            meshWingEdgeTrailing.vertices = vp;
-                            meshWingEdgeTrailing.uv = uv;
-                            meshWingEdgeTrailing.RecalculateBounds ();
                         }
+
+                        meshFilterWingEdgeTrailing.mesh.vertices = vp;
+                        meshFilterWingEdgeTrailing.mesh.uv = uv;
+                        meshFilterWingEdgeTrailing.mesh.RecalculateBounds ();
                     }
                     if (meshFilterWingEdgeLeading != null)
                     {
                         meshFilterWingEdgeLeading.transform.localPosition = Vector3.zero;
                         meshFilterWingEdgeLeading.transform.localRotation = Quaternion.Euler (180f, 0f, 0f);
-                        if (meshWingEdgeLeading == null) meshWingEdgeLeading = meshFilterWingEdgeLeading.mesh;
-                        if (meshWingEdgeLeading != null)
+
+                        MeshReference meshReference = GetWingEdgeReference (wingEdgeTypeLeading);
+                        int length = meshReference.vp.Length;
+                        Vector3[] vp = new Vector3[length];
+                        Array.Copy (meshReference.vp, vp, length);
+                        Vector3[] nm = new Vector3[length];
+                        Array.Copy (meshReference.nm, nm, length);
+                        Vector2[] uv = new Vector2[length];
+                        Array.Copy (meshReference.uv, uv, length);
+
+                        float wingThicknessDeviationRoot = wingThicknessRoot / wingThicknessLimits.y;
+                        float wingThicknessDeviationTip = wingThicknessTip / wingThicknessLimits.y;
+
+                        for (int i = 0; i < vp.Length; ++i)
                         {
-                            Vector3[] vps = GetReferenceVertices (GetEdgeProxyFilter (wingEdgeTypeLeading));
-                            Vector3[] vp = meshWingEdgeLeading.vertices;
-                            Vector3[] nm = meshWingEdgeLeading.normals;
-                            Vector2[] uv = meshWingEdgeLeading.uv;
-
-                            float wingThicknessDeviationRoot = wingThicknessRoot / wingThicknessLimits.y;
-                            float wingThicknessDeviationTip = wingThicknessTip / wingThicknessLimits.y;
-
-                            for (int i = 0; i < vp.Length; ++i)
+                            if (nm[i].x == -1.0f) vp[i] = new Vector3 (-wingSpan, vp[i].y * wingThicknessDeviationTip, Mathf.Lerp (2f, vp[i].z, wingEdgeLeading) - 2f + wingWidthTip / 2f - wingOffset); // Tip section
+                            else if (nm[i].x == 1.0f) vp[i] = new Vector3 (0f, vp[i].y * wingThicknessDeviationRoot, Mathf.Lerp (2f, vp[i].z, wingEdgeLeading) - 2f + wingWidthRoot / 2f); // Root section
+                            else
                             {
-                                if (nm[i].x == -1.0f) vp[i] = new Vector3 (-wingSpan, vps[i].y * wingThicknessDeviationTip, Mathf.Lerp (2f, vps[i].z, wingEdgeLeading) - 2f + wingWidthTip / 2f - wingOffset); // Tip section
-                                else if (nm[i].x == 1.0f) vp[i] = new Vector3 (0f, vps[i].y * wingThicknessDeviationRoot, Mathf.Lerp (2f, vps[i].z, wingEdgeLeading) - 2f + wingWidthRoot / 2f); // Root section
-                                else
+                                if (vp[i].x < -0.1f)
                                 {
-                                    if (vp[i].x < -0.1f)
-                                    {
-                                        vp[i] = new Vector3 (-wingSpan, vps[i].y * wingThicknessDeviationTip, Mathf.Lerp (2f, vps[i].z, wingEdgeLeading) - 2f + wingWidthTip / 2f - wingOffset); // Tip edge
-                                        uv[i] = new Vector2 (wingSpan, uv[i].y);
-                                    }
-                                    else vp[i] = new Vector3 (0f, vps[i].y * wingThicknessDeviationRoot, Mathf.Lerp (2f, vps[i].z, wingEdgeLeading) - 2f + wingWidthRoot / 2f); // Root edge
+                                    vp[i] = new Vector3 (-wingSpan, vp[i].y * wingThicknessDeviationTip, Mathf.Lerp (2f, vp[i].z, wingEdgeLeading) - 2f + wingWidthTip / 2f - wingOffset); // Tip edge
+                                    uv[i] = new Vector2 (wingSpan, uv[i].y);
                                 }
+                                else vp[i] = new Vector3 (0f, vp[i].y * wingThicknessDeviationRoot, Mathf.Lerp (2f, vp[i].z, wingEdgeLeading) - 2f + wingWidthRoot / 2f); // Root edge
                             }
-
-                            meshWingEdgeLeading.vertices = vp;
-                            meshWingEdgeLeading.uv = uv;
-                            meshWingEdgeLeading.RecalculateBounds ();
                         }
+
+                        meshFilterWingEdgeLeading.mesh.vertices = vp;
+                        meshFilterWingEdgeLeading.mesh.uv = uv;
+                        meshFilterWingEdgeLeading.mesh.RecalculateBounds ();
                     }
                 }
             }
@@ -880,143 +877,140 @@ namespace WingProcedural
             {
                 if (meshFilterCtrlEdge != null)
                 {
-                    if (meshCtrlEdge == null) meshCtrlEdge = meshFilterCtrlEdge.mesh;
-                    if (meshCtrlEdge != null)
+                    int length = meshReferenceCtrlEdge.vp.Length;
+                    Vector3[] vp = new Vector3[length];
+                    Array.Copy (meshReferenceCtrlEdge.vp, vp, length);
+                    Vector3[] nm = new Vector3[length];
+                    Array.Copy (meshReferenceCtrlEdge.nm, nm, length);
+                    Vector2[] uv = new Vector2[length];
+                    Array.Copy (meshReferenceCtrlEdge.uv, uv, length);
+
+                    float ctrlThicknessDeviation = ctrlThickness / ctrlThicknessLimits.y;
+
+                    for (int i = 0; i < vp.Length; ++i)
                     {
-                        Vector3[] vps = GetReferenceVertices (meshFilterCtrlEdgeReference);
-                        Vector3[] vp = meshCtrlEdge.vertices;
-                        Vector3[] nm = meshCtrlEdge.normals;
-                        Vector2[] uv = meshCtrlEdge.uv;
+                        if (vp[i].z < 0f) vp[i] = new Vector3 (vp[i].x * ctrlThicknessDeviation, vp[i].y, -ctrlSpan / 2f);
+                        else vp[i] = new Vector3 (vp[i].x * ctrlThicknessDeviation, vp[i].y, ctrlSpan / 2f);
 
-                        float ctrlThicknessDeviation = ctrlThickness / ctrlThicknessLimits.y;
-
-                        for (int i = 0; i < vp.Length; ++i)
+                        // Sides
+                        if (nm[i] == new Vector3 (0f, 0f, 1f) || nm[i] == new Vector3 (0f, 0f, -1f))
                         {
-                            if (vp[i].z < 0f) vp[i] = new Vector3 (vps[i].x * ctrlThicknessDeviation, vps[i].y, -ctrlSpan / 2f);
-                            else vp[i] = new Vector3 (vps[i].x * ctrlThicknessDeviation, vps[i].y, ctrlSpan / 2f);
-
-                            // Sides
-                            if (nm[i] == new Vector3 (0f, 0f, 1f) || nm[i] == new Vector3 (0f, 0f, -1f))
+                            if (uv[i].y > 0.185f)
                             {
-                                if (uv[i].y > 0.185f)
+                                if (vp[i].y < -0.01f)
                                 {
-                                    if (vp[i].y < -0.01f)
-                                    {
-                                        uv[i] = new Vector2 (ctrlWidthRoot, uv[i].y);
-                                        if (vp[i].z < 0f) vp[i] = new Vector3 (vps[i].x * ctrlThicknessDeviation, -ctrlWidthRoot, vp[i].z);
-                                        else vp[i] = new Vector3 (vps[i].x * ctrlThicknessDeviation, -ctrlWidthTip, vp[i].z);
-                                    }
-                                }
-                                else vp[i] = new Vector3 (vps[i].x * ctrlThicknessDeviation, vps[i].y + 0.5f - ctrlWidthRoot, vp[i].z);
-                            }
-
-                            // Root
-                            else if (nm[i] == new Vector3 (0f, 1f, 0f))
-                            {
-                                if (vp[i].z < 0f) uv[i] = new Vector2 (ctrlSpan, uv[i].y);
-                            }
-
-                            // Trailing edge
-                            else
-                            {
-                                if (vp[i].z < 0f)
-                                {
-                                    vp[i] = new Vector3 (vps[i].x * ctrlThicknessDeviation, vps[i].y + 0.5f - ctrlWidthTip, vp[i].z);
-                                    uv[i] = new Vector2 (ctrlSpan, uv[i].y);
-                                }
-                                else
-                                {
-                                    vp[i] = new Vector3 (vps[i].x * ctrlThicknessDeviation, vps[i].y + 0.5f - ctrlWidthRoot, vp[i].z);
+                                    uv[i] = new Vector2 (ctrlWidthRoot, uv[i].y);
+                                    if (vp[i].z < 0f) vp[i] = new Vector3 (vp[i].x * ctrlThicknessDeviation, -ctrlWidthRoot, vp[i].z);
+                                    else vp[i] = new Vector3 (vp[i].x * ctrlThicknessDeviation, -ctrlWidthTip, vp[i].z);
                                 }
                             }
+                            else vp[i] = new Vector3 (vp[i].x * ctrlThicknessDeviation, vp[i].y + 0.5f - ctrlWidthRoot, vp[i].z);
                         }
 
-                        meshCtrlEdge.vertices = vp;
-                        meshCtrlEdge.uv = uv;
-                        meshCtrlEdge.RecalculateBounds ();
+                        // Root
+                        else if (nm[i] == new Vector3 (0f, 1f, 0f))
+                        {
+                            if (vp[i].z < 0f) uv[i] = new Vector2 (ctrlSpan, uv[i].y);
+                        }
 
-                        MeshCollider meshCollider = meshFilterCtrlEdge.gameObject.GetComponent<MeshCollider> ();
-                        if (meshCollider == null) meshCollider = meshFilterCtrlEdge.gameObject.AddComponent<MeshCollider> ();
-                        meshCollider.sharedMesh = null;
-                        meshCollider.sharedMesh = meshCtrlEdge;
-                        meshCollider.convex = true;
+                        // Trailing edge
+                        else
+                        {
+                            if (vp[i].z < 0f)
+                            {
+                                vp[i] = new Vector3 (vp[i].x * ctrlThicknessDeviation, vp[i].y + 0.5f - ctrlWidthTip, vp[i].z);
+                                uv[i] = new Vector2 (ctrlSpan, uv[i].y);
+                            }
+                            else
+                            {
+                                vp[i] = new Vector3 (vp[i].x * ctrlThicknessDeviation, vp[i].y + 0.5f - ctrlWidthRoot, vp[i].z);
+                            }
+                        }
                     }
+
+                    meshFilterCtrlEdge.mesh.vertices = vp;
+                    meshFilterCtrlEdge.mesh.uv = uv;
+                    meshFilterCtrlEdge.mesh.RecalculateBounds ();
+
+                    MeshCollider meshCollider = meshFilterCtrlEdge.gameObject.GetComponent<MeshCollider> ();
+                    if (meshCollider == null) meshCollider = meshFilterCtrlEdge.gameObject.AddComponent<MeshCollider> ();
+                    meshCollider.sharedMesh = null;
+                    meshCollider.sharedMesh = meshFilterCtrlEdge.mesh;
+                    meshCollider.convex = true;
                 }
                 if (meshFilterCtrlSurfaceTop != null)
                 {
-                    if (meshCtrlSurfaceTop == null) meshCtrlSurfaceTop = meshFilterCtrlSurfaceTop.mesh;
-                    if (meshCtrlSurfaceTop != null)
+                    int length = meshReferenceCtrlSurfaceTop.vp.Length;
+                    Vector3[] vp = new Vector3[length];
+                    Array.Copy (meshReferenceCtrlSurfaceTop.vp, vp, length);
+                    Vector2[] uv = new Vector2[length];
+                    Array.Copy (meshReferenceCtrlSurfaceTop.uv, uv, length);
+
+                    for (int i = 0; i < vp.Length; ++i)
                     {
-                        Vector3[] vp = meshCtrlSurfaceTop.vertices;
-                        Vector2[] uv = meshCtrlSurfaceTop.uv;
+                        vp[i] = new Vector3 (ctrlThickness / 2f, vp[i].y, vp[i].z);
 
-                        for (int i = 0; i < vp.Length; ++i)
+                        if (vp[i].z < 0f)
                         {
-                            vp[i] = new Vector3 (ctrlThickness / 2f, vp[i].y, vp[i].z);
-
-                            if (vp[i].z < 0f)
-                            {
-                                vp[i] = new Vector3 (vp[i].x, vp[i].y, -ctrlSpan / 2f);
-                                uv[i] = new Vector2 (0f, uv[i].y);
-                            }
-                            else
-                            {
-                                vp[i] = new Vector3 (vp[i].x, vp[i].y, ctrlSpan / 2f);
-                                uv[i] = new Vector2 (ctrlSpan / 4f, uv[i].y);
-                            }
-                            if (vp[i].y < -0.01f)
-                            {
-                                if (vp[i].z < 0f) vp[i] = new Vector3 (vp[i].x, -ctrlWidthTip, vp[i].z);
-                                else vp[i] = new Vector3 (vp[i].x, -ctrlWidthRoot, vp[i].z);
-                                uv[i] = new Vector2 (uv[i].x, ctrlWidthRoot / 4f);
-                            }
-                            else
-                            {
-                                uv[i] = new Vector2 (uv[i].x, 0f);
-                            }
+                            vp[i] = new Vector3 (vp[i].x, vp[i].y, -ctrlSpan / 2f);
+                            uv[i] = new Vector2 (0f, uv[i].y);
                         }
-                        meshCtrlSurfaceTop.vertices = vp;
-                        meshCtrlSurfaceTop.uv = uv;
-                        meshCtrlSurfaceTop.RecalculateBounds ();
+                        else
+                        {
+                            vp[i] = new Vector3 (vp[i].x, vp[i].y, ctrlSpan / 2f);
+                            uv[i] = new Vector2 (ctrlSpan / 4f, uv[i].y);
+                        }
+                        if (vp[i].y < -0.01f)
+                        {
+                            if (vp[i].z < 0f) vp[i] = new Vector3 (vp[i].x, -ctrlWidthTip, vp[i].z);
+                            else vp[i] = new Vector3 (vp[i].x, -ctrlWidthRoot, vp[i].z);
+                            uv[i] = new Vector2 (uv[i].x, ctrlWidthRoot / 4f);
+                        }
+                        else
+                        {
+                            uv[i] = new Vector2 (uv[i].x, 0f);
+                        }
                     }
+                    meshFilterCtrlSurfaceTop.mesh.vertices = vp;
+                    meshFilterCtrlSurfaceTop.mesh.uv = uv;
+                    meshFilterCtrlSurfaceTop.mesh.RecalculateBounds ();
                 }
                 if (meshFilterCtrlSurfaceBottom != null)
                 {
-                    if (meshCtrlSurfaceBottom == null) meshCtrlSurfaceBottom = meshFilterCtrlSurfaceBottom.mesh;
-                    if (meshCtrlSurfaceBottom != null)
+                    int length = meshReferenceCtrlSurfaceBottom.vp.Length;
+                    Vector3[] vp = new Vector3[length];
+                    Array.Copy (meshReferenceCtrlSurfaceBottom.vp, vp, length);
+                    Vector2[] uv = new Vector2[length];
+                    Array.Copy (meshReferenceCtrlSurfaceBottom.uv, uv, length);
+
+                    for (int i = 0; i < vp.Length; ++i)
                     {
-                        Vector3[] vp = meshCtrlSurfaceBottom.vertices;
-                        Vector2[] uv = meshCtrlSurfaceBottom.uv;
+                        vp[i] = new Vector3 (ctrlThickness / 2f, vp[i].y, vp[i].z);
 
-                        for (int i = 0; i < vp.Length; ++i)
+                        if (vp[i].z < 0f)
                         {
-                            vp[i] = new Vector3 (ctrlThickness / 2f, vp[i].y, vp[i].z);
-
-                            if (vp[i].z < 0f)
-                            {
-                                vp[i] = new Vector3 (vp[i].x, vp[i].y, -ctrlSpan / 2f);
-                                uv[i] = new Vector2 (0f, uv[i].y);
-                            }
-                            else
-                            {
-                                vp[i] = new Vector3 (vp[i].x, vp[i].y, ctrlSpan / 2f);
-                                uv[i] = new Vector2 (ctrlSpan / 4f, uv[i].y);
-                            }
-                            if (vp[i].y < -0.01f)
-                            {
-                                if (vp[i].z < 0f) vp[i] = new Vector3 (vp[i].x, -ctrlWidthTip, vp[i].z);
-                                else vp[i] = new Vector3 (vp[i].x, -ctrlWidthRoot, vp[i].z);
-                                uv[i] = new Vector2 (uv[i].x, ctrlWidthRoot / 4f);
-                            }
-                            else
-                            {
-                                uv[i] = new Vector2 (uv[i].x, 0f);
-                            }
+                            vp[i] = new Vector3 (vp[i].x, vp[i].y, -ctrlSpan / 2f);
+                            uv[i] = new Vector2 (0f, uv[i].y);
                         }
-                        meshCtrlSurfaceBottom.vertices = vp;
-                        meshCtrlSurfaceBottom.uv = uv;
-                        meshCtrlSurfaceBottom.RecalculateBounds ();
+                        else
+                        {
+                            vp[i] = new Vector3 (vp[i].x, vp[i].y, ctrlSpan / 2f);
+                            uv[i] = new Vector2 (ctrlSpan / 4f, uv[i].y);
+                        }
+                        if (vp[i].y < -0.01f)
+                        {
+                            if (vp[i].z < 0f) vp[i] = new Vector3 (vp[i].x, -ctrlWidthTip, vp[i].z);
+                            else vp[i] = new Vector3 (vp[i].x, -ctrlWidthRoot, vp[i].z);
+                            uv[i] = new Vector2 (uv[i].x, ctrlWidthRoot / 4f);
+                        }
+                        else
+                        {
+                            uv[i] = new Vector2 (uv[i].x, 0f);
+                        }
                     }
+                    meshFilterCtrlSurfaceBottom.mesh.vertices = vp;
+                    meshFilterCtrlSurfaceBottom.mesh.uv = uv;
+                    meshFilterCtrlSurfaceBottom.mesh.RecalculateBounds ();
                 }
             }
             CalculateAerodynamicValues ();
@@ -1055,11 +1049,11 @@ namespace WingProcedural
 
         // Edge geometry
 
-        public MeshFilter GetEdgeProxyFilter (int selection)
+        public MeshReference GetWingEdgeReference (int selection)
         {
-            if (selection == 0) return meshFilterWingEdgeA;
-            else if (selection == 1) return meshFilterWingEdgeB;
-            else return meshFilterWingEdgeC;
+            if (selection == 0) return meshReferenceWingEdgeA;
+            else if (selection == 1) return meshReferenceWingEdgeB;
+            else return meshReferenceWingEdgeC;
         }
 
         public Vector3[] GetReferenceVertices (MeshFilter source)
@@ -1074,26 +1068,6 @@ namespace WingProcedural
                 }
             }
             return positions;
-        }
-
-        public void UpdateMeshes ()
-        {
-            if (!isCtrlSrf)
-            {
-                if (meshFilterWingEdgeA != null && meshFilterWingEdgeB != null && meshFilterWingEdgeC != null)
-                {
-                    if (meshFilterWingEdgeTrailing != null)
-                    {
-                        if (meshWingEdgeTrailing != null) UnityEngine.Object.DestroyImmediate (meshWingEdgeTrailing);
-                        meshFilterWingEdgeTrailing.mesh = GetEdgeProxyFilter (wingEdgeTypeTrailing).mesh;
-                    }
-                    if (meshFilterWingEdgeLeading != null)
-                    {
-                        if (meshWingEdgeLeading != null) UnityEngine.Object.DestroyImmediate (meshWingEdgeLeading);
-                        meshFilterWingEdgeLeading.mesh = GetEdgeProxyFilter (wingEdgeTypeLeading).mesh;
-                    }
-                }
-            }
         }
 
 
@@ -1414,9 +1388,9 @@ namespace WingProcedural
             {
                 if (isCtrlSrf)
                 {
-                    meshCtrlEdge = meshFilterCtrlEdge.mesh;
-                    meshCtrlSurfaceTop = meshFilterCtrlSurfaceTop.mesh;
-                    meshCtrlSurfaceBottom = meshFilterCtrlSurfaceTop.mesh;
+                    // meshCtrlEdge = meshFilterCtrlEdge.mesh;
+                    // meshCtrlSurfaceTop = meshFilterCtrlSurfaceTop.mesh;
+                    // meshCtrlSurfaceBottom = meshFilterCtrlSurfaceTop.mesh;
 
                     // UnityEngine.Object.DestroyImmediate (meshCtrlEdge);
                     // UnityEngine.Object.DestroyImmediate (meshCtrlSurfaceTop);
@@ -1424,11 +1398,11 @@ namespace WingProcedural
                 }
                 else
                 {
-                    meshWingSurfaceTop = meshFilterWingSurfaceTop.mesh;
-                    meshWingSurfaceBottom = meshFilterWingSurfaceBottom.mesh;
-                    meshWingSection = meshFilterWingSection.mesh;
-                    meshWingEdgeLeading = GetEdgeProxyFilter (wingEdgeTypeLeading).mesh;
-                    meshWingEdgeTrailing = GetEdgeProxyFilter (wingEdgeTypeTrailing).mesh;
+                    // meshWingSurfaceTop = meshFilterWingSurfaceTop.mesh;
+                    // meshWingSurfaceBottom = meshFilterWingSurfaceBottom.mesh;
+                    // meshWingSection = meshFilterWingSection.mesh;
+                    // meshWingEdgeLeading = GetWingEdgeReference (wingEdgeTypeLeading).mesh;
+                    // meshWingEdgeTrailing = GetWingEdgeReference (wingEdgeTypeTrailing).mesh;
 
                     // UnityEngine.Object.DestroyImmediate (meshEdgeLeading);
                     // UnityEngine.Object.DestroyImmediate (meshEdgeTrailing);

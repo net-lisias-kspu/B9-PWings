@@ -13,7 +13,7 @@ namespace WingProcedural
     {
         // Neater way to cache mesh properties
 
-        private class MeshReference
+        public class MeshReference
         {
             public Vector3[] vp;
             public Vector3[] nm;

@@ -218,7 +218,7 @@ namespace WingProcedural
 
             if (forceUpdates)
             {
-                UpdateTextures ();
+                // UpdateTextures ();
                 Debug.Log ("WingProcedural | Changing " + side + " surface to " + target);
                 if (myWindow != null) myWindow.displayDirty = true;
             }
@@ -256,7 +256,8 @@ namespace WingProcedural
 
             if (forceUpdates)
             {
-                UpdateGeometry ();
+                // UpdateMeshes ();
+                // UpdateGeometry ();
                 Debug.Log ("WingProcedural | Changing " + side + " edge to " + target);
                 if (myWindow != null) myWindow.displayDirty = true;
             }

@@ -694,7 +694,7 @@ namespace WingProcedural
             int length = source.sharedMesh.vertices.Length;
             reference.vp = new Vector3[length];
             Array.Copy (source.sharedMesh.vertices, reference.vp, length);
-            reference.vp = new Vector3[length];
+            reference.nm = new Vector3[length];
             Array.Copy (source.sharedMesh.normals, reference.nm, length);
             reference.uv = new Vector2[length];
             Array.Copy (source.sharedMesh.uv, reference.uv, length);

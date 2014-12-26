@@ -13,6 +13,7 @@ namespace WingProcedural
     {
         // Neater way to cache mesh properties
 
+        [System.Serializable]
         public class MeshReference
         {
             public Vector3[] vp;
@@ -112,7 +113,10 @@ namespace WingProcedural
         [KSPField (isPersistant = true)] public int wingSurfaceTextureTopCached = 1;
         [KSPField (isPersistant = true)] public int wingSurfaceTextureBottom = 2; 
         [KSPField (isPersistant = true)] public int wingSurfaceTextureBottomCached = 2;
-        public Texture wingSurfaceTextureA, wingSurfaceTextureB, wingSurfaceTextureC;
+
+        public Texture wingSurfaceTextureA;
+        public Texture wingSurfaceTextureB;
+        public Texture wingSurfaceTextureC;
 
 
 
@@ -151,6 +155,8 @@ namespace WingProcedural
         public Vector2 ctrlSpanLimits = new Vector2 (0.5f, 4f);
         public Vector2 ctrlWidthLimits = new Vector2 (0.25f, 1f);
         public Vector2 ctrlThicknessLimits = new Vector2 (0.08f, 0.24f);
+
+        public Transform temporaryCollider;
 
 
 
@@ -344,109 +350,6 @@ namespace WingProcedural
         private bool updateCounterparts = false;
         private float timer;
 
-        public void Setup ()
-        {
-            if (!isCtrlSrf)
-            {
-                Debug.Log ("WingProcedural | Setup | Wing");
-
-                meshFilterWingSurfaceTop = CheckMeshFilter (meshFilterWingSurfaceTop, "surface_top");
-                meshFilterWingSurfaceBottom = CheckMeshFilter (meshFilterWingSurfaceBottom, "surface_bottom");
-                meshFilterWingEdgeTrailing = CheckMeshFilter (meshFilterWingEdgeTrailing, "edge_trailing");
-                meshFilterWingEdgeLeading = CheckMeshFilter (meshFilterWingEdgeLeading, "edge_leading");
-                meshFilterWingSection = CheckMeshFilter (meshFilterWingSection, "proxy_collision");
-                meshFilterWingEdgeA = CheckMeshFilter (meshFilterWingEdgeA, "proxy_edge_a", true);
-                meshFilterWingEdgeB = CheckMeshFilter (meshFilterWingEdgeB, "proxy_edge_b", true);
-                meshFilterWingEdgeC = CheckMeshFilter (meshFilterWingEdgeC, "proxy_edge_c", true);
-                meshFilterWingSurfaceA = CheckMeshFilter (meshFilterWingSurfaceA, "proxy_material_a", true);
-                meshFilterWingSurfaceB = CheckMeshFilter (meshFilterWingSurfaceB, "proxy_material_b", true);
-                meshFilterWingSurfaceC = CheckMeshFilter (meshFilterWingSurfaceC, "proxy_material_c", true);
-
-                meshReferenceWingSection = FillMeshRefererence (meshFilterWingSection);
-                meshReferenceWingSurfaceTop = FillMeshRefererence (meshFilterWingSurfaceTop);
-                meshReferenceWingSurfaceBottom = FillMeshRefererence (meshFilterWingSurfaceBottom);
-                meshReferenceWingEdgeA = FillMeshRefererence (meshFilterWingEdgeA);
-                meshReferenceWingEdgeB = FillMeshRefererence (meshFilterWingEdgeB);
-                meshReferenceWingEdgeC = FillMeshRefererence (meshFilterWingEdgeC);
-
-                wingSurfaceTextureA = CheckTexture (wingSurfaceTextureA, meshFilterWingSurfaceA);
-                wingSurfaceTextureB = CheckTexture (wingSurfaceTextureB, meshFilterWingSurfaceB);
-                wingSurfaceTextureC = CheckTexture (wingSurfaceTextureC, meshFilterWingSurfaceC);
-
-                wingSpan = Mathf.Clamp (wingSpan, wingSpanLimits.x, wingSpanLimits.y);
-                wingWidthRoot = Mathf.Clamp (wingWidthRoot, wingWidthLimits.x, wingWidthLimits.y);
-                wingWidthTip = Mathf.Clamp (wingWidthTip, wingWidthLimits.x, wingWidthLimits.y);
-                wingThicknessRoot = Mathf.Clamp (wingThicknessRoot, wingThicknessLimits.x, wingThicknessLimits.y);
-                wingThicknessTip = Mathf.Clamp (wingThicknessTip, wingThicknessLimits.x, wingThicknessLimits.y);
-                wingOffset = Mathf.Clamp (wingOffset, wingOffsetLimits.x, wingOffsetLimits.y);
-                wingEdgeTrailing = Mathf.Clamp (wingEdgeTrailing, wingEdgeLimits.x, wingEdgeLimits.y);
-                wingEdgeLeading = Mathf.Clamp (wingEdgeLeading, wingEdgeLimits.x, wingEdgeLimits.y);
-
-                SelectNextEdgeGeneric (wingEdgeTypeTrailing, "Trailing", "T", false);
-                SelectNextEdgeGeneric (wingEdgeTypeLeading, "Leading", "L", false);
-
-                SelectNextSurfaceGeneric (wingSurfaceTextureTop, "Top", "T", false);
-                SelectNextSurfaceGeneric (wingSurfaceTextureBottom, "Bottom", "B", false);
-
-                SetFieldVisibility ("ctrlSpan", false);
-                SetFieldVisibility ("ctrlWidthRoot", false);
-                SetFieldVisibility ("ctrlWidthTip", false);
-                SetFieldVisibility ("ctrlThickness", false);
-            }
-            else
-            {
-                Debug.Log ("WingProcedural | Setup | Control surface");
-
-                meshFilterCtrlEdge = CheckMeshFilter (meshFilterCtrlEdge, "ctrl_surface_edge");
-                meshFilterCtrlEdgeReference = CheckMeshFilter (meshFilterCtrlEdgeReference, "ctrl_surface_edge_reference", true);
-                meshFilterCtrlSurfaceTop = CheckMeshFilter (meshFilterCtrlSurfaceTop, "ctrl_surface_top");
-                meshFilterCtrlSurfaceBottom = CheckMeshFilter (meshFilterCtrlSurfaceBottom, "ctrl_surface_bottom");
-
-                meshReferenceCtrlEdge = FillMeshRefererence (meshFilterCtrlEdge);
-                meshReferenceCtrlSurfaceTop = FillMeshRefererence (meshFilterCtrlSurfaceTop);
-                meshReferenceCtrlSurfaceBottom = FillMeshRefererence (meshFilterCtrlSurfaceBottom);
-
-                ctrlSpan = Mathf.Clamp (ctrlSpan, ctrlSpanLimits.x, ctrlSpanLimits.y);
-                ctrlWidthRoot = Mathf.Clamp (ctrlWidthRoot, ctrlWidthLimits.x, ctrlWidthLimits.y);
-                ctrlWidthTip = Mathf.Clamp (ctrlWidthRoot, ctrlWidthLimits.x, ctrlWidthLimits.y);
-                ctrlThickness = Mathf.Clamp (ctrlThickness, ctrlThicknessLimits.x, ctrlThicknessLimits.y);
-
-                SetFieldVisibility ("wingSpan", false);
-                SetFieldVisibility ("wingWidthRoot", false);
-                SetFieldVisibility ("wingWidthTip", false);
-                SetFieldVisibility ("wingThicknessRoot", false);
-                SetFieldVisibility ("wingThicknessTip", false);
-                SetFieldVisibility ("wingOffset", false);
-                SetFieldVisibility ("wingEdgeTrailing", false);
-                SetFieldVisibility ("wingEdgeLeading", false);
-                SetFieldVisibility ("syncWidth", false);
-                SetFieldVisibility ("syncThickness", false);
-                SetFieldVisibility ("syncEdge", false);
-
-                SetEventVisibility ("SelectNextEdgeTrailing", false);
-                SetEventVisibility ("SelectNextEdgeLeading", false);
-                SetEventVisibility ("SelectNextSurfaceBottom", false);
-                SetEventVisibility ("SelectNextSurfaceTop", false);
-            }
-            ForceUpdate ();
-        }
-
-        private void SetFieldVisibility (string name, bool visible)
-        {
-            BaseField field = Fields[name];
-            field.uiControlEditor.controlEnabled = false;
-            field.uiControlFlight.controlEnabled = false;
-            field.guiActiveEditor = false;
-            field.guiActive = false;
-        }
-
-        private void SetEventVisibility (string name, bool visible)
-        {
-            BaseEvent basefield = Events[name];
-            basefield.guiActiveEditor = false;
-            basefield.guiActive = false;
-        }
-
         public void Update ()
         {
             if (HighLogic.LoadedSceneIsEditor)
@@ -456,12 +359,6 @@ namespace WingProcedural
 
                 if (CachedOnEditorDetach == null) CachedOnEditorDetach = new Callback (UpdateOnEditorDetach);
                 if (!this.part.OnEditorDetach.GetInvocationList ().Contains (CachedOnEditorDetach)) this.part.OnEditorDetach += CachedOnEditorDetach;
-
-                if (isAttached && !isStarted)
-                {
-                    isStarted = true;
-                    Setup ();
-                }
 
                 // Used to determine whether updates are spammed
                 // Switch off in release
@@ -649,6 +546,11 @@ namespace WingProcedural
                     updateRequiredOnWindow = false;
                     UpdateWindow ();
                 }
+                if (isAttached && !isStarted)
+                {
+                    isStarted = true;
+                    Setup ();
+                }
             }
             else
             {
@@ -680,6 +582,12 @@ namespace WingProcedural
             return reference;
         }
 
+        private Transform CheckTransform (string name)
+        {
+            Transform t = part.transform.GetChild (0).GetChild (0).GetChild (0).Find (name);
+            return t;
+        }
+
         private Texture CheckTexture (Texture reference, MeshFilter source)
         {
             if (source != null && reference == null)
@@ -693,13 +601,13 @@ namespace WingProcedural
         private MeshReference FillMeshRefererence (MeshFilter source)
         {
             MeshReference reference = new MeshReference ();
-            int length = source.sharedMesh.vertices.Length;
+            int length = source.mesh.vertices.Length;
             reference.vp = new Vector3[length];
-            Array.Copy (source.sharedMesh.vertices, reference.vp, length);
+            Array.Copy (source.mesh.vertices, reference.vp, length);
             reference.nm = new Vector3[length];
-            Array.Copy (source.sharedMesh.normals, reference.nm, length);
+            Array.Copy (source.mesh.normals, reference.nm, length);
             reference.uv = new Vector2[length];
-            Array.Copy (source.sharedMesh.uv, reference.uv, length);
+            Array.Copy (source.mesh.uv, reference.uv, length);
             return reference;
         }
 
@@ -753,9 +661,9 @@ namespace WingProcedural
                     vp[7] = new Vector3 (0f, wingThicknessRoot / 2f, -wingWidthRootBasedOffset);
                     uv[7] = new Vector2 (0f, uv[7].y);
 
-                    meshFilterWingSection.sharedMesh.vertices = vp;
-                    meshFilterWingSection.sharedMesh.uv = uv;
-                    meshFilterWingSection.sharedMesh.RecalculateBounds ();
+                    meshFilterWingSection.mesh.vertices = vp;
+                    meshFilterWingSection.mesh.uv = uv;
+                    meshFilterWingSection.mesh.RecalculateBounds ();
 
                     MeshCollider meshCollider = meshFilterWingSection.gameObject.GetComponent<MeshCollider> ();
                     if (meshCollider == null) meshCollider = meshFilterWingSection.gameObject.AddComponent<MeshCollider> ();
@@ -788,9 +696,9 @@ namespace WingProcedural
                     vp[3] = new Vector3 (-wingSpan, wingThicknessTip / 2f, -wingWidthTip / 2f + wingOffset);
                     uv[3] = new Vector2 (wingSpan / 4f, 1f - 0.5f + wingWidthTip / 8f - wingOffset / 4f);
 
-                    meshFilterWingSurfaceTop.sharedMesh.vertices = vp;
-                    meshFilterWingSurfaceTop.sharedMesh.uv = uv;
-                    meshFilterWingSurfaceTop.sharedMesh.RecalculateBounds ();
+                    meshFilterWingSurfaceTop.mesh.vertices = vp;
+                    meshFilterWingSurfaceTop.mesh.uv = uv;
+                    meshFilterWingSurfaceTop.mesh.RecalculateBounds ();
                     Debug.Log ("WP | UG-" + geometryUpdateCounterDebug.ToString ("000") + " | Wing surface top | Finished");
                 }
                 if (meshFilterWingSurfaceBottom != null)
@@ -817,9 +725,9 @@ namespace WingProcedural
                     vp[3] = new Vector3 (-wingSpan, wingThicknessTip / 2f, -wingWidthTip / 2f - wingOffset);
                     uv[3] = new Vector2 (wingSpan / 4f, 1f - 0.5f + wingWidthTip / 8f + wingOffset / 4f);
 
-                    meshFilterWingSurfaceBottom.sharedMesh.vertices = vp;
-                    meshFilterWingSurfaceBottom.sharedMesh.uv = uv;
-                    meshFilterWingSurfaceBottom.sharedMesh.RecalculateBounds ();
+                    meshFilterWingSurfaceBottom.mesh.vertices = vp;
+                    meshFilterWingSurfaceBottom.mesh.uv = uv;
+                    meshFilterWingSurfaceBottom.mesh.RecalculateBounds ();
                     Debug.Log ("WP | UG-" + geometryUpdateCounterDebug.ToString ("000") + " | Wing surface bottom | Finished");
                 }
                 if (meshFilterWingEdgeA != null && meshFilterWingEdgeB != null && meshFilterWingEdgeC != null)
@@ -837,7 +745,7 @@ namespace WingProcedural
                         Array.Copy (meshReference.nm, nm, length);
                         Vector2[] uv = new Vector2[length];
                         Array.Copy (meshReference.uv, uv, length);
-                        Debug.Log ("WP | UG-" + geometryUpdateCounterDebug.ToString ("000") + " | Wing edge trailing | Passed array setup | Edge type: " + wingEdgeTypeTrailing + " | Reference length: " + length + " | Mesh length: " + meshFilterWingEdgeTrailing.sharedMesh.vertices.Length);
+                        Debug.Log ("WP | UG-" + geometryUpdateCounterDebug.ToString ("000") + " | Wing edge trailing | Passed array setup | Edge type: " + wingEdgeTypeTrailing + " | Reference length: " + length + " | Mesh length: " + meshFilterWingEdgeTrailing.mesh.vertices.Length);
 
                         float wingThicknessDeviationRoot = wingThicknessRoot / wingThicknessLimits.y;
                         float wingThicknessDeviationTip = wingThicknessTip / wingThicknessLimits.y;
@@ -857,9 +765,9 @@ namespace WingProcedural
                             }
                         }
 
-                        meshFilterWingEdgeTrailing.sharedMesh.vertices = vp;
-                        meshFilterWingEdgeTrailing.sharedMesh.uv = uv;
-                        meshFilterWingEdgeTrailing.sharedMesh.RecalculateBounds ();
+                        meshFilterWingEdgeTrailing.mesh.vertices = vp;
+                        meshFilterWingEdgeTrailing.mesh.uv = uv;
+                        meshFilterWingEdgeTrailing.mesh.RecalculateBounds ();
                         Debug.Log ("WP | UG-" + geometryUpdateCounterDebug.ToString ("000") + " | Wing edge trailing | Finished");
                     }
                     if (meshFilterWingEdgeLeading != null)
@@ -875,7 +783,7 @@ namespace WingProcedural
                         Array.Copy (meshReference.nm, nm, length);
                         Vector2[] uv = new Vector2[length];
                         Array.Copy (meshReference.uv, uv, length);
-                        Debug.Log ("WP | UG-" + geometryUpdateCounterDebug.ToString ("000") + " | Wing edge leading | Passed array setup | Edge type: " + wingEdgeTypeLeading + " | Reference length: " + length + " | Mesh length: " + meshFilterWingEdgeLeading.sharedMesh.vertices.Length);
+                        Debug.Log ("WP | UG-" + geometryUpdateCounterDebug.ToString ("000") + " | Wing edge leading | Passed array setup | Edge type: " + wingEdgeTypeLeading + " | Reference length: " + length + " | Mesh length: " + meshFilterWingEdgeLeading.mesh.vertices.Length);
 
                         float wingThicknessDeviationRoot = wingThicknessRoot / wingThicknessLimits.y;
                         float wingThicknessDeviationTip = wingThicknessTip / wingThicknessLimits.y;
@@ -895,9 +803,9 @@ namespace WingProcedural
                             }
                         }
 
-                        meshFilterWingEdgeLeading.sharedMesh.vertices = vp;
-                        meshFilterWingEdgeLeading.sharedMesh.uv = uv;
-                        meshFilterWingEdgeLeading.sharedMesh.RecalculateBounds ();
+                        meshFilterWingEdgeLeading.mesh.vertices = vp;
+                        meshFilterWingEdgeLeading.mesh.uv = uv;
+                        meshFilterWingEdgeLeading.mesh.RecalculateBounds ();
                         Debug.Log ("WP | UG-" + geometryUpdateCounterDebug.ToString ("000") + " | Wing edge leading | Finished");
                     }
                 }
@@ -958,9 +866,9 @@ namespace WingProcedural
                         }
                     }
 
-                    meshFilterCtrlEdge.sharedMesh.vertices = vp;
-                    meshFilterCtrlEdge.sharedMesh.uv = uv;
-                    meshFilterCtrlEdge.sharedMesh.RecalculateBounds ();
+                    meshFilterCtrlEdge.mesh.vertices = vp;
+                    meshFilterCtrlEdge.mesh.uv = uv;
+                    meshFilterCtrlEdge.mesh.RecalculateBounds ();
 
                     MeshCollider meshCollider = meshFilterCtrlEdge.gameObject.GetComponent<MeshCollider> ();
                     if (meshCollider == null) meshCollider = meshFilterCtrlEdge.gameObject.AddComponent<MeshCollider> ();
@@ -1003,9 +911,9 @@ namespace WingProcedural
                             uv[i] = new Vector2 (uv[i].x, 0f);
                         }
                     }
-                    meshFilterCtrlSurfaceTop.sharedMesh.vertices = vp;
-                    meshFilterCtrlSurfaceTop.sharedMesh.uv = uv;
-                    meshFilterCtrlSurfaceTop.sharedMesh.RecalculateBounds ();
+                    meshFilterCtrlSurfaceTop.mesh.vertices = vp;
+                    meshFilterCtrlSurfaceTop.mesh.uv = uv;
+                    meshFilterCtrlSurfaceTop.mesh.RecalculateBounds ();
                     Debug.Log ("WP | UG-" + geometryUpdateCounterDebug.ToString ("000") + " | Control surface top | Finished");
                 }
                 if (meshFilterCtrlSurfaceBottom != null)
@@ -1042,9 +950,9 @@ namespace WingProcedural
                             uv[i] = new Vector2 (uv[i].x, 0f);
                         }
                     }
-                    meshFilterCtrlSurfaceBottom.sharedMesh.vertices = vp;
-                    meshFilterCtrlSurfaceBottom.sharedMesh.uv = uv;
-                    meshFilterCtrlSurfaceBottom.sharedMesh.RecalculateBounds ();
+                    meshFilterCtrlSurfaceBottom.mesh.vertices = vp;
+                    meshFilterCtrlSurfaceBottom.mesh.uv = uv;
+                    meshFilterCtrlSurfaceBottom.mesh.RecalculateBounds ();
                     Debug.Log ("WP | UG-" + geometryUpdateCounterDebug.ToString ("000") + " | Control surface bottom | Finished");
                 }
             }
@@ -1103,9 +1011,9 @@ namespace WingProcedural
             Vector3[] positions = new Vector3[0];
             if (source != null)
             {
-                if (source.sharedMesh != null)
+                if (source.mesh != null)
                 {
-                    positions = source.sharedMesh.vertices;
+                    positions = source.mesh.vertices;
                     return positions;
                 }
             }
@@ -1114,21 +1022,21 @@ namespace WingProcedural
 
         public void UpdateMeshes ()
         {
-            if (meshFilterWingEdgeTrailing.sharedMesh != null)
+            if (meshFilterWingEdgeTrailing.mesh != null)
             {
-                Debug.Log ("WP | UM | Wing trailing edge | Mesh present | Length: " + meshFilterWingEdgeTrailing.sharedMesh.vertices.Length + " | Removing");
-                DestroyImmediate (meshFilterWingEdgeTrailing.sharedMesh);
+                Debug.Log ("WP | UM | Wing trailing edge | Mesh present | Length: " + meshFilterWingEdgeTrailing.mesh.vertices.Length + " | Removing");
+                DestroyImmediate (meshFilterWingEdgeTrailing.mesh);
             }
-            meshFilterWingEdgeTrailing.sharedMesh = Instantiate (GetWingEdgeFilter (wingEdgeTypeTrailing).sharedMesh) as Mesh;
-            Debug.Log ("WP | UM | Wing trailing edge | Mesh created | Length: " + meshFilterWingEdgeTrailing.sharedMesh.vertices.Length);
+            meshFilterWingEdgeTrailing.mesh = Instantiate (GetWingEdgeFilter (wingEdgeTypeTrailing).mesh) as Mesh;
+            Debug.Log ("WP | UM | Wing trailing edge | Mesh created | Length: " + meshFilterWingEdgeTrailing.mesh.vertices.Length);
 
-            if (meshFilterWingEdgeLeading.sharedMesh != null)
+            if (meshFilterWingEdgeLeading.mesh != null)
             {
-                Debug.Log ("WP | UM | Wing trailing edge | Mesh present | Length: " + meshFilterWingEdgeLeading.sharedMesh.vertices.Length + " | Removing");
-                DestroyImmediate (meshFilterWingEdgeLeading.sharedMesh);
+                Debug.Log ("WP | UM | Wing trailing edge | Mesh present | Length: " + meshFilterWingEdgeLeading.mesh.vertices.Length + " | Removing");
+                DestroyImmediate (meshFilterWingEdgeLeading.mesh);
             }
-            meshFilterWingEdgeLeading.sharedMesh = Instantiate (GetWingEdgeFilter (wingEdgeTypeLeading).sharedMesh) as Mesh;
-            Debug.Log ("WP | UM | Wing trailing edge | Mesh created | Length: " + meshFilterWingEdgeLeading.sharedMesh.vertices.Length);
+            meshFilterWingEdgeLeading.mesh = Instantiate (GetWingEdgeFilter (wingEdgeTypeLeading).mesh) as Mesh;
+            Debug.Log ("WP | UM | Wing trailing edge | Mesh created | Length: " + meshFilterWingEdgeLeading.mesh.vertices.Length);
         }
 
 
@@ -1439,40 +1347,14 @@ namespace WingProcedural
 
 
 
-        // Fires when the part is attached
+        // Attachment
+
         public void UpdateOnEditorAttach ()
         {
-            // We are attached
             isAttached = true;
-
-            if (isStarted)
-            {
-                if (isCtrlSrf)
-                {
-                    // meshCtrlEdge = meshFilterCtrlEdge.mesh;
-                    // meshCtrlSurfaceTop = meshFilterCtrlSurfaceTop.mesh;
-                    // meshCtrlSurfaceBottom = meshFilterCtrlSurfaceTop.mesh;
-
-                    // UnityEngine.Object.DestroyImmediate (meshCtrlEdge);
-                    // UnityEngine.Object.DestroyImmediate (meshCtrlSurfaceTop);
-                    // UnityEngine.Object.DestroyImmediate (meshCtrlSurfaceBottom);
-                }
-                else
-                {
-                    // meshWingSurfaceTop = meshFilterWingSurfaceTop.mesh;
-                    // meshWingSurfaceBottom = meshFilterWingSurfaceBottom.mesh;
-                    // meshWingSection = meshFilterWingSection.mesh;
-                    // meshWingEdgeLeading = GetWingEdgeReference (wingEdgeTypeLeading).mesh;
-                    // meshWingEdgeTrailing = GetWingEdgeReference (wingEdgeTypeTrailing).mesh;
-
-                    // UnityEngine.Object.DestroyImmediate (meshEdgeLeading);
-                    // UnityEngine.Object.DestroyImmediate (meshEdgeTrailing);
-                    // UnityEngine.Object.DestroyImmediate (meshSurfaceTop);
-                    // UnityEngine.Object.DestroyImmediate (meshSurfaceBottom);
-                    // UnityEngine.Object.DestroyImmediate (meshProxyCollision);
-                }
-                ForceUpdate ();
-            }
+            isStarted = true;
+            Debug.Log ("WP | UpdateOnEditorAttach | Fired");
+            Setup ();
         }
 
         private Callback CachedOnEditorAttach;
@@ -1480,10 +1362,8 @@ namespace WingProcedural
         public void UpdateOnEditorDetach ()
         {
             // If the root is not null and is a pWing, set its justDetached so it knows to check itself next Update
-            if (this.part.parent != null && this.part.parent.Modules.Contains ("WingManipulator"))
+            if (this.part.parent != null && this.part.parent.Modules.Contains ("WingProcedural"))
                 this.part.parent.Modules.OfType<WingProcedural> ().FirstOrDefault ().justDetached = true;
-
-            // We are not attached.
 
             isAttached = false;
             justDetached = true;
@@ -1494,6 +1374,240 @@ namespace WingProcedural
 
 
 
-        // Math
+        // Setup
+
+        public void Setup ()
+        {
+            SetupMeshFilters ();
+            SetupClamping ();
+            SetupFields ();
+            SetupMeshReferences ();
+            SetupTemporaryCollider ();
+            ReportOnMeshReferences ();
+            ForceUpdate ();
+        }
+
+        private void SetupMeshFilters ()
+        {
+            if (!isCtrlSrf)
+            {
+                meshFilterWingSurfaceTop = CheckMeshFilter (meshFilterWingSurfaceTop, "surface_top");
+                meshFilterWingSurfaceBottom = CheckMeshFilter (meshFilterWingSurfaceBottom, "surface_bottom");
+                meshFilterWingEdgeTrailing = CheckMeshFilter (meshFilterWingEdgeTrailing, "edge_trailing");
+                meshFilterWingEdgeLeading = CheckMeshFilter (meshFilterWingEdgeLeading, "edge_leading");
+                meshFilterWingSection = CheckMeshFilter (meshFilterWingSection, "proxy_collision");
+                meshFilterWingEdgeA = CheckMeshFilter (meshFilterWingEdgeA, "proxy_edge_a", true);
+                meshFilterWingEdgeB = CheckMeshFilter (meshFilterWingEdgeB, "proxy_edge_b", true);
+                meshFilterWingEdgeC = CheckMeshFilter (meshFilterWingEdgeC, "proxy_edge_c", true);
+                meshFilterWingSurfaceA = CheckMeshFilter (meshFilterWingSurfaceA, "proxy_material_a", true);
+                meshFilterWingSurfaceB = CheckMeshFilter (meshFilterWingSurfaceB, "proxy_material_b", true);
+                meshFilterWingSurfaceC = CheckMeshFilter (meshFilterWingSurfaceC, "proxy_material_c", true);
+
+                wingSurfaceTextureA = CheckTexture (wingSurfaceTextureA, meshFilterWingSurfaceA);
+                wingSurfaceTextureB = CheckTexture (wingSurfaceTextureB, meshFilterWingSurfaceB);
+                wingSurfaceTextureC = CheckTexture (wingSurfaceTextureC, meshFilterWingSurfaceC);
+            }
+            else
+            {
+                meshFilterCtrlEdge = CheckMeshFilter (meshFilterCtrlEdge, "ctrl_surface_edge");
+                meshFilterCtrlEdgeReference = CheckMeshFilter (meshFilterCtrlEdgeReference, "ctrl_surface_edge_reference", true);
+                meshFilterCtrlSurfaceTop = CheckMeshFilter (meshFilterCtrlSurfaceTop, "ctrl_surface_top");
+                meshFilterCtrlSurfaceBottom = CheckMeshFilter (meshFilterCtrlSurfaceBottom, "ctrl_surface_bottom");
+            }
+        }
+
+        private void SetupClamping ()
+        {
+            if (!isCtrlSrf)
+            {
+                wingSpan = Mathf.Clamp (wingSpan, wingSpanLimits.x, wingSpanLimits.y);
+                wingWidthRoot = Mathf.Clamp (wingWidthRoot, wingWidthLimits.x, wingWidthLimits.y);
+                wingWidthTip = Mathf.Clamp (wingWidthTip, wingWidthLimits.x, wingWidthLimits.y);
+                wingThicknessRoot = Mathf.Clamp (wingThicknessRoot, wingThicknessLimits.x, wingThicknessLimits.y);
+                wingThicknessTip = Mathf.Clamp (wingThicknessTip, wingThicknessLimits.x, wingThicknessLimits.y);
+                wingOffset = Mathf.Clamp (wingOffset, wingOffsetLimits.x, wingOffsetLimits.y);
+                wingEdgeTrailing = Mathf.Clamp (wingEdgeTrailing, wingEdgeLimits.x, wingEdgeLimits.y);
+                wingEdgeLeading = Mathf.Clamp (wingEdgeLeading, wingEdgeLimits.x, wingEdgeLimits.y);
+
+            }
+            else
+            {
+                ctrlSpan = Mathf.Clamp (ctrlSpan, ctrlSpanLimits.x, ctrlSpanLimits.y);
+                ctrlWidthRoot = Mathf.Clamp (ctrlWidthRoot, ctrlWidthLimits.x, ctrlWidthLimits.y);
+                ctrlWidthTip = Mathf.Clamp (ctrlWidthRoot, ctrlWidthLimits.x, ctrlWidthLimits.y);
+                ctrlThickness = Mathf.Clamp (ctrlThickness, ctrlThicknessLimits.x, ctrlThicknessLimits.y);
+            }
+        }
+
+        private void SetupFields ()
+        {
+            if (!isCtrlSrf)
+            {
+                SelectNextEdgeGeneric (wingEdgeTypeTrailing, "Trailing", "T", false);
+                SelectNextEdgeGeneric (wingEdgeTypeLeading, "Leading", "L", false);
+
+                SelectNextSurfaceGeneric (wingSurfaceTextureTop, "Top", "T", false);
+                SelectNextSurfaceGeneric (wingSurfaceTextureBottom, "Bottom", "B", false);
+
+                SetFieldVisibility ("ctrlSpan", false);
+                SetFieldVisibility ("ctrlWidthRoot", false);
+                SetFieldVisibility ("ctrlWidthTip", false);
+                SetFieldVisibility ("ctrlThickness", false);
+            }
+            else
+            {
+                SetFieldVisibility ("wingSpan", false);
+                SetFieldVisibility ("wingWidthRoot", false);
+                SetFieldVisibility ("wingWidthTip", false);
+                SetFieldVisibility ("wingThicknessRoot", false);
+                SetFieldVisibility ("wingThicknessTip", false);
+                SetFieldVisibility ("wingOffset", false);
+                SetFieldVisibility ("wingEdgeTrailing", false);
+                SetFieldVisibility ("wingEdgeLeading", false);
+                SetFieldVisibility ("syncWidth", false);
+                SetFieldVisibility ("syncThickness", false);
+                SetFieldVisibility ("syncEdge", false);
+
+                SetEventVisibility ("SelectNextEdgeTrailing", false);
+                SetEventVisibility ("SelectNextEdgeLeading", false);
+                SetEventVisibility ("SelectNextSurfaceBottom", false);
+                SetEventVisibility ("SelectNextSurfaceTop", false);
+            }
+        }
+
+        private void SetFieldVisibility (string name, bool visible)
+        {
+            BaseField field = Fields[name];
+            field.uiControlEditor.controlEnabled = false;
+            field.uiControlFlight.controlEnabled = false;
+            field.guiActiveEditor = false;
+            field.guiActive = false;
+        }
+
+        private void SetEventVisibility (string name, bool visible)
+        {
+            BaseEvent basefield = Events[name];
+            basefield.guiActiveEditor = false;
+            basefield.guiActive = false;
+        }
+
+        public void SetupMeshReferences ()
+        {
+            Debug.Log ("WP | SetupMeshReferences");
+            if (this.part.parent != null && this.part.parent.Modules.Contains ("WingProcedural"))
+            {
+                Debug.Log ("WP | CheckAndRepairMeshReferences | Parent module found, using the references");
+                var source = this.part.parent.Modules.OfType<WingProcedural> ().FirstOrDefault ();
+                SetupMeshReferencesFromSource (source);
+            }
+            else if (this.part.symmetryCounterparts.Count > 0)
+            {
+                Debug.Log ("WP | CheckAndRepairMeshReferences | Symmetry counterparts found, using the references");
+                var source = this.part.symmetryCounterparts[0].Modules.OfType<WingProcedural> ().FirstOrDefault ();
+                if (source != null)
+                {
+                    if (CheckMeshReferenceAvailability (source)) SetupMeshReferencesFromSource (source);
+                    else SetupMeshReferencesFromScratch ();
+                }
+                else SetupMeshReferencesFromScratch ();
+            }
+            else SetupMeshReferencesFromScratch ();
+        }
+
+        public void ReportOnMeshReferences ()
+        {
+            if (isCtrlSrf)
+            {
+                Debug.Log
+                (
+                    "WP | UpdateOnEditorAttach | Control surface reference length check"
+                    + " | Edge: " + meshReferenceCtrlEdge.vp.Length
+                    + " | Top: " + meshReferenceCtrlSurfaceTop.vp.Length
+                    + " | Bottom: " + meshReferenceCtrlSurfaceBottom.vp.Length
+                );
+            }
+            else
+            {
+                Debug.Log
+                (
+                    "WP | UpdateOnEditorAttach | Wing reference length check"
+                    + " | Section: " + meshReferenceWingSection.vp.Length
+                    + " | Top: " + meshReferenceWingSurfaceTop.vp.Length
+                    + " | Bottom: " + meshReferenceWingSurfaceBottom.vp.Length
+                    + " | Edge A: " + meshReferenceWingEdgeA.vp.Length
+                    + " | Edge B: " + meshReferenceWingEdgeB.vp.Length
+                    + " | Edge C: " + meshReferenceWingEdgeC.vp.Length
+                );
+            }
+        }
+
+        private bool CheckMeshReferenceAvailability (WingProcedural source)
+        {
+            bool valid = true;
+            if (isCtrlSrf)
+            {
+                if (source.meshReferenceCtrlEdge == null) valid = false;
+                if (source.meshReferenceCtrlSurfaceTop == null) valid = false;
+                if (source.meshReferenceCtrlSurfaceBottom == null) valid = false;
+            }
+            else
+            {
+                if (source.meshReferenceWingSection == null) valid = false;
+                if (source.meshReferenceWingSurfaceTop == null) valid = false;
+                if (source.meshReferenceWingSurfaceBottom == null) valid = false;
+                if (source.meshReferenceWingEdgeA == null) valid = false;
+                if (source.meshReferenceWingEdgeB == null) valid = false;
+                if (source.meshReferenceWingEdgeC == null) valid = false;
+            }
+            return valid;
+        }
+
+        private void SetupMeshReferencesFromSource (WingProcedural source)
+        {
+            if (source != null)
+            {
+                if (isCtrlSrf)
+                {
+                    if (meshReferenceCtrlEdge == null && source.meshReferenceCtrlEdge != null) meshReferenceCtrlEdge = source.meshReferenceCtrlEdge;
+                    if (meshReferenceCtrlSurfaceTop == null && source.meshReferenceCtrlSurfaceTop != null) meshReferenceCtrlSurfaceTop = source.meshReferenceCtrlSurfaceTop;
+                    if (meshReferenceCtrlSurfaceBottom == null && source.meshReferenceCtrlSurfaceBottom != null) meshReferenceCtrlSurfaceBottom = source.meshReferenceCtrlSurfaceBottom;
+                }
+                else
+                {
+                    if (meshReferenceWingSection == null && source.meshReferenceWingSection != null) meshReferenceWingSection = source.meshReferenceWingSection;
+                    if (meshReferenceWingSurfaceTop == null && source.meshReferenceWingSurfaceTop != null) meshReferenceWingSurfaceTop = source.meshReferenceWingSurfaceTop;
+                    if (meshReferenceWingSurfaceBottom == null && source.meshReferenceWingSurfaceBottom != null) meshReferenceWingSurfaceBottom = source.meshReferenceWingSurfaceBottom;
+                    if (meshReferenceWingEdgeA == null && source.meshReferenceWingEdgeA != null) meshReferenceWingEdgeA = source.meshReferenceWingEdgeA;
+                    if (meshReferenceWingEdgeB == null && source.meshReferenceWingEdgeB != null) meshReferenceWingEdgeB = source.meshReferenceWingEdgeB;
+                    if (meshReferenceWingEdgeC == null && source.meshReferenceWingEdgeC != null) meshReferenceWingEdgeC = source.meshReferenceWingEdgeC;
+                }
+            }
+        }
+
+        private void SetupMeshReferencesFromScratch ()
+        {
+            Debug.Log ("WP | SetupMeshReferencesFromScratch | No sources found, creating new references");
+            if (isCtrlSrf)
+            {
+                meshReferenceCtrlEdge = FillMeshRefererence (meshFilterCtrlEdge);
+                meshReferenceCtrlSurfaceTop = FillMeshRefererence (meshFilterCtrlSurfaceTop);
+                meshReferenceCtrlSurfaceBottom = FillMeshRefererence (meshFilterCtrlSurfaceBottom);
+            }
+            else
+            {
+                meshReferenceWingSection = FillMeshRefererence (meshFilterWingSection);
+                meshReferenceWingSurfaceTop = FillMeshRefererence (meshFilterWingSurfaceTop);
+                meshReferenceWingSurfaceBottom = FillMeshRefererence (meshFilterWingSurfaceBottom);
+                meshReferenceWingEdgeA = FillMeshRefererence (meshFilterWingEdgeA);
+                meshReferenceWingEdgeB = FillMeshRefererence (meshFilterWingEdgeB);
+                meshReferenceWingEdgeC = FillMeshRefererence (meshFilterWingEdgeC);
+            }
+        }
+
+        private void SetupTemporaryCollider ()
+        {
+            temporaryCollider = CheckTransform ("proxy_collision_temporary");
+            if (temporaryCollider != null) temporaryCollider.gameObject.SetActive (false);
+        }
     }
 }

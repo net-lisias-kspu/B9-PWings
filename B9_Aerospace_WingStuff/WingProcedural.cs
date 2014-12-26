@@ -1494,7 +1494,7 @@ namespace WingProcedural
         public void SetupMeshReferences ()
         {
             Debug.Log ("WP | SetupMeshReferences");
-            if (this.part.parent != null && this.part.parent.Modules.Contains ("WingProcedural"))
+            if (this.part.parent != null && this.part.parent.Modules.Contains ("WingProcedural") && !isCtrlSrf)
             {
                 Debug.Log ("WP | CheckAndRepairMeshReferences | Parent module found, using the references");
                 var source = this.part.parent.Modules.OfType<WingProcedural> ().FirstOrDefault ();
@@ -1546,18 +1546,26 @@ namespace WingProcedural
             bool valid = true;
             if (isCtrlSrf)
             {
-                if (source.meshReferenceCtrlEdge == null) valid = false;
-                if (source.meshReferenceCtrlSurfaceTop == null) valid = false;
-                if (source.meshReferenceCtrlSurfaceBottom == null) valid = false;
+                if (source.isCtrlSrf)
+                {
+                    if (source.meshReferenceCtrlEdge == null) valid = false;
+                    if (source.meshReferenceCtrlSurfaceTop == null) valid = false;
+                    if (source.meshReferenceCtrlSurfaceBottom == null) valid = false;
+                }
+                else valid = false;
             }
             else
             {
-                if (source.meshReferenceWingSection == null) valid = false;
-                if (source.meshReferenceWingSurfaceTop == null) valid = false;
-                if (source.meshReferenceWingSurfaceBottom == null) valid = false;
-                if (source.meshReferenceWingEdgeA == null) valid = false;
-                if (source.meshReferenceWingEdgeB == null) valid = false;
-                if (source.meshReferenceWingEdgeC == null) valid = false;
+                if (!source.isCtrlSrf)
+                {
+                    if (source.meshReferenceWingSection == null) valid = false;
+                    if (source.meshReferenceWingSurfaceTop == null) valid = false;
+                    if (source.meshReferenceWingSurfaceBottom == null) valid = false;
+                    if (source.meshReferenceWingEdgeA == null) valid = false;
+                    if (source.meshReferenceWingEdgeB == null) valid = false;
+                    if (source.meshReferenceWingEdgeC == null) valid = false;
+                }
+                else valid = false;
             }
             return valid;
         }
@@ -1568,7 +1576,7 @@ namespace WingProcedural
             {
                 if (isCtrlSrf)
                 {
-                    if (meshReferenceCtrlEdge == null && source.meshReferenceCtrlEdge != null) meshReferenceCtrlEdge = source.meshReferenceCtrlEdge;
+                    if (meshReferenceCtrlEdge == null && source.meshReferenceCtrlEdge != null) meshReferenceCtrlEdge = source.meshReferenceCtrlEdge; 
                     if (meshReferenceCtrlSurfaceTop == null && source.meshReferenceCtrlSurfaceTop != null) meshReferenceCtrlSurfaceTop = source.meshReferenceCtrlSurfaceTop;
                     if (meshReferenceCtrlSurfaceBottom == null && source.meshReferenceCtrlSurfaceBottom != null) meshReferenceCtrlSurfaceBottom = source.meshReferenceCtrlSurfaceBottom;
                 }

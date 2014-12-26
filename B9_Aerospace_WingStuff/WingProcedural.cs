@@ -128,12 +128,12 @@ namespace WingProcedural
         public float ctrlSpan = 1f;
         public float ctrlSpanCached = 1f;
 
-        [KSPField (isPersistant = true, guiActive = true, guiActiveEditor = true, guiName = "Width"),
+        [KSPField (isPersistant = true, guiActive = true, guiActiveEditor = true, guiName = "Width R"),
         UI_FloatRange (minValue = 0.25f, maxValue = 1f, scene = UI_Scene.Editor, stepIncrement = 0.25f)]
         public float ctrlWidthRoot = 0.25f;
         public float ctrlWidthRootCached = 0.25f;
 
-        [KSPField (isPersistant = true, guiActive = true, guiActiveEditor = true, guiName = "Width"),
+        [KSPField (isPersistant = true, guiActive = true, guiActiveEditor = true, guiName = "Width T"),
         UI_FloatRange (minValue = 0.25f, maxValue = 1f, scene = UI_Scene.Editor, stepIncrement = 0.25f)]
         public float ctrlWidthTip = 0.25f;
         public float ctrlWidthTipCached = 0.25f;
@@ -824,7 +824,6 @@ namespace WingProcedural
                     Debug.Log ("WP | UG-" + geometryUpdateCounterDebug.ToString ("000") + " | Control surface edge | Passed array setup");
 
                     float ctrlThicknessDeviation = ctrlThickness / ctrlThicknessLimits.y;
-
                     for (int i = 0; i < vp.Length; ++i)
                     {
                         if (vp[i].z < 0f) vp[i] = new Vector3 (vp[i].x * ctrlThicknessDeviation, vp[i].y, -ctrlSpan / 2f);
@@ -837,12 +836,23 @@ namespace WingProcedural
                             {
                                 if (vp[i].y < -0.01f)
                                 {
-                                    uv[i] = new Vector2 (ctrlWidthRoot, uv[i].y);
-                                    if (vp[i].z < 0f) vp[i] = new Vector3 (vp[i].x * ctrlThicknessDeviation, -ctrlWidthRoot, vp[i].z);
-                                    else vp[i] = new Vector3 (vp[i].x * ctrlThicknessDeviation, -ctrlWidthTip, vp[i].z);
+                                    if (vp[i].z < 0f)
+                                    {
+                                        vp[i] = new Vector3 (vp[i].x, -ctrlWidthTip, vp[i].z);
+                                        uv[i] = new Vector2 (ctrlWidthTip, uv[i].y);
+                                    }
+                                    else
+                                    {
+                                        vp[i] = new Vector3 (vp[i].x, -ctrlWidthRoot, vp[i].z);
+                                        uv[i] = new Vector2 (ctrlWidthRoot, uv[i].y);
+                                    }
                                 }
                             }
-                            else vp[i] = new Vector3 (vp[i].x * ctrlThicknessDeviation, vp[i].y + 0.5f - ctrlWidthRoot, vp[i].z);
+                            else
+                            {
+                                if (vp[i].z < 0f) vp[i] = new Vector3 (vp[i].x, vp[i].y + 0.5f - ctrlWidthTip, vp[i].z);
+                                else vp[i] = new Vector3 (vp[i].x, vp[i].y + 0.5f - ctrlWidthRoot, vp[i].z);
+                            }
                         }
 
                         // Root
@@ -856,12 +866,12 @@ namespace WingProcedural
                         {
                             if (vp[i].z < 0f)
                             {
-                                vp[i] = new Vector3 (vp[i].x * ctrlThicknessDeviation, vp[i].y + 0.5f - ctrlWidthTip, vp[i].z);
+                                vp[i] = new Vector3 (vp[i].x, vp[i].y + 0.5f - ctrlWidthTip, vp[i].z);
                                 uv[i] = new Vector2 (ctrlSpan, uv[i].y);
                             }
                             else
                             {
-                                vp[i] = new Vector3 (vp[i].x * ctrlThicknessDeviation, vp[i].y + 0.5f - ctrlWidthRoot, vp[i].z);
+                                vp[i] = new Vector3 (vp[i].x, vp[i].y + 0.5f - ctrlWidthRoot, vp[i].z);
                             }
                         }
                     }
@@ -941,8 +951,8 @@ namespace WingProcedural
                         }
                         if (vp[i].y < -0.01f)
                         {
-                            if (vp[i].z < 0f) vp[i] = new Vector3 (vp[i].x, -ctrlWidthTip, vp[i].z);
-                            else vp[i] = new Vector3 (vp[i].x, -ctrlWidthRoot, vp[i].z);
+                            if (vp[i].z < 0f) vp[i] = new Vector3 (vp[i].x, -ctrlWidthRoot, vp[i].z);
+                            else vp[i] = new Vector3 (vp[i].x, -ctrlWidthTip, vp[i].z);
                             uv[i] = new Vector2 (uv[i].x, ctrlWidthRoot / 4f);
                         }
                         else

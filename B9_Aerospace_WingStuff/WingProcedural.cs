@@ -1600,7 +1600,7 @@ namespace WingProcedural
             Debug.Log ("WP | SetupMeshReferencesFromScratch | No sources found, creating new references");
             if (isCtrlSrf)
             {
-                meshReferenceCtrlEdge = FillMeshRefererence (meshFilterCtrlEdge);
+                meshReferenceCtrlEdge = FillMeshRefererence (meshFilterCtrlEdgeReference);
                 meshReferenceCtrlSurfaceTop = FillMeshRefererence (meshFilterCtrlSurfaceTop);
                 meshReferenceCtrlSurfaceBottom = FillMeshRefererence (meshFilterCtrlSurfaceBottom);
             }

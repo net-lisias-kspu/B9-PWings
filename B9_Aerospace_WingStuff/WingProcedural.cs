@@ -1022,21 +1022,24 @@ namespace WingProcedural
 
         public void UpdateMeshes ()
         {
-            if (meshFilterWingEdgeTrailing.mesh != null)
+            if (!isCtrlSrf)
             {
-                Debug.Log ("WP | UM | Wing trailing edge | Mesh present | Length: " + meshFilterWingEdgeTrailing.mesh.vertices.Length + " | Removing");
-                DestroyImmediate (meshFilterWingEdgeTrailing.mesh);
-            }
-            meshFilterWingEdgeTrailing.mesh = Instantiate (GetWingEdgeFilter (wingEdgeTypeTrailing).mesh) as Mesh;
-            Debug.Log ("WP | UM | Wing trailing edge | Mesh created | Length: " + meshFilterWingEdgeTrailing.mesh.vertices.Length);
+                if (meshFilterWingEdgeTrailing.mesh != null)
+                {
+                    Debug.Log ("WP | UM | Wing trailing edge | Mesh present | Length: " + meshFilterWingEdgeTrailing.mesh.vertices.Length + " | Removing");
+                    DestroyImmediate (meshFilterWingEdgeTrailing.mesh);
+                }
+                meshFilterWingEdgeTrailing.mesh = Instantiate (GetWingEdgeFilter (wingEdgeTypeTrailing).mesh) as Mesh;
+                Debug.Log ("WP | UM | Wing trailing edge | Mesh created | Length: " + meshFilterWingEdgeTrailing.mesh.vertices.Length);
 
-            if (meshFilterWingEdgeLeading.mesh != null)
-            {
-                Debug.Log ("WP | UM | Wing trailing edge | Mesh present | Length: " + meshFilterWingEdgeLeading.mesh.vertices.Length + " | Removing");
-                DestroyImmediate (meshFilterWingEdgeLeading.mesh);
+                if (meshFilterWingEdgeLeading.mesh != null)
+                {
+                    Debug.Log ("WP | UM | Wing trailing edge | Mesh present | Length: " + meshFilterWingEdgeLeading.mesh.vertices.Length + " | Removing");
+                    DestroyImmediate (meshFilterWingEdgeLeading.mesh);
+                }
+                meshFilterWingEdgeLeading.mesh = Instantiate (GetWingEdgeFilter (wingEdgeTypeLeading).mesh) as Mesh;
+                Debug.Log ("WP | UM | Wing trailing edge | Mesh created | Length: " + meshFilterWingEdgeLeading.mesh.vertices.Length);
             }
-            meshFilterWingEdgeLeading.mesh = Instantiate (GetWingEdgeFilter (wingEdgeTypeLeading).mesh) as Mesh;
-            Debug.Log ("WP | UM | Wing trailing edge | Mesh created | Length: " + meshFilterWingEdgeLeading.mesh.vertices.Length);
         }
 
 

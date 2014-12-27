@@ -529,16 +529,16 @@ namespace WingProcedural
                     vp[3] = new Vector3 (-wingSpan, vp[3].y * wingThicknessDeviationTip, wingWidthTipBasedOffsetLeading);
                     uv[3] = new Vector2 (wingWidthTip, uv[3].y);
 
-                    vp[4] = new Vector3 (0f, vp[0].y * wingThicknessDeviationRoot, wingWidthRootBasedOffset);
+                    vp[4] = new Vector3 (0f, vp[4].y * wingThicknessDeviationRoot, wingWidthRootBasedOffset);
                     uv[4] = new Vector2 (wingWidthRoot, uv[4].y);
 
-                    vp[5] = new Vector3 (0f, vp[0].y * wingThicknessDeviationRoot, wingWidthRootBasedOffset);
+                    vp[5] = new Vector3 (0f, vp[5].y * wingThicknessDeviationRoot, wingWidthRootBasedOffset);
                     uv[5] = new Vector2 (wingWidthRoot, uv[5].y);
 
-                    vp[6] = new Vector3 (0f, vp[0].y * wingThicknessDeviationRoot, -wingWidthRootBasedOffset);
+                    vp[6] = new Vector3 (0f, vp[6].y * wingThicknessDeviationRoot, -wingWidthRootBasedOffset);
                     uv[6] = new Vector2 (0f, uv[6].y);
 
-                    vp[7] = new Vector3 (0f, vp[0].y * wingThicknessDeviationRoot, -wingWidthRootBasedOffset);
+                    vp[7] = new Vector3 (0f, vp[7].y * wingThicknessDeviationRoot, -wingWidthRootBasedOffset);
                     uv[7] = new Vector2 (0f, uv[7].y);
 
                     meshFilterWingSection.mesh.vertices = vp;

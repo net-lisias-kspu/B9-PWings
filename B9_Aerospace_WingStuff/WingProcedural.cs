@@ -26,7 +26,8 @@ namespace WingProcedural
 
         // Prerequisites / Wing
 
-        [KSPField (isPersistant = true, guiActive = true, guiActiveEditor = true, guiName = "Span"),
+
+        [KSPField (isPersistant = true, guiActive = true, guiActiveEditor = true, guiName = "Semispan"),
         UI_FloatRange (minValue = 0.5f, maxValue = 16f, scene = UI_Scene.Editor, stepIncrement = 0.5f)]
         public float wingSpan = 4f;
         public float wingSpanCached = 4f;
@@ -42,12 +43,12 @@ namespace WingProcedural
         public float wingWidthTipCached = 4f;
 
         [KSPField (isPersistant = true, guiActive = true, guiActiveEditor = true, guiName = "Height / root"),
-        UI_FloatRange (minValue = 0.08f, maxValue = 0.24f, scene = UI_Scene.Editor, stepIncrement = 0.04f)]
+        UI_FloatRange (minValue = 0.08f, maxValue = 0.48f, scene = UI_Scene.Editor, stepIncrement = 0.04f)]
         public float wingThicknessRoot = 0.24f;
         public float wingThicknessRootCached = 0.24f;
 
         [KSPField (isPersistant = true, guiActive = true, guiActiveEditor = true, guiName = "Height / tip"),
-        UI_FloatRange (minValue = 0.08f, maxValue = 0.24f, scene = UI_Scene.Editor, stepIncrement = 0.04f)]
+        UI_FloatRange (minValue = 0.08f, maxValue = 0.48f, scene = UI_Scene.Editor, stepIncrement = 0.04f)]
         public float wingThicknessTip = 0.24f;
         public float wingThicknessTipCached = 0.24f;
 
@@ -55,16 +56,6 @@ namespace WingProcedural
         UI_FloatRange (minValue = -8f, maxValue = 8f, scene = UI_Scene.Editor, stepIncrement = 0.5f)]
         public float wingOffset = 0f;
         public float wingOffsetCached = 0f;
-
-        [KSPField (isPersistant = true, guiActive = true, guiActiveEditor = true, guiName = "Edge / trailing"),
-        UI_FloatRange (minValue = 0f, maxValue = 1f, scene = UI_Scene.Editor, stepIncrement = 0.25f)]
-        public float wingEdgeTrailing = 1f;
-        public float wingEdgeTrailingCached = 1f;
-
-        [KSPField (isPersistant = true, guiActive = true, guiActiveEditor = true, guiName = "Edge / leading"),
-        UI_FloatRange (minValue = 0f, maxValue = 1f, scene = UI_Scene.Editor, stepIncrement = 0.25f)]
-        public float wingEdgeLeading = 1f;
-        public float wingEdgeLeadingCached = 1f;
 
         [KSPField (isPersistant = true, guiActive = true, guiActiveEditor = true, guiName = "Sync width"),
         UI_Toggle (disabledText = "Off", enabledText = "On", scene = UI_Scene.Editor)]
@@ -80,6 +71,16 @@ namespace WingProcedural
         UI_Toggle (disabledText = "Off", enabledText = "On", scene = UI_Scene.Editor)]
         public bool syncEdge = false;
         public bool syncEdgeCached = false;
+
+        [KSPField (isPersistant = true, guiActive = true, guiActiveEditor = true, guiName = "Edge T (scale)"),
+        UI_FloatRange (minValue = 0f, maxValue = 1f, scene = UI_Scene.Editor, stepIncrement = 0.25f)]
+        public float wingEdgeTrailing = 1f;
+        public float wingEdgeTrailingCached = 1f;
+
+        [KSPField (isPersistant = true, guiActive = true, guiActiveEditor = true, guiName = "Edge L (scale)"),
+        UI_FloatRange (minValue = 0f, maxValue = 1f, scene = UI_Scene.Editor, stepIncrement = 0.25f)]
+        public float wingEdgeLeading = 1f;
+        public float wingEdgeLeadingCached = 1f;
 
         public MeshFilter meshFilterWingSection;
         public MeshFilter meshFilterWingSurfaceTop;
@@ -99,7 +100,7 @@ namespace WingProcedural
 
         public Vector2 wingSpanLimits = new Vector2 (0.5f, 16f);
         public Vector2 wingWidthLimits = new Vector2 (0.5f, 16f);
-        public Vector2 wingThicknessLimits = new Vector2 (0.08f, 0.24f);
+        public Vector2 wingThicknessLimits = new Vector2 (0.08f, 0.48f);
         public Vector2 wingOffsetLimits = new Vector2 (-8f, 8f);
         public Vector2 wingEdgeLimits = new Vector2 (0f, 1f);
 
@@ -141,15 +142,25 @@ namespace WingProcedural
         public float ctrlWidthTip = 0.25f;
         public float ctrlWidthTipCached = 0.25f;
 
-        [KSPField (isPersistant = true, guiActive = true, guiActiveEditor = true, guiName = "Height"),
-        UI_FloatRange (minValue = 0.08f, maxValue = 0.24f, scene = UI_Scene.Editor, stepIncrement = 0.04f)]
-        public float ctrlThickness = 0.24f;
-        public float ctrlThicknessCached = 0.24f;
+        [KSPField (isPersistant = true, guiActive = true, guiActiveEditor = true, guiName = "Height R"),
+        UI_FloatRange (minValue = 0.08f, maxValue = 0.48f, scene = UI_Scene.Editor, stepIncrement = 0.04f)]
+        public float ctrlThicknessRoot = 0.24f;
+        public float ctrlThicknessRootCached = 0.24f;
 
-        [KSPField (isPersistant = true, guiActive = true, guiActiveEditor = true, guiName = "Offset"),
+        [KSPField (isPersistant = true, guiActive = true, guiActiveEditor = true, guiName = "Height T"),
+        UI_FloatRange (minValue = 0.08f, maxValue = 0.48f, scene = UI_Scene.Editor, stepIncrement = 0.04f)]
+        public float ctrlThicknessTip = 0.24f;
+        public float ctrlThicknessTipCached = 0.24f;
+
+        [KSPField (isPersistant = true, guiActive = true, guiActiveEditor = true, guiName = "Offset R"),
         UI_FloatRange (minValue = -1f, maxValue = 1f, scene = UI_Scene.Editor, stepIncrement = 0.125f)]
-        public float ctrlOffset = 0.0f;
-        public float ctrlOffsetCached = 0.0f;
+        public float ctrlOffsetRoot = 0.0f; 
+        public float ctrlOffsetRootCached = 0.0f;
+
+        [KSPField (isPersistant = true, guiActive = true, guiActiveEditor = true, guiName = "Offset T"),
+        UI_FloatRange (minValue = -1f, maxValue = 1f, scene = UI_Scene.Editor, stepIncrement = 0.125f)]
+        public float ctrlOffsetTip = 0.0f;
+        public float ctrlOffsetTipCached = 0.0f; 
 
         public MeshFilter meshFilterCtrlEdge;
         public MeshFilter meshFilterCtrlEdgeReference;
@@ -162,7 +173,8 @@ namespace WingProcedural
 
         public Vector2 ctrlSpanLimits = new Vector2 (0.5f, 4f);
         public Vector2 ctrlWidthLimits = new Vector2 (0.25f, 1f);
-        public Vector2 ctrlThicknessLimits = new Vector2 (0.08f, 0.24f);
+        public Vector2 ctrlThicknessLimits = new Vector2 (0.08f, 0.48f);
+        public Vector2 ctrlOffsetLimits = new Vector2 (-1f, 1f);
 
         public Transform temporaryCollider;
 
@@ -178,6 +190,7 @@ namespace WingProcedural
         public bool justDetached = false;
         public bool logUpdate = true;
         public bool logUpdateGeometry = false;
+
 
 
 
@@ -361,17 +374,29 @@ namespace WingProcedural
                             updateRequiredOnGeometry = true;
                             ctrlWidthTipCached = ctrlWidthTip;
                         }
-                        if (ctrlThickness != ctrlThicknessCached)
+                        if (ctrlThicknessRoot != ctrlThicknessRootCached)
                         {
-                            if (logUpdate) Debug.Log ("WP | Update at " + updateTimer.ToString ("F1") + " | Non-equal ctrlThickness");
+                            if (logUpdate) Debug.Log ("WP | Update at " + updateTimer.ToString ("F1") + " | Non-equal ctrlThicknessRoot");
                             updateRequiredOnGeometry = true;
-                            ctrlThicknessCached = ctrlThickness;
+                            ctrlThicknessRootCached = ctrlThicknessRoot;
                         }
-                        if (ctrlOffset != ctrlOffsetCached)
+                        if (ctrlThicknessTip != ctrlThicknessTipCached)
                         {
-                            if (logUpdate) Debug.Log ("WP | Update at " + updateTimer.ToString ("F1") + " | Non-equal ctrlOffset");
+                            if (logUpdate) Debug.Log ("WP | Update at " + updateTimer.ToString ("F1") + " | Non-equal ctrlThicknessTip");
                             updateRequiredOnGeometry = true;
-                            ctrlOffsetCached = ctrlOffset;
+                            ctrlThicknessTipCached = ctrlThicknessTip;
+                        }
+                        if (ctrlOffsetRoot != ctrlOffsetRootCached)
+                        {
+                            if (logUpdate) Debug.Log ("WP | Update at " + updateTimer.ToString ("F1") + " | Non-equal ctrlOffsetRoot");
+                            updateRequiredOnGeometry = true;
+                            ctrlOffsetRootCached = ctrlOffsetRoot;
+                        }
+                        if (ctrlOffsetTip != ctrlOffsetTipCached)
+                        {
+                            if (logUpdate) Debug.Log ("WP | Update at " + updateTimer.ToString ("F1") + " | Non-equal ctrlOffsetRoot");
+                            updateRequiredOnGeometry = true;
+                            ctrlOffsetTipCached = ctrlOffsetTip;
                         }
                     }
 
@@ -476,6 +501,9 @@ namespace WingProcedural
             Debug.Log ("WP | UpdateGeometry | Started for " + geometryUpdateCounterDebug.ToString ("000") + " time | isCtrlSrf: " + isCtrlSrf);
             if (!isCtrlSrf)
             {
+                float wingThicknessDeviationRoot = wingThicknessRoot / 0.24f;
+                float wingThicknessDeviationTip = wingThicknessTip / 0.24f;
+
                 if (meshFilterWingSection != null)
                 {
                     int length = meshReferenceWingSection.vp.Length;
@@ -485,33 +513,32 @@ namespace WingProcedural
                     Array.Copy (meshReferenceWingSection.uv, uv, length);
                     if (logUpdateGeometry) Debug.Log ("WP | UG-" + geometryUpdateCounterDebug.ToString ("000") + " | Wing section | Passed array setup");
 
-                    float wingThicknessTipBasedOffset = wingThicknessTip / 2f;
                     float wingWidthTipBasedOffsetTrailing = wingWidthTip / 2f + wingOffset;
                     float wingWidthTipBasedOffsetLeading = -wingWidthTip / 2f + wingOffset;
                     float wingWidthRootBasedOffset = wingWidthRoot / 2f;
 
-                    vp[0] = new Vector3 (-wingSpan, -wingThicknessTipBasedOffset, wingWidthTipBasedOffsetLeading);
+                    vp[0] = new Vector3 (-wingSpan, vp[0].y * wingThicknessDeviationTip, wingWidthTipBasedOffsetLeading);
                     uv[0] = new Vector2 (wingWidthTip, uv[0].y);
 
-                    vp[1] = new Vector3 (-wingSpan, -wingThicknessTipBasedOffset, wingWidthTipBasedOffsetTrailing);
+                    vp[1] = new Vector3 (-wingSpan, vp[1].y * wingThicknessDeviationTip, wingWidthTipBasedOffsetTrailing);
                     uv[1] = new Vector2 (0f, uv[1].y);
 
-                    vp[2] = new Vector3 (-wingSpan, wingThicknessTipBasedOffset, wingWidthTipBasedOffsetTrailing);
+                    vp[2] = new Vector3 (-wingSpan, vp[2].y * wingThicknessDeviationTip, wingWidthTipBasedOffsetTrailing);
                     uv[2] = new Vector2 (0f, uv[2].y);
 
-                    vp[3] = new Vector3 (-wingSpan, wingThicknessTipBasedOffset, wingWidthTipBasedOffsetLeading);
+                    vp[3] = new Vector3 (-wingSpan, vp[3].y * wingThicknessDeviationTip, wingWidthTipBasedOffsetLeading);
                     uv[3] = new Vector2 (wingWidthTip, uv[3].y);
 
-                    vp[4] = new Vector3 (0f, wingThicknessRoot / 2f, wingWidthRootBasedOffset);
+                    vp[4] = new Vector3 (0f, vp[0].y * wingThicknessDeviationRoot, wingWidthRootBasedOffset);
                     uv[4] = new Vector2 (wingWidthRoot, uv[4].y);
 
-                    vp[5] = new Vector3 (0f, -wingThicknessRoot / 2f, wingWidthRootBasedOffset);
+                    vp[5] = new Vector3 (0f, vp[0].y * wingThicknessDeviationRoot, wingWidthRootBasedOffset);
                     uv[5] = new Vector2 (wingWidthRoot, uv[5].y);
 
-                    vp[6] = new Vector3 (0f, -wingThicknessRoot / 2f, -wingWidthRootBasedOffset);
+                    vp[6] = new Vector3 (0f, vp[0].y * wingThicknessDeviationRoot, -wingWidthRootBasedOffset);
                     uv[6] = new Vector2 (0f, uv[6].y);
 
-                    vp[7] = new Vector3 (0f, wingThicknessRoot / 2f, -wingWidthRootBasedOffset);
+                    vp[7] = new Vector3 (0f, vp[0].y * wingThicknessDeviationRoot, -wingWidthRootBasedOffset);
                     uv[7] = new Vector2 (0f, uv[7].y);
 
                     meshFilterWingSection.mesh.vertices = vp;
@@ -537,16 +564,16 @@ namespace WingProcedural
                     Array.Copy (meshReferenceWingSurfaceTop.uv, uv, length);
                     if (logUpdateGeometry) Debug.Log ("WP | UG-" + geometryUpdateCounterDebug.ToString ("000") + " | Wing surface top | Passed array setup");
 
-                    vp[0] = new Vector3 (-wingSpan, wingThicknessTip / 2f, wingWidthTip / 2f + wingOffset);
+                    vp[0] = new Vector3 (-wingSpan, vp[0].y * wingThicknessDeviationTip, wingWidthTip / 2f + wingOffset);
                     uv[0] = new Vector2 (wingSpan / 4f, 0f + 0.5f - wingWidthTip / 8f - wingOffset / 4f);
 
-                    vp[1] = new Vector3 (0f, wingThicknessRoot / 2f, wingWidthRoot / 2f);
+                    vp[1] = new Vector3 (0f, vp[1].y * wingThicknessDeviationRoot, wingWidthRoot / 2f);
                     uv[1] = new Vector2 (0f, 0f + 0.5f - wingWidthRoot / 8f);
 
-                    vp[2] = new Vector3 (0f, wingThicknessRoot / 2f, -wingWidthRoot / 2f);
+                    vp[2] = new Vector3 (0f, vp[2].y * wingThicknessDeviationRoot, -wingWidthRoot / 2f);
                     uv[2] = new Vector2 (0.0f, 1f - 0.5f + wingWidthRoot / 8f);
 
-                    vp[3] = new Vector3 (-wingSpan, wingThicknessTip / 2f, -wingWidthTip / 2f + wingOffset);
+                    vp[3] = new Vector3 (-wingSpan, vp[3].y * wingThicknessDeviationTip, -wingWidthTip / 2f + wingOffset);
                     uv[3] = new Vector2 (wingSpan / 4f, 1f - 0.5f + wingWidthTip / 8f - wingOffset / 4f);
 
                     meshFilterWingSurfaceTop.mesh.vertices = vp;
@@ -566,16 +593,16 @@ namespace WingProcedural
                     Array.Copy (meshReferenceWingSurfaceBottom.uv, uv, length);
                     if (logUpdateGeometry) Debug.Log ("WP | UG-" + geometryUpdateCounterDebug.ToString ("000") + " | Wing surface bottom | Passed array setup");
 
-                    vp[0] = new Vector3 (-wingSpan, wingThicknessTip / 2f, wingWidthTip / 2f - wingOffset);
+                    vp[0] = new Vector3 (-wingSpan, vp[0].y * wingThicknessDeviationTip, wingWidthTip / 2f - wingOffset);
                     uv[0] = new Vector2 (wingSpan / 4f, 0f + 0.5f - wingWidthTip / 8f + wingOffset / 4f);
 
-                    vp[1] = new Vector3 (0f, wingThicknessRoot / 2f, wingWidthRoot / 2f);
+                    vp[1] = new Vector3 (0f, vp[1].y * wingThicknessDeviationRoot, wingWidthRoot / 2f);
                     uv[1] = new Vector2 (0f, 0f + 0.5f - wingWidthRoot / 8f);
 
-                    vp[2] = new Vector3 (0f, wingThicknessRoot / 2f, -wingWidthRoot / 2f);
+                    vp[2] = new Vector3 (0f, vp[2].y * wingThicknessDeviationRoot, -wingWidthRoot / 2f);
                     uv[2] = new Vector2 (0f, 1f - 0.5f + wingWidthRoot / 8f);
 
-                    vp[3] = new Vector3 (-wingSpan, wingThicknessTip / 2f, -wingWidthTip / 2f - wingOffset);
+                    vp[3] = new Vector3 (-wingSpan, vp[3].y * wingThicknessDeviationTip, -wingWidthTip / 2f - wingOffset);
                     uv[3] = new Vector2 (wingSpan / 4f, 1f - 0.5f + wingWidthTip / 8f + wingOffset / 4f);
 
                     meshFilterWingSurfaceBottom.mesh.vertices = vp;
@@ -599,9 +626,6 @@ namespace WingProcedural
                         Vector2[] uv = new Vector2[length];
                         Array.Copy (meshReference.uv, uv, length);
                         if (logUpdateGeometry) Debug.Log ("WP | UG-" + geometryUpdateCounterDebug.ToString ("000") + " | Wing edge trailing | Passed array setup | Edge type: " + wingEdgeTypeTrailing + " | Reference length: " + length + " | Mesh length: " + meshFilterWingEdgeTrailing.mesh.vertices.Length);
-
-                        float wingThicknessDeviationRoot = wingThicknessRoot / wingThicknessLimits.y;
-                        float wingThicknessDeviationTip = wingThicknessTip / wingThicknessLimits.y;
 
                         for (int i = 0; i < vp.Length; ++i)
                         {
@@ -638,9 +662,6 @@ namespace WingProcedural
                         Array.Copy (meshReference.uv, uv, length);
                         if (logUpdateGeometry) Debug.Log ("WP | UG-" + geometryUpdateCounterDebug.ToString ("000") + " | Wing edge leading | Passed array setup | Edge type: " + wingEdgeTypeLeading + " | Reference length: " + length + " | Mesh length: " + meshFilterWingEdgeLeading.mesh.vertices.Length);
 
-                        float wingThicknessDeviationRoot = wingThicknessRoot / wingThicknessLimits.y;
-                        float wingThicknessDeviationTip = wingThicknessTip / wingThicknessLimits.y;
-
                         for (int i = 0; i < vp.Length; ++i)
                         {
                             if (nm[i].x == -1.0f) vp[i] = new Vector3 (-wingSpan, vp[i].y * wingThicknessDeviationTip, Mathf.Lerp (2f, vp[i].z, wingEdgeLeading) - 2f + wingWidthTip / 2f - wingOffset); // Tip section
@@ -665,6 +686,17 @@ namespace WingProcedural
             }
             else
             {
+                // To prevent intersections on low span to width configurations
+
+                float ctrlOffsetRootLimit = (ctrlSpan / 2f) / (ctrlWidthRoot + 1f);
+                float ctrlOffsetTipLimit = (ctrlSpan / 2f) / (ctrlWidthTip + 1f);
+
+                float ctrlOffsetRootClamped = Mathf.Clamp (ctrlOffsetRoot, -ctrlOffsetRootLimit, ctrlOffsetRootLimit);
+                float ctrlOffsetTipClamped = Mathf.Clamp (ctrlOffsetTip, -ctrlOffsetTipLimit, ctrlOffsetTipLimit);
+
+                float ctrlThicknessDeviationRoot = ctrlThicknessRoot / 0.24f;
+                float ctrlThicknessDeviationTip = ctrlThicknessTip / 0.24f;
+
                 if (meshFilterCtrlEdge != null)
                 {
                     int length = meshReferenceCtrlEdge.vp.Length;
@@ -676,60 +708,91 @@ namespace WingProcedural
                     Array.Copy (meshReferenceCtrlEdge.uv, uv, length);
                     if (logUpdateGeometry) Debug.Log ("WP | UG-" + geometryUpdateCounterDebug.ToString ("000") + " | Control surface edge | Passed array setup");
 
-                    float ctrlThicknessDeviation = ctrlThickness / ctrlThicknessLimits.y;
                     for (int i = 0; i < vp.Length; ++i)
                     {
-                        if (vp[i].z < 0f) vp[i] = new Vector3 (vp[i].x * ctrlThicknessDeviation, vp[i].y, -ctrlSpan / 2f);
-                        else vp[i] = new Vector3 (vp[i].x * ctrlThicknessDeviation, vp[i].y, ctrlSpan / 2f);
-
-                        // Sides
-                        if (nm[i] == new Vector3 (0f, 0f, 1f) || nm[i] == new Vector3 (0f, 0f, -1f))
+                        if (nm[i] != new Vector3 (1f, 0f, 0f) && nm[i] != new Vector3 (-1f, 0f, 0f))
                         {
-                            if (uv[i].y > 0.185f)
+                            if (vp[i].z < 0f) vp[i] = new Vector3 (vp[i].x * ctrlThicknessDeviationTip, vp[i].y, -ctrlSpan / 2f);
+                            else vp[i] = new Vector3 (vp[i].x * ctrlThicknessDeviationRoot, vp[i].y, ctrlSpan / 2f);
+
+                            // Sides
+                            if (nm[i] == new Vector3 (0f, 0f, 1f) || nm[i] == new Vector3 (0f, 0f, -1f))
                             {
-                                if (vp[i].y < -0.01f)
+                                if (uv[i].y > 0.185f)
                                 {
-                                    if (vp[i].z < 0f)
+                                    if (vp[i].y < -0.01f)
                                     {
-                                        vp[i] = new Vector3 (vp[i].x, -ctrlWidthTip, vp[i].z);
-                                        uv[i] = new Vector2 (ctrlWidthTip, uv[i].y);
-                                    }
-                                    else
-                                    {
-                                        vp[i] = new Vector3 (vp[i].x, -ctrlWidthRoot, vp[i].z);
-                                        uv[i] = new Vector2 (ctrlWidthRoot, uv[i].y);
+                                        if (vp[i].z < 0f)
+                                        {
+                                            vp[i] = new Vector3 (vp[i].x, -ctrlWidthTip, vp[i].z);
+                                            uv[i] = new Vector2 (ctrlWidthTip, uv[i].y);
+                                        }
+                                        else
+                                        {
+                                            vp[i] = new Vector3 (vp[i].x, -ctrlWidthRoot, vp[i].z);
+                                            uv[i] = new Vector2 (ctrlWidthRoot, uv[i].y);
+                                        }
                                     }
                                 }
+                                else
+                                {
+                                    if (vp[i].z < 0f) vp[i] = new Vector3 (vp[i].x, vp[i].y + 0.5f - ctrlWidthTip, vp[i].z);
+                                    else vp[i] = new Vector3 (vp[i].x, vp[i].y + 0.5f - ctrlWidthRoot, vp[i].z);
+                                }
                             }
+
+                            // Root
+                            else if (nm[i] == new Vector3 (0f, 1f, 0f))
+                            {
+                                if (vp[i].z < 0f) uv[i] = new Vector2 (ctrlSpan, uv[i].y);
+                            }
+
+                            // Trailing edge
                             else
                             {
                                 if (vp[i].z < 0f) vp[i] = new Vector3 (vp[i].x, vp[i].y + 0.5f - ctrlWidthTip, vp[i].z);
                                 else vp[i] = new Vector3 (vp[i].x, vp[i].y + 0.5f - ctrlWidthRoot, vp[i].z);
                             }
-                        }
 
-                        // Root
-                        else if (nm[i] == new Vector3 (0f, 1f, 0f))
-                        {
-                            if (vp[i].z < 0f) uv[i] = new Vector2 (ctrlSpan, uv[i].y);
-                        }
-
-                        // Trailing edge
-                        else
-                        {
+                            // Offset
                             if (vp[i].z < 0f)
                             {
-                                vp[i] = new Vector3 (vp[i].x, vp[i].y + 0.5f - ctrlWidthTip, vp[i].z);
-                                uv[i] = new Vector2 (ctrlSpan, uv[i].y);
+                                vp[i] = new Vector3 (vp[i].x, vp[i].y, vp[i].z + vp[i].y * ctrlOffsetTipClamped);
+                                if (nm[i] != new Vector3 (0f, 0f, 1f) && nm[i] != new Vector3 (0f, 0f, -1f)) uv[i] = new Vector2 (uv[i].x - (vp[i].y * ctrlOffsetTipClamped) / 4f, uv[i].y);
                             }
                             else
                             {
-                                vp[i] = new Vector3 (vp[i].x, vp[i].y + 0.5f - ctrlWidthRoot, vp[i].z);
+                                vp[i] = new Vector3 (vp[i].x, vp[i].y, vp[i].z + vp[i].y * ctrlOffsetRootClamped);
+                                if (nm[i] != new Vector3 (0f, 0f, 1f) && nm[i] != new Vector3 (0f, 0f, -1f)) uv[i] = new Vector2 (uv[i].x - (vp[i].y * ctrlOffsetRootClamped) / 4f, uv[i].y);
+                            }
+
+                            // Trailing edge UVs
+
+                            if (nm[i] != new Vector3 (0f, 1f, 0f) && nm[i] != new Vector3 (0f, 0f, 1f) && nm[i] != new Vector3 (0f, 0f, -1f))
+                            {
+                                if (vp[i].z < 0f) uv[i] = new Vector2 (vp[i].z, uv[i].y);
+                                else uv[i] = new Vector2 (vp[i].z, uv[i].y);
                             }
                         }
 
-                        // Offset
-                        vp[i] = new Vector3 (vp[i].x, vp[i].y, vp[i].z + vp[i].y * ctrlOffset);
+                        // Border
+                        else
+                        {
+                            // Span-based shift
+                            if (vp[i].z < 0f) vp[i] = new Vector3 (vp[i].x, vp[i].y, vp[i].z + 0.5f - ctrlSpan / 2f);
+                            else vp[i] = new Vector3 (vp[i].x, vp[i].y, vp[i].z - 0.5f + ctrlSpan / 2f);
+
+                            // Width-based shift
+                            if (vp[i].y < -0.1f)
+                            {
+                                if (vp[i].z < 0f) vp[i] = new Vector3 (vp[i].x, vp[i].y + 0.5f - ctrlWidthTip, vp[i].z);
+                                else vp[i] = new Vector3 (vp[i].x, vp[i].y + 0.5f - ctrlWidthRoot, vp[i].z);
+                            }
+
+                            // Offsets && thickness
+                            if (vp[i].z < 0f) vp[i] = new Vector3 (vp[i].x * ctrlThicknessDeviationTip + 0.00f * nm[i].x, vp[i].y, vp[i].z + vp[i].y * ctrlOffsetTipClamped);
+                            else vp[i] = new Vector3 (vp[i].x * ctrlThicknessDeviationRoot + 0.00f * nm[i].x, vp[i].y, vp[i].z + vp[i].y * ctrlOffsetRootClamped);
+                        }
                     }
 
                     meshFilterCtrlEdge.mesh.vertices = vp;
@@ -754,34 +817,45 @@ namespace WingProcedural
 
                     for (int i = 0; i < vp.Length; ++i)
                     {
+                        // Span-based shift
                         if (vp[i].z < 0f)
                         {
-                            vp[i] = new Vector3 (vp[i].x, vp[i].y, -ctrlSpan / 2f);
+                            vp[i] = new Vector3 (vp[i].x, vp[i].y, vp[i].z + 0.5f - ctrlSpan / 2f);
                             uv[i] = new Vector2 (0f, uv[i].y);
                         }
                         else
                         {
-                            vp[i] = new Vector3 (vp[i].x, vp[i].y, ctrlSpan / 2f);
+                            vp[i] = new Vector3 (vp[i].x, vp[i].y, vp[i].z - 0.5f + ctrlSpan / 2f);
                             uv[i] = new Vector2 (ctrlSpan / 4f, uv[i].y);
                         }
-                        if (vp[i].y < -0.01f)
+
+                        // Width-based shift
+                        if (vp[i].y < -0.1f)
                         {
                             if (vp[i].z < 0f)
                             {
-                                vp[i] = new Vector3 (vp[i].x, -ctrlWidthTip, vp[i].z);
+                                vp[i] = new Vector3 (vp[i].x, vp[i].y + 0.5f - ctrlWidthTip, vp[i].z);
                                 uv[i] = new Vector2 (uv[i].x, ctrlWidthTip / 4f);
                             }
                             else
                             {
-                                vp[i] = new Vector3 (vp[i].x, -ctrlWidthRoot, vp[i].z);
+                                vp[i] = new Vector3 (vp[i].x, vp[i].y + 0.5f - ctrlWidthRoot, vp[i].z);
                                 uv[i] = new Vector2 (uv[i].x, ctrlWidthRoot / 4f);
                             }
                         }
+                        else uv[i] = new Vector2 (uv[i].x, 0f);
+
+                        // Offsets & thickness
+                        if (vp[i].z < 0f)
+                        {
+                            vp[i] = new Vector3 (vp[i].x * ctrlThicknessDeviationTip, vp[i].y, vp[i].z + vp[i].y * ctrlOffsetTipClamped);
+                            uv[i] = new Vector2 (uv[i].x + (vp[i].y * ctrlOffsetTipClamped) / 4f, uv[i].y);
+                        }
                         else
                         {
-                            uv[i] = new Vector2 (uv[i].x, 0f);
+                            vp[i] = new Vector3 (vp[i].x * ctrlThicknessDeviationRoot, vp[i].y, vp[i].z + vp[i].y * ctrlOffsetRootClamped);
+                            uv[i] = new Vector2 (uv[i].x + (vp[i].y * ctrlOffsetRootClamped) / 4f, uv[i].y);
                         }
-                        vp[i] = new Vector3 (ctrlThickness / 2f, vp[i].y, vp[i].z + vp[i].y * ctrlOffset);
                     }
                     meshFilterCtrlSurfaceTop.mesh.vertices = vp;
                     meshFilterCtrlSurfaceTop.mesh.uv = uv;
@@ -799,27 +873,45 @@ namespace WingProcedural
 
                     for (int i = 0; i < vp.Length; ++i)
                     {
+                        // Span-based shift
                         if (vp[i].z < 0f)
                         {
-                            vp[i] = new Vector3 (vp[i].x, vp[i].y, -ctrlSpan / 2f);
+                            vp[i] = new Vector3 (vp[i].x, vp[i].y, vp[i].z + 0.5f - ctrlSpan / 2f);
                             uv[i] = new Vector2 (0f, uv[i].y);
                         }
                         else
                         {
-                            vp[i] = new Vector3 (vp[i].x, vp[i].y, ctrlSpan / 2f);
+                            vp[i] = new Vector3 (vp[i].x, vp[i].y, vp[i].z - 0.5f + ctrlSpan / 2f);
                             uv[i] = new Vector2 (ctrlSpan / 4f, uv[i].y);
                         }
-                        if (vp[i].y < -0.01f)
+
+                        // Width-based shift
+                        if (vp[i].y < -0.1f)
                         {
-                            if (vp[i].z < 0f) vp[i] = new Vector3 (vp[i].x, -ctrlWidthRoot, vp[i].z);
-                            else vp[i] = new Vector3 (vp[i].x, -ctrlWidthTip, vp[i].z);
-                            uv[i] = new Vector2 (uv[i].x, ctrlWidthRoot / 4f);
+                            if (vp[i].z < 0f)
+                            {
+                                vp[i] = new Vector3 (vp[i].x, vp[i].y + 0.5f - ctrlWidthRoot, vp[i].z);
+                                uv[i] = new Vector2 (uv[i].x, ctrlWidthRoot / 4f);
+                            }
+                            else
+                            {
+                                vp[i] = new Vector3 (vp[i].x, vp[i].y + 0.5f - ctrlWidthTip, vp[i].z);
+                                uv[i] = new Vector2 (uv[i].x, ctrlWidthTip / 4f);
+                            }
+                        }
+                        else uv[i] = new Vector2 (uv[i].x, 0f);
+
+                        // Offsets & thickness
+                        if (vp[i].z < 0f)
+                        {
+                            vp[i] = new Vector3 (vp[i].x * ctrlThicknessDeviationRoot, vp[i].y, vp[i].z - vp[i].y * ctrlOffsetRootClamped);
+                            uv[i] = new Vector2 (uv[i].x - (vp[i].y * ctrlOffsetRootClamped) / 4f, uv[i].y);
                         }
                         else
                         {
-                            uv[i] = new Vector2 (uv[i].x, 0f);
+                            vp[i] = new Vector3 (vp[i].x * ctrlThicknessDeviationTip, vp[i].y, vp[i].z - vp[i].y * ctrlOffsetTipClamped);
+                            uv[i] = new Vector2 (uv[i].x - (vp[i].y * ctrlOffsetTipClamped) / 4f, uv[i].y);
                         }
-                        vp[i] = new Vector3 (ctrlThickness / 2f, vp[i].y, vp[i].z - vp[i].y * ctrlOffset);
                     }
                     meshFilterCtrlSurfaceBottom.mesh.vertices = vp;
                     meshFilterCtrlSurfaceBottom.mesh.uv = uv;
@@ -1272,8 +1364,10 @@ namespace WingProcedural
                     clone.ctrlSpan =                    clone.ctrlSpanCached =                  ctrlSpan;
                     clone.ctrlWidthRoot =               clone.ctrlWidthRootCached =             ctrlWidthRoot;
                     clone.ctrlWidthTip =                clone.ctrlWidthTipCached =              ctrlWidthTip;
-                    clone.ctrlThickness =               clone.ctrlThicknessCached =             ctrlThickness;
-                    clone.ctrlOffset =                  clone.ctrlOffsetCached =                ctrlOffset;
+                    clone.ctrlThicknessRoot =           clone.ctrlThicknessRootCached =         ctrlThicknessRoot;
+                    clone.ctrlThicknessTip =            clone.ctrlThicknessTipCached =          ctrlThicknessTip;
+                    clone.ctrlOffsetRoot =              clone.ctrlOffsetRootCached =            ctrlOffsetRoot;
+                    clone.ctrlOffsetTip =               clone.ctrlOffsetTipCached =             ctrlOffsetTip;
                 }
                 clone.SetupRecurring ();
             }
@@ -1327,7 +1421,10 @@ namespace WingProcedural
                 ctrlSpan = Mathf.Clamp (ctrlSpan, ctrlSpanLimits.x, ctrlSpanLimits.y);
                 ctrlWidthRoot = Mathf.Clamp (ctrlWidthRoot, ctrlWidthLimits.x, ctrlWidthLimits.y);
                 ctrlWidthTip = Mathf.Clamp (ctrlWidthTip, ctrlWidthLimits.x, ctrlWidthLimits.y);
-                ctrlThickness = Mathf.Clamp (ctrlThickness, ctrlThicknessLimits.x, ctrlThicknessLimits.y);
+                ctrlThicknessRoot = Mathf.Clamp (ctrlThicknessRoot, ctrlThicknessLimits.x, ctrlThicknessLimits.y);
+                ctrlThicknessTip = Mathf.Clamp (ctrlThicknessTip, ctrlThicknessLimits.x, ctrlThicknessLimits.y);
+                ctrlOffsetRoot = Mathf.Clamp (ctrlOffsetRoot, ctrlOffsetLimits.x, ctrlOffsetLimits.y);
+                ctrlOffsetTip = Mathf.Clamp (ctrlOffsetTip, ctrlOffsetLimits.x, ctrlOffsetLimits.y);
             }
         }
 
@@ -1344,7 +1441,10 @@ namespace WingProcedural
                 SetFieldVisibility ("ctrlSpan", false);
                 SetFieldVisibility ("ctrlWidthRoot", false);
                 SetFieldVisibility ("ctrlWidthTip", false);
-                SetFieldVisibility ("ctrlThickness", false);
+                SetFieldVisibility ("ctrlThicknessRoot", false);
+                SetFieldVisibility ("ctrlThicknessTip", false);
+                SetFieldVisibility ("ctrlOffsetRoot", false);
+                SetFieldVisibility ("ctrlOffsetTip", false);
             }
             else
             {

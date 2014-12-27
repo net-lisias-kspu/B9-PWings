@@ -3,8 +3,9 @@ using UnityEngine;
 
 namespace WingProcedural
 {
-    // All credit goes to R4m0n
-    // Initially released with Procedural Dynamics mod
+    // Credit goes to R4m0n
+    // Originally released with Procedural Dynamics mod
+    // Used in aerodynamic stats calculation as all FAR values are stored in doubles
 
     public struct MathD
     {

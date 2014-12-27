@@ -30,15 +30,13 @@ Some important imformation on the current state of the mod:
 * Well, actually, I have no idea whether FAR config values are right either - I think they are, but beyound "huh, it flies" I'm not an authority on that
 * Mirroring is not working on procedural control surfaces for some weird reason (investigating that), so while asymmetric control surfaces are supported, they are not usable for anything but centered tails yet
 * Wings with inbuilt control surfaces won't be supported, same thing can be built out of a wing segment with a slightly smaller root/tip width compared to neighbours, Flat trailing edge type on that wing, and a control surface attached to it
-* Control surfaces cause FAR to drop NREs in some particular situations, I'm still investigating the reason
-* Symmetry for control surfaces is not entirely stable, except attachment not to work sometimes
+* Update FAR to the latest development version, otherwise parts can cause NREs on attachment and break their parent parts, making them permanently unavailable until you reload a craft
 
 
 ### Plans ###
 
 In no particular order:
 
-* Fixing symmetry and attachment issues with control surfaces
 * Fixing possibly bugged aerodynamic values calculation
 * Better tweakable UI and/or alternative input options
 * Adding more options for control surfaces
@@ -52,5 +50,5 @@ I'm not sure whether it's best to integrate this into B9 or leave it as a separa
 I referenced how attachment/detachment is handled in pWings by DYJ and I have used the same aerodynamic stats calculation methods (if I'm not mistaken, those were set up by Taverius).
 Wing geometry itself is not handled in the same way (I'm not using skinned mesh renderers or same parameters) and no part content is shared with Procedural Dynamics, so this is not exactly a proper derivative work, I guess.
 
-Still, credit where it's due, I'm sure I would've stepped into far, far more horrifying bugs and design mistakes if I had not studied the source. Thanks to [B]DYJ[/B], [B]NathanKell[/B] and [B]Taverius[/B] for working on it.
-Also, thanks to [B]ferram4[/B] for advice on FAR support and to helpful folks from #kspmodders IRC channel who answered some of my horrifyingly incompetent questions about C#.
+Still, credit where it's due, I'm sure I would've stepped into far, far more horrifying bugs and design mistakes if I had not studied the source. Thanks to DYJ, NathanKell and Taverius for working on it.
+Also, thanks to ferram4 for advice on FAR support and to helpful folks from #kspmodders IRC channel who answered some of my horrifyingly incompetent questions about C#.

@@ -1485,25 +1485,53 @@ namespace WingProcedural
 
         public void SetupMeshReferences ()
         {
-            Debug.Log ("WP | SetupMeshReferences");
-            if (this.part.parent != null && this.part.parent.Modules.Contains ("WingProcedural") && !isCtrlSrf)
+            bool required = true;
+            if (!isCtrlSrf)
             {
-                Debug.Log ("WP | CheckAndRepairMeshReferences | Parent module found, using the references");
-                var source = this.part.parent.Modules.OfType<WingProcedural> ().FirstOrDefault ();
-                SetupMeshReferencesFromSource (source);
-            }
-            else if (this.part.symmetryCounterparts.Count > 0)
-            {
-                Debug.Log ("WP | CheckAndRepairMeshReferences | Symmetry counterparts found, using the references");
-                var source = this.part.symmetryCounterparts[0].Modules.OfType<WingProcedural> ().FirstOrDefault ();
-                if (source != null)
+                if (meshReferenceWingSection != null && meshReferenceWingSurfaceTop != null && meshReferenceWingSurfaceBottom != null && meshReferenceWingEdgeA != null && meshReferenceWingEdgeB != null && meshReferenceWingEdgeC != null)
                 {
-                    if (CheckMeshReferenceAvailability (source)) SetupMeshReferencesFromSource (source);
+                    if (meshReferenceWingSection.vp.Length > 0 && meshReferenceWingSurfaceTop.vp.Length > 0 && meshReferenceWingSurfaceBottom.vp.Length > 0 && meshReferenceWingEdgeA.vp.Length > 0 && meshReferenceWingEdgeB.vp.Length > 0 && meshReferenceWingEdgeC.vp.Length > 0)
+                    {
+                        required = false;
+                    }
+                }
+            }
+            else
+            {
+                if (meshReferenceCtrlEdge != null && meshReferenceCtrlSurfaceTop != null && meshReferenceCtrlSurfaceBottom != null)
+                {
+                    if (meshReferenceCtrlEdge.vp.Length > 0 && meshReferenceCtrlSurfaceTop.vp.Length > 0 && meshReferenceCtrlSurfaceBottom.vp.Length > 0)
+                    {
+                        required = false;
+                    }
+                }
+            }
+            if (required)
+            {
+                Debug.Log ("WP | SetupMeshReferences | Started");
+                if (this.part.parent != null && this.part.parent.Modules.Contains ("WingProcedural") && !isCtrlSrf)
+                {
+                    Debug.Log ("WP | CheckAndRepairMeshReferences | Parent module found, using the references");
+                    var source = this.part.parent.Modules.OfType<WingProcedural> ().FirstOrDefault ();
+                    SetupMeshReferencesFromSource (source);
+                }
+                else if (this.part.symmetryCounterparts.Count > 0)
+                {
+                    Debug.Log ("WP | CheckAndRepairMeshReferences | Symmetry counterparts found, using the references");
+                    var source = this.part.symmetryCounterparts[0].Modules.OfType<WingProcedural> ().FirstOrDefault ();
+                    if (source != null)
+                    {
+                        if (CheckMeshReferenceAvailability (source)) SetupMeshReferencesFromSource (source);
+                        else SetupMeshReferencesFromScratch ();
+                    }
                     else SetupMeshReferencesFromScratch ();
                 }
                 else SetupMeshReferencesFromScratch ();
             }
-            else SetupMeshReferencesFromScratch ();
+            else
+            {
+                Debug.Log ("WP | SetupMeshReferences | Skipped, all references seem to be in order");
+            }
         }
 
         public void ReportOnMeshReferences ()
@@ -1512,7 +1540,7 @@ namespace WingProcedural
             {
                 Debug.Log
                 (
-                    "WP | UpdateOnEditorAttach | Control surface reference length check"
+                    "WP | ReportOnMeshReferences | Control surface reference length check"
                     + " | Edge: " + meshReferenceCtrlEdge.vp.Length
                     + " | Top: " + meshReferenceCtrlSurfaceTop.vp.Length
                     + " | Bottom: " + meshReferenceCtrlSurfaceBottom.vp.Length
@@ -1522,7 +1550,7 @@ namespace WingProcedural
             {
                 Debug.Log
                 (
-                    "WP | UpdateOnEditorAttach | Wing reference length check"
+                    "WP | ReportOnMeshReferences | Wing reference length check"
                     + " | Section: " + meshReferenceWingSection.vp.Length
                     + " | Top: " + meshReferenceWingSurfaceTop.vp.Length
                     + " | Bottom: " + meshReferenceWingSurfaceBottom.vp.Length

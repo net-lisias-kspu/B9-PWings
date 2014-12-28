@@ -27,57 +27,57 @@ namespace WingProcedural
         // Prerequisites / Wing
 
 
-        [KSPField (isPersistant = true, guiActive = true, guiActiveEditor = true, guiName = "Semispan"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Semispan"),
         UI_FloatRange (minValue = 0.5f, maxValue = 16f, scene = UI_Scene.Editor, stepIncrement = 0.5f)]
         public float wingSpan = 4f;
         public float wingSpanCached = 4f;
 
-        [KSPField (isPersistant = true, guiActive = true, guiActiveEditor = true, guiName = "Width / root"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Width / root"),
         UI_FloatRange (minValue = 0.5f, maxValue = 16f, scene = UI_Scene.Editor, stepIncrement = 0.5f)]
         public float wingWidthRoot = 4f;
         public float wingWidthRootCached = 4f;
 
-        [KSPField (isPersistant = true, guiActive = true, guiActiveEditor = true, guiName = "Width / tip"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Width / tip"),
         UI_FloatRange (minValue = 0.5f, maxValue = 16f, scene = UI_Scene.Editor, stepIncrement = 0.5f)]
         public float wingWidthTip = 4f;
         public float wingWidthTipCached = 4f;
 
-        [KSPField (isPersistant = true, guiActive = true, guiActiveEditor = true, guiName = "Height / root"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Height / root"),
         UI_FloatRange (minValue = 0.08f, maxValue = 0.48f, scene = UI_Scene.Editor, stepIncrement = 0.04f)]
         public float wingThicknessRoot = 0.24f;
         public float wingThicknessRootCached = 0.24f;
 
-        [KSPField (isPersistant = true, guiActive = true, guiActiveEditor = true, guiName = "Height / tip"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Height / tip"),
         UI_FloatRange (minValue = 0.08f, maxValue = 0.48f, scene = UI_Scene.Editor, stepIncrement = 0.04f)]
         public float wingThicknessTip = 0.24f;
         public float wingThicknessTipCached = 0.24f;
 
-        [KSPField (isPersistant = true, guiActive = true, guiActiveEditor = true, guiName = "Offset"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Offset"),
         UI_FloatRange (minValue = -8f, maxValue = 8f, scene = UI_Scene.Editor, stepIncrement = 0.5f)]
         public float wingOffset = 0f;
         public float wingOffsetCached = 0f;
 
-        [KSPField (isPersistant = true, guiActive = true, guiActiveEditor = true, guiName = "Sync width"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Sync width"),
         UI_Toggle (disabledText = "Off", enabledText = "On", scene = UI_Scene.Editor)]
         public bool syncWidth = false;
         public bool syncWidthCached = false;
 
-        [KSPField (isPersistant = true, guiActive = true, guiActiveEditor = true, guiName = "Sync height"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Sync height"),
         UI_Toggle (disabledText = "Off", enabledText = "On", scene = UI_Scene.Editor)]
         public bool syncThickness = false;
         public bool syncThicknessCached = false;
 
-        [KSPField (isPersistant = true, guiActive = true, guiActiveEditor = true, guiName = "Sync edges"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Sync edges"),
         UI_Toggle (disabledText = "Off", enabledText = "On", scene = UI_Scene.Editor)]
         public bool syncEdge = false;
         public bool syncEdgeCached = false;
 
-        [KSPField (isPersistant = true, guiActive = true, guiActiveEditor = true, guiName = "Edge T (scale)"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Edge T (scale)"),
         UI_FloatRange (minValue = 0f, maxValue = 1f, scene = UI_Scene.Editor, stepIncrement = 0.25f)]
         public float wingEdgeTrailing = 1f;
         public float wingEdgeTrailingCached = 1f;
 
-        [KSPField (isPersistant = true, guiActive = true, guiActiveEditor = true, guiName = "Edge L (scale)"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Edge L (scale)"),
         UI_FloatRange (minValue = 0f, maxValue = 1f, scene = UI_Scene.Editor, stepIncrement = 0.25f)]
         public float wingEdgeLeading = 1f;
         public float wingEdgeLeadingCached = 1f;
@@ -118,46 +118,42 @@ namespace WingProcedural
         [KSPField (isPersistant = true)] public int wingSurfaceTextureBottom = 2; 
         [KSPField (isPersistant = true)] public int wingSurfaceTextureBottomCached = 2;
 
-        public Texture wingSurfaceTextureA;
-        public Texture wingSurfaceTextureB;
-        public Texture wingSurfaceTextureC;
-
 
 
 
         // Prerequisites / Control surfaces
 
-        [KSPField (isPersistant = true, guiActive = true, guiActiveEditor = true, guiName = "Span"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Span"),
         UI_FloatRange (minValue = 0.25f, maxValue = 8f, scene = UI_Scene.Editor, stepIncrement = 0.25f)]
         public float ctrlSpan = 1f;
         public float ctrlSpanCached = 1f;
 
-        [KSPField (isPersistant = true, guiActive = true, guiActiveEditor = true, guiName = "Width R"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Width R"),
         UI_FloatRange (minValue = 0.25f, maxValue = 1f, scene = UI_Scene.Editor, stepIncrement = 0.25f)]
         public float ctrlWidthRoot = 0.25f;
         public float ctrlWidthRootCached = 0.25f;
 
-        [KSPField (isPersistant = true, guiActive = true, guiActiveEditor = true, guiName = "Width T"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Width T"),
         UI_FloatRange (minValue = 0.25f, maxValue = 1f, scene = UI_Scene.Editor, stepIncrement = 0.25f)]
         public float ctrlWidthTip = 0.25f;
         public float ctrlWidthTipCached = 0.25f;
 
-        [KSPField (isPersistant = true, guiActive = true, guiActiveEditor = true, guiName = "Height R"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Height R"),
         UI_FloatRange (minValue = 0.08f, maxValue = 0.48f, scene = UI_Scene.Editor, stepIncrement = 0.04f)]
         public float ctrlThicknessRoot = 0.24f;
         public float ctrlThicknessRootCached = 0.24f;
 
-        [KSPField (isPersistant = true, guiActive = true, guiActiveEditor = true, guiName = "Height T"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Height T"),
         UI_FloatRange (minValue = 0.08f, maxValue = 0.48f, scene = UI_Scene.Editor, stepIncrement = 0.04f)]
         public float ctrlThicknessTip = 0.24f;
         public float ctrlThicknessTipCached = 0.24f;
 
-        [KSPField (isPersistant = true, guiActive = true, guiActiveEditor = true, guiName = "Offset R"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Offset R"),
         UI_FloatRange (minValue = -1f, maxValue = 1f, scene = UI_Scene.Editor, stepIncrement = 0.125f)]
         public float ctrlOffsetRoot = 0.0f; 
         public float ctrlOffsetRootCached = 0.0f;
 
-        [KSPField (isPersistant = true, guiActive = true, guiActiveEditor = true, guiName = "Offset T"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Offset T"),
         UI_FloatRange (minValue = -1f, maxValue = 1f, scene = UI_Scene.Editor, stepIncrement = 0.125f)]
         public float ctrlOffsetTip = 0.0f;
         public float ctrlOffsetTipCached = 0.0f; 
@@ -987,6 +983,7 @@ namespace WingProcedural
         {
             if (!isCtrlSrf)
             {
+                Debug.Log ("WP | UpdateTextures | Started for a wing | Selections (T/B): " + wingSurfaceTextureTop + "/" + wingSurfaceTextureBottom);
                 if (meshFilterWingSurfaceTop != null)
                 {
                     Renderer r = meshFilterWingSurfaceTop.gameObject.GetComponent<Renderer> ();
@@ -1004,17 +1001,21 @@ namespace WingProcedural
 
         private Texture GetShieldingTexture (int selection)
         {
-            if (selection == 0) return wingSurfaceTextureA;
-            else if (selection == 1) return wingSurfaceTextureB;
-            else return wingSurfaceTextureC;
+            if (selection == 0) return meshFilterWingSurfaceA.renderer.sharedMaterial.GetTexture ("_MainTex");
+            else if (selection == 1) return meshFilterWingSurfaceB.renderer.sharedMaterial.GetTexture ("_MainTex");
+            else return meshFilterWingSurfaceC.renderer.sharedMaterial.GetTexture ("_MainTex");
         }
 
         private void SetTexture (Renderer r, Texture t)
         {
             if (r != null)
             {
-                if (t != r.sharedMaterial.GetTexture ("_MainTex"))
-                    r.sharedMaterial.SetTexture ("_MainTex", t);
+                Debug.Log ("WP | SetTexture | Object: " + r.gameObject.name + " | Texture: " + t.name);
+                r.material.SetTexture ("_MainTex", t);
+            }
+            else
+            {
+                Debug.LogError ("WP | SetTexture | Renderer is null, texture can't be assigned.");
             }
         }
 
@@ -1385,13 +1386,10 @@ namespace WingProcedural
                 meshFilterWingEdgeA = CheckMeshFilter (meshFilterWingEdgeA, "proxy_edge_a", true);
                 meshFilterWingEdgeB = CheckMeshFilter (meshFilterWingEdgeB, "proxy_edge_b", true);
                 meshFilterWingEdgeC = CheckMeshFilter (meshFilterWingEdgeC, "proxy_edge_c", true);
+
                 meshFilterWingSurfaceA = CheckMeshFilter (meshFilterWingSurfaceA, "proxy_material_a", true);
                 meshFilterWingSurfaceB = CheckMeshFilter (meshFilterWingSurfaceB, "proxy_material_b", true);
                 meshFilterWingSurfaceC = CheckMeshFilter (meshFilterWingSurfaceC, "proxy_material_c", true);
-
-                wingSurfaceTextureA = CheckTexture (wingSurfaceTextureA, meshFilterWingSurfaceA);
-                wingSurfaceTextureB = CheckTexture (wingSurfaceTextureB, meshFilterWingSurfaceB);
-                wingSurfaceTextureC = CheckTexture (wingSurfaceTextureC, meshFilterWingSurfaceC);
             }
             else
             {
@@ -1742,16 +1740,24 @@ namespace WingProcedural
 
         // Reference fetching
 
+        private bool logCheckMeshFilter = false;
+
         private MeshFilter CheckMeshFilter (MeshFilter reference, string name) { return CheckMeshFilter (reference, name, false); }
         private MeshFilter CheckMeshFilter (MeshFilter reference, string name, bool disable)
         {
             if (reference == null)
             {
+                if (logCheckMeshFilter) Debug.Log ("WP | CheckMeshFilter | Looking for object: " + name);
                 Transform parent = part.transform.GetChild (0).GetChild (0).GetChild (0).Find (name);
                 if (parent != null)
                 {
+                    if (logCheckMeshFilter) Debug.Log ("WP | CheckMeshFilter | Object " + name + " was found");
                     reference = parent.gameObject.GetComponent<MeshFilter> ();
                     if (disable) parent.gameObject.SetActive (false);
+                }
+                else
+                {
+                    if (logCheckMeshFilter) Debug.LogError ("WP | CheckMeshFilter | Object " + name + " was not found!");
                 }
             }
             return reference;
@@ -1761,16 +1767,6 @@ namespace WingProcedural
         {
             Transform t = part.transform.GetChild (0).GetChild (0).GetChild (0).Find (name);
             return t;
-        }
-
-        private Texture CheckTexture (Texture reference, MeshFilter source)
-        {
-            if (source != null && reference == null)
-            {
-                Renderer r = source.gameObject.GetComponent<Renderer> ();
-                if (r != null) reference = r.material.GetTexture ("_MainTex");
-            }
-            return reference;
         }
 
         private MeshReference FillMeshRefererence (MeshFilter source)

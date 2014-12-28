@@ -27,8 +27,6 @@ Additional control surface-exclusive options might be added later too.
 Some important imformation on the current state of the mod:
 
 * So far it has only been tested with FAR, whether config values for the stock flight model are calculated correctly, I have no idea
-* Well, actually, I have no idea whether FAR config values are right either - I think they are, but beyound "huh, it flies" I'm not an authority on that
-* Mirroring is not working on procedural control surfaces for some weird reason (investigating that), so while asymmetric control surfaces are supported, they are not usable for anything but centered tails yet
 * Wings with inbuilt control surfaces won't be supported, same thing can be built out of a wing segment with a slightly smaller root/tip width compared to neighbours, Flat trailing edge type on that wing, and a control surface attached to it
 * Update FAR to the latest development version, otherwise parts can cause NREs on attachment and break their parent parts, making them permanently unavailable until you reload a craft
 
@@ -37,9 +35,8 @@ Some important imformation on the current state of the mod:
 
 In no particular order:
 
-* Fixing possibly bugged aerodynamic values calculation
+* DRE integration for shielding options
 * Better tweakable UI and/or alternative input options
-* Adding more options for control surfaces
 * Adding better control over wing edges
 
 I'm not sure whether it's best to integrate this into B9 or leave it as a separate mod. For the meantime it will be the latter as there are no shared dependencies.

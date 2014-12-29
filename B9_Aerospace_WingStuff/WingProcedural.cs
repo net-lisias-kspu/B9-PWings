@@ -620,7 +620,11 @@ namespace WingProcedural
                     uv[3] = new Vector2 (wingSpan / 4f, 1f - 0.5f + wingWidthTip / 8f - wingOffset / 4f);
 
                     Color[] cl = new Color[length];
-                    for (int i = 0; i < length; ++i) cl[i] = new Color (1f, 1f, 1f, GetMaterialVertexAlpha (wingSurfaceTextureTop));
+                    for (int i = 0; i < length; ++i)
+                    {
+                        Debug.Log ("WP| UG-WST | CL-" + i + ": " + cl[i]);
+                        cl[i] = new Color (0f, 0f, 0f, GetMaterialVertexAlpha (wingSurfaceTextureTop));
+                    }
 
                     meshFilterWingSurfaceTop.mesh.vertices = vp;
                     meshFilterWingSurfaceTop.mesh.uv = uv;
@@ -653,7 +657,11 @@ namespace WingProcedural
                     uv[3] = new Vector2 (wingSpan / 4f, 1f - 0.5f + wingWidthTip / 8f + wingOffset / 4f);
 
                     Color[] cl = new Color[length];
-                    for (int i = 0; i < length; ++i) cl[i] = new Color (1f, 1f, 1f, GetMaterialVertexAlpha (wingSurfaceTextureBottom));
+                    for (int i = 0; i < length; ++i)
+                    {
+                        Debug.Log ("WP | UG-WSB | CL-" + i + ": " + cl[i]);
+                        cl[i] = new Color (0f, 0f, 0f, GetMaterialVertexAlpha (wingSurfaceTextureBottom));
+                    }
 
                     meshFilterWingSurfaceBottom.mesh.vertices = vp;
                     meshFilterWingSurfaceBottom.mesh.uv = uv;
@@ -1036,17 +1044,13 @@ namespace WingProcedural
 
 
         public static Material materialLayered;
+        public static Texture materialLayeredTexture;
 
         public void UpdateMaterials ()
         {
-            Debug.Log ("WP | UM | Started | Available resources: ");
-            string[] resources = Assembly.GetExecutingAssembly ().GetManifestResourceNames ();
-            for (int i = 0; i < resources.Length; ++i) Debug.Log ("WP | UM | " + i + ": " + resources[i]);
-
             if (materialLayered == null) SetMaterialReference ();
             if (materialLayered != null)
             {
-                Debug.Log ("WP | UM | Material created successfully, shader: " + materialLayered.shader.name);
                 if (!isCtrlSrf)
                 {
                     if (meshFilterWingSurfaceTop != null)
@@ -1074,17 +1078,37 @@ namespace WingProcedural
                     }
                 }
             }
-            else Debug.Log ("WP | UM | Material creation failed");
+            else Debug.Log ("WP | UpdateMaterials | Material creation failed");
         }
 
         private void SetMaterialReference ()
         {
             materialLayered = ResourceExtractor.GetEmbeddedMaterial ("B9_Aerospace_WingStuff.SpecularLayered.txt");
+            if (!isCtrlSrf)
+            {
+                if (meshFilterWingSurfaceTop != null)
+                {
+                    Renderer r = meshFilterWingSurfaceTop.gameObject.GetComponent<Renderer> ();
+                    if (r != null) materialLayeredTexture = r.sharedMaterial.GetTexture ("_MainTex");
+                }
+            }
+            else
+            {
+                if (meshFilterCtrlSurfaceTop != null)
+                {
+                    Renderer r = meshFilterCtrlSurfaceTop.gameObject.GetComponent<Renderer> ();
+                    if (r != null) materialLayeredTexture = r.sharedMaterial.GetTexture ("_MainTex");
+                }
+            }
+            if (materialLayeredTexture != null) materialLayered.SetTexture ("_MainTex", materialLayeredTexture);
+            else Debug.Log ("WP | SetMaterialReference | Texture not found");
         }
 
         private float GetMaterialVertexAlpha (int selection)
         {
-            return (float)selection / 3f;
+            float a = (float)selection / 3f;
+            Debug.Log ("WP | GetMaterialVertexAlpha | Value: " + a);
+            return a;
         }
 
 

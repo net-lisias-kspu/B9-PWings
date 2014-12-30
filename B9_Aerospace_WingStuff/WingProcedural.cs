@@ -167,12 +167,12 @@ namespace WingProcedural
 
         [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Side A"),
         UI_FloatRange (minValue = 1f, maxValue = 4f, scene = UI_Scene.Editor, stepIncrement = 1f)]
-        public float ctrlSurfaceTextureTop = 3f;
+        public float ctrlSurfaceTextureTop = 1f;
         public float ctrlSurfaceTextureTopCached;
 
         [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Side B"),
         UI_FloatRange (minValue = 1f, maxValue = 4f, scene = UI_Scene.Editor, stepIncrement = 1f)]
-        public float ctrlSurfaceTextureBottom = 3f;
+        public float ctrlSurfaceTextureBottom = 4f;
         public float ctrlSurfaceTextureBottomCached;
 
         public MeshFilter meshFilterCtrlEdge;
@@ -184,7 +184,7 @@ namespace WingProcedural
         public static MeshReference meshReferenceCtrlSurfaceTop;
         public static MeshReference meshReferenceCtrlSurfaceBottom;
 
-        public Vector2 ctrlSpanLimits = new Vector2 (0.25f, 4f);
+        public Vector2 ctrlSpanLimits = new Vector2 (0.25f, 8f);
         public Vector2 ctrlWidthLimits = new Vector2 (0.25f, 1f);
         public Vector2 ctrlThicknessLimits = new Vector2 (0.08f, 0.48f);
         public Vector2 ctrlOffsetLimits = new Vector2 (-1f, 1f);

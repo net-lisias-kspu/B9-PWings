@@ -1676,6 +1676,8 @@ namespace WingProcedural
                     midChordSweep = MathD.Atan ((double) Mathf.Abs (ctrlWidthRoot - ctrlWidthTip) / (double) ctrlSpan) * MathD.Rad2Deg;
                 }
 
+                DebugLogWithID ("CalculateAerodynamicValues", "Passed B2/TR/MAC/MCS");
+
                 surfaceArea = meanAerodynamicChord * b_2;
                 aspectRatio = 2.0f * b_2 / meanAerodynamicChord;
 
@@ -1688,6 +1690,8 @@ namespace WingProcedural
                 Cl = liftFudgeNumber * surfaceArea * aspectRatioSweepScale;
 
                 connectionForce = MathD.Round (MathD.Clamp (MathD.Sqrt (Cl + ChildrenCl) * (double) connectionFactor, (double) connectionMinimum, double.MaxValue));
+
+                DebugLogWithID ("CalculateAerodynamicValues", "Passed SR/AR/ARSS/mass/Cl/Cd/connection");
 
                 // Values always set
 
@@ -1705,6 +1709,8 @@ namespace WingProcedural
 
                 part.breakingForce = Mathf.Round ((float) connectionForce);
                 part.breakingTorque = Mathf.Round ((float) connectionForce);
+
+                DebugLogWithID ("CalculateAerodynamicValues", "Passed cost/force/torque");
 
                 // Stock-only values
 
@@ -1727,6 +1733,8 @@ namespace WingProcedural
                         mCtrlSrf.ctrlSurfaceArea = modelControlSurfaceFraction;
                     }
                 }
+
+                DebugLogWithID ("CalculateAerodynamicValues", "Passed stock drag/deflection/area");
 
                 // FAR values
                 // With reflection stuff from r4m0n
@@ -1757,6 +1765,9 @@ namespace WingProcedural
                         FARtype.GetMethod ("StartInitialization").Invoke (FARmodule, null); // if (doInteraction)
                     }
                 }
+
+                DebugLogWithID ("CalculateAerodynamicValues", "Passed FAR/NEAR parameter setting");
+
                 // Update GUI values
 
                 if (!FARactive && !NEARactive)
@@ -1771,7 +1782,12 @@ namespace WingProcedural
                 guiTaperRatio = (float) taperRatio;
                 guiSurfaceArea = (float) surfaceArea;
                 guiAspectRatio = (float) aspectRatio;
+
+                DebugLogWithID ("CalculateAerodynamicValues", "Passed GUI setup");
+
                 if (HighLogic.LoadedSceneIsEditor) GameEvents.onEditorShipModified.Fire (EditorLogic.fetch.ship);
+
+                DebugLogWithID ("CalculateAerodynamicValues", "Finished");
             }
         }
 

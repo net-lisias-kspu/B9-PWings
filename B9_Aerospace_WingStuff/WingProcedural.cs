@@ -227,7 +227,7 @@ namespace WingProcedural
 
         private void DebugLogWithID (string method, string message)
         {
-            // Debug.Log ("WP | ID: " + part.gameObject.GetInstanceID () + " | T: " + debugTimer.ToString ("F1") + " | " + method + " | " + message);
+            Debug.Log ("WP | ID: " + part.gameObject.GetInstanceID () + " | T: " + debugTimer.ToString ("F1") + " | " + method + " | " + message);
         }
 
 
@@ -1447,11 +1447,31 @@ namespace WingProcedural
         public override void OnStart (PartModule.StartState state)
         {
             base.OnStart (state);
-            FARactive = AssemblyLoader.loadedAssemblies.Any (a => a.assembly.GetName ().Name.Equals ("FerramAerospaceResearch", StringComparison.InvariantCultureIgnoreCase));
-            NEARactive = AssemblyLoader.loadedAssemblies.Any (a => a.assembly.GetName ().Name.Equals ("NEAR", StringComparison.InvariantCultureIgnoreCase));
+            FARactive = AssemblyLoader.loadedAssemblies.Any (a => a.assembly.GetName ().Name.Equals ("FerramAerospaceResearch.dll", StringComparison.InvariantCultureIgnoreCase));
+            NEARactive = AssemblyLoader.loadedAssemblies.Any (a => a.assembly.GetName ().Name.Equals ("NEAR.dll", StringComparison.InvariantCultureIgnoreCase));
+            if (!FARactive)
+            {
+                if (logCAV) DebugLogWithID ("OnStart", "FAR not found, attempting another search");
+                bool FARactiveTemp = AssemblyLoader.loadedAssemblies.Any (a => a.assembly.GetName ().Name.Equals ("FerramAerospaceResearch", StringComparison.InvariantCultureIgnoreCase));
+                if (FARactiveTemp)
+                {
+                    if (logCAV) DebugLogWithID ("OnStart", "FAR found using alternative assembly name");
+                    FARactive = true;
+                }
+            }
+            if (!NEARactive)
+            {
+                if (logCAV) DebugLogWithID ("OnStart", "NEAR not found, attempting another search");
+                bool NEARactiveTemp = AssemblyLoader.loadedAssemblies.Any (a => a.assembly.GetName ().Name.Equals ("NEAR", StringComparison.InvariantCultureIgnoreCase));
+                if (NEARactiveTemp)
+                {
+                    if (logCAV) DebugLogWithID ("OnStart", "NEAR found using alternative assembly name");
+                    NEARactive = true;
+                }
+            }
             if (FARactive || NEARactive)
             {
-                // If FAR|NEAR have the "massPerWingAreaSupported" value, disable mass calculations, and the mass editor info.
+                
                 foreach (ConfigNode node in GameDatabase.Instance.GetConfigNodes ("FARAeroData"))
                 {
                     if (node == null)
@@ -1461,6 +1481,7 @@ namespace WingProcedural
                         FARmass = true;
                 }
             }
+            if (logCAV) DebugLogWithID ("OnStart", "Search results | FAR: " + FARactive + " | NEAR: " + NEARactive + " | FAR mass: " + FARmass);
         }
 
 
@@ -1545,15 +1566,6 @@ namespace WingProcedural
             {
                 if (logCAV) DebugLogWithID ("CalculateAerodynamicValues", "Started");
 
-                // float offsetLeading = Mathf.Abs (wingWidthRoot / 2f - (wingWidthTip / 2f - wingOffset));
-                // float offsetTrailing = Mathf.Abs (wingWidthRoot / 2f - (wingWidthTip / 2f + wingOffset));
-
-                // float edgeLengthLeading = Mathf.Sqrt (Mathf.Pow (offsetLeading, 2) + Mathf.Pow (wingSpan, 2));
-                // float edgeLengthTrailing = Mathf.Sqrt (Mathf.Pow (offsetTrailing, 2) + Mathf.Pow (wingSpan, 2));
-
-                // float sweepLeading = Mathf.Atan (offsetLeading / wingSpan) * Mathf.Rad2Deg;
-                // float sweepTrailing =  Mathf.Atan (offsetTrailing / wingSpan) * Mathf.Rad2Deg;
-
                 if (!isCtrlSrf)
                 {
                     b_2 = wingSpan;
@@ -1609,17 +1621,20 @@ namespace WingProcedural
 
                 if ((!FARactive && !NEARactive) || !FARmass)
                 {
+                    if (logCAV) DebugLogWithID ("CalculateAerodynamicValues", "FAR/NEAR is inactive or FAR mass is not enabled, calculating stock part mass");
                     part.mass = Mathf.Round ((float) wingMass * 100f) / 100f;
                 }
                 if (!FARactive && !NEARactive)
                 {
                     if (!isCtrlSrf)
                     {
+                        if (logCAV) DebugLogWithID ("CalculateAerodynamicValues", "FAR/NEAR is inactive, calculating values for winglet part type");
                         ((Winglet) this.part).deflectionLiftCoeff = Mathf.Round ((float) Cl * 100f) / 100f;
                         ((Winglet) this.part).dragCoeff = Mathf.Round ((float) Cd * 100f) / 100f;
                     }
                     else
                     {
+                        if (logCAV) DebugLogWithID ("CalculateAerodynamicValues", "FAR/NEAR is inactive, calculating stock control surface module values");
                         var mCtrlSrf = part.Modules.OfType<ModuleControlSurface> ().FirstOrDefault ();
                         mCtrlSrf.deflectionLiftCoeff = Mathf.Round ((float) Cl * 100f) / 100f;
                         mCtrlSrf.dragCoeff = Mathf.Round ((float) Cd * 100f) / 100f;
@@ -1634,8 +1649,10 @@ namespace WingProcedural
 
                 if (FARactive || NEARactive)
                 {
+                    if (logCAV) DebugLogWithID ("CalculateAerodynamicValues", "Got into FAR/NEAR condition");
                     if (part.Modules.Contains ("FARControllableSurface"))
                     {
+                        if (logCAV) DebugLogWithID ("CalculateAerodynamicValues", "Got into FAR/NEAR control surface");
                         PartModule FARmodule = part.Modules["FARControllableSurface"];
                         Type FARtype = FARmodule.GetType ();
                         FARtype.GetField ("b_2").SetValue (FARmodule, b_2);
@@ -1644,10 +1661,13 @@ namespace WingProcedural
                         FARtype.GetField ("MidChordSweep").SetValue (FARmodule, midChordSweep);
                         FARtype.GetField ("TaperRatio").SetValue (FARmodule, taperRatio);
                         FARtype.GetField ("ctrlSurfFrac").SetValue (FARmodule, modelControlSurfaceFraction);
-                        FARtype.GetMethod ("StartInitialization").Invoke (FARmodule, null); // if (doInteraction)
+                        if (logCAV) DebugLogWithID ("CalculateAerodynamicValues", "Passed FAR/NEAR value setting");
+                        if (NEARactive) FARtype.GetMethod ("MathAndFunctionInitialization").Invoke (FARmodule, null);
+                        else FARtype.GetMethod ("StartInitialization").Invoke (FARmodule, null); // if (doInteraction)
                     }
                     else if (part.Modules.Contains ("FARWingAerodynamicModel"))
                     {
+                        if (logCAV) DebugLogWithID ("CalculateAerodynamicValues", "Got into FAR/NEAR wing");
                         PartModule FARmodule = part.Modules["FARWingAerodynamicModel"];
                         Type FARtype = FARmodule.GetType ();
                         FARtype.GetField ("b_2").SetValue (FARmodule, b_2);
@@ -1655,7 +1675,9 @@ namespace WingProcedural
                         FARtype.GetField ("S").SetValue (FARmodule, surfaceArea);
                         FARtype.GetField ("MidChordSweep").SetValue (FARmodule, midChordSweep);
                         FARtype.GetField ("TaperRatio").SetValue (FARmodule, taperRatio);
-                        FARtype.GetMethod ("StartInitialization").Invoke (FARmodule, null); // if (doInteraction)
+                        if (logCAV) DebugLogWithID ("CalculateAerodynamicValues", "Passed FAR/NEAR value setting");
+                        if (NEARactive) FARtype.GetMethod ("MathAndFunctionInitialization").Invoke (FARmodule, null);
+                        else FARtype.GetMethod ("StartInitialization").Invoke (FARmodule, null);// if (doInteraction)
                     }
                 }
 
@@ -1669,17 +1691,16 @@ namespace WingProcedural
                     guiCl = Mathf.Round ((float) Cl * 100f) / 100f;
                 }
                 if ((!FARactive && !NEARactive) || !FARmass) guiWingMass = part.mass;
+
                 guiMAC = (float) meanAerodynamicChord;
                 guiB_2 = (float) b_2;
                 guiMidChordSweep = (float) midChordSweep;
                 guiTaperRatio = (float) taperRatio;
                 guiSurfaceArea = (float) surfaceArea;
                 guiAspectRatio = (float) aspectRatio;
-
                 if (logCAV) DebugLogWithID ("CalculateAerodynamicValues", "Passed GUI setup");
 
                 if (HighLogic.LoadedSceneIsEditor) GameEvents.onEditorShipModified.Fire (EditorLogic.fetch.ship);
-
                 if (logCAV) DebugLogWithID ("CalculateAerodynamicValues", "Finished");
             }
         }
@@ -1754,5 +1775,16 @@ namespace WingProcedural
                     myWindow.displayDirty = true;
             }
         }
+
+
+
+
+        // Alternative controls
+
+        public string keyTranslation = "g";
+        public string keyTipScale = "t";
+        public string keyRootScale = "r";
+
+        // Actually, let's not do that
     }
 }

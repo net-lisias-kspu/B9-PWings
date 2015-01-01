@@ -43,11 +43,6 @@ namespace WingProcedural
         public float wingWidthTip = 4f;
         public float wingWidthTipCached = 4f;
 
-        // [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Sync width"),
-        // UI_Toggle (disabledText = "Off", enabledText = "On", scene = UI_Scene.Editor)]
-        public bool syncWidth = false;
-        public bool syncWidthCached = false;
-
         [KSPField (isPersistant = true, guiActiveEditor = true, guiActive = false, guiName = "Offset", guiFormat = "S4", guiUnits = "m"),
         UI_FloatEdit (scene = UI_Scene.Editor, minValue = -8f, maxValue = 8f, incrementLarge = 1f, incrementSlide = 0.125f)]
         public float wingOffset = 0f;
@@ -63,11 +58,6 @@ namespace WingProcedural
         public float wingThicknessTip = 0.24f;
         public float wingThicknessTipCached = 0.24f;
 
-        // [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Sync height"),
-        // UI_Toggle (disabledText = "Off", enabledText = "On", scene = UI_Scene.Editor)]
-        public bool syncThickness = false;
-        public bool syncThicknessCached = false;
-
         [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Side A (type)"),
         UI_FloatRange (minValue = 1f, maxValue = 4f, scene = UI_Scene.Editor, stepIncrement = 1f)]
         public float wingSurfaceTextureTop = 3f;
@@ -79,14 +69,14 @@ namespace WingProcedural
         public float wingSurfaceTextureBottomCached = 4f;
 
         [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Edge L (type)"),
-        UI_FloatRange (minValue = 1f, maxValue = 3f, scene = UI_Scene.Editor, stepIncrement = 1f)]
-        public float wingEdgeTypeLeading = 2f;
-        public float wingEdgeTypeLeadingCached = 2f;
+        UI_FloatRange (minValue = 1f, maxValue = 4f, scene = UI_Scene.Editor, stepIncrement = 1f)]
+        public float wingEdgeTypeLeading = 3;
+        public float wingEdgeTypeLeadingCached = 3f;
 
         [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Edge T (type)"),
-        UI_FloatRange (minValue = 1f, maxValue = 3f, scene = UI_Scene.Editor, stepIncrement = 1f)]
-        public float wingEdgeTypeTrailing = 3f;
-        public float wingEdgeTypeTrailingCached = 3f;
+        UI_FloatRange (minValue = 1f, maxValue = 4f, scene = UI_Scene.Editor, stepIncrement = 1f)]
+        public float wingEdgeTypeTrailing = 4f;
+        public float wingEdgeTypeTrailingCached = 4f;
 
         [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Edge L (material)"),
         UI_FloatRange (minValue = 1f, maxValue = 4f, scene = UI_Scene.Editor, stepIncrement = 1f)]
@@ -108,32 +98,29 @@ namespace WingProcedural
         public float wingEdgeScaleTrailing = 1f;
         public float wingEdgeScaleTrailingCached = 1f;
 
-        // [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Sync edges"),
-        // UI_Toggle (disabledText = "Off", enabledText = "On", scene = UI_Scene.Editor)]
-        public bool syncEdge = false;
-        public bool syncEdgeCached = false;
-
         public MeshFilter meshFilterWingSection;
         public MeshFilter meshFilterWingSurfaceTop;
         public MeshFilter meshFilterWingSurfaceBottom;
-        public MeshFilter meshFilterWingEdgeTrailing;
-        public MeshFilter meshFilterWingEdgeLeading;
-        public MeshFilter meshFilterWingEdgeA;
-        public MeshFilter meshFilterWingEdgeB;
-        public MeshFilter meshFilterWingEdgeC;
+        public List<MeshFilter> meshFiltersWingEdgeTrailing = new List<MeshFilter> ();
+        public List<MeshFilter> meshFiltersWingEdgeLeading = new List<MeshFilter> ();
 
         public static MeshReference meshReferenceWingSection;
         public static MeshReference meshReferenceWingSurfaceTop;
         public static MeshReference meshReferenceWingSurfaceBottom;
-        public static MeshReference meshReferenceWingEdgeA;
-        public static MeshReference meshReferenceWingEdgeB;
-        public static MeshReference meshReferenceWingEdgeC;
+        public static List<MeshReference> meshReferencesWingEdge = new List<MeshReference> ();
 
-        public Vector2 wingSpanLimits = new Vector2 (0.25f, 16f);
-        public Vector2 wingWidthLimits = new Vector2 (0.25f, 16f);
-        public Vector2 wingThicknessLimits = new Vector2 (0.08f, 0.48f);
-        public Vector2 wingOffsetLimits = new Vector2 (-8f, 8f);
-        public Vector2 wingEdgeScaleLimits = new Vector2 (0f, 1f);
+        private MeshReference meshReferenceWingSectionTemp = new MeshReference ();
+        private MeshReference meshReferenceWingSurfaceTopTemp = new MeshReference ();
+        private MeshReference meshReferenceWingSurfaceBottomTemp = new MeshReference ();
+        private MeshReference meshReferencesWingEdgeTemp = new MeshReference ();
+
+        private Vector2 wingSpanLimits = new Vector2 (0.25f, 16f);
+        private Vector2 wingWidthLimits = new Vector2 (0.25f, 16f);
+        private Vector2 wingThicknessLimits = new Vector2 (0.08f, 0.48f);
+        private Vector2 wingOffsetLimits = new Vector2 (-8f, 8f);
+        private Vector2 wingEdgeScaleLimits = new Vector2 (0f, 1f);
+        private Vector2 wingEdgeTypeLimits = new Vector2 (1f, 4f);
+        private int     wingEdgeTypeCount = 4;
 
 
 
@@ -146,12 +133,12 @@ namespace WingProcedural
         public float ctrlSpanCached = 1f;
 
         [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Width R"),
-        UI_FloatRange (minValue = 0.25f, maxValue = 1f, scene = UI_Scene.Editor, stepIncrement = 0.25f)]
+        UI_FloatRange (minValue = 0.25f, maxValue = 1.5f, scene = UI_Scene.Editor, stepIncrement = 0.25f)]
         public float ctrlWidthRoot = 0.25f;
         public float ctrlWidthRootCached = 0.25f;
 
         [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Width T"),
-        UI_FloatRange (minValue = 0.25f, maxValue = 1f, scene = UI_Scene.Editor, stepIncrement = 0.25f)]
+        UI_FloatRange (minValue = 0.25f, maxValue = 1.5f, scene = UI_Scene.Editor, stepIncrement = 0.25f)]
         public float ctrlWidthTip = 0.25f;
         public float ctrlWidthTipCached = 0.25f;
 
@@ -199,10 +186,10 @@ namespace WingProcedural
         public static MeshReference meshReferenceCtrlSurfaceTop;
         public static MeshReference meshReferenceCtrlSurfaceBottom;
 
-        public Vector2 ctrlSpanLimits = new Vector2 (0.25f, 8f);
-        public Vector2 ctrlWidthLimits = new Vector2 (0.25f, 1f);
-        public Vector2 ctrlThicknessLimits = new Vector2 (0.08f, 0.48f);
-        public Vector2 ctrlOffsetLimits = new Vector2 (-1f, 1f);
+        private Vector2 ctrlSpanLimits = new Vector2 (0.25f, 8f);
+        private Vector2 ctrlWidthLimits = new Vector2 (0.25f, 1.5f);
+        private Vector2 ctrlThicknessLimits = new Vector2 (0.08f, 0.48f);
+        private Vector2 ctrlOffsetLimits = new Vector2 (-1f, 1f);
 
         public Transform temporaryCollider;
 
@@ -217,7 +204,7 @@ namespace WingProcedural
         public bool isStarted = false;
         public bool isStartingNow = false;
         public bool justDetached = false;
-        public bool logUpdate = true;
+        public bool logUpdate = false;
         public bool logUpdateGeometry = false;
 
 
@@ -235,7 +222,7 @@ namespace WingProcedural
 
         private void DebugLogWithID (string method, string message)
         {
-            Debug.Log ("WP | ID: " + part.gameObject.GetInstanceID () + " | T: " + debugTimer.ToString ("F1") + " | " + method + " | " + message);
+            // Debug.Log ("WP | ID: " + part.gameObject.GetInstanceID () + " | T: " + debugTimer.ToString ("F1") + " | " + method + " | " + message);
         }
 
 
@@ -245,7 +232,6 @@ namespace WingProcedural
         // Performance hit shouldn't be too bad as all KSPFields have snapped sliders that can't spam dozens of values per second
 
         public  bool updateCounterpartsAllowed = true;
-        private bool updateRequiredOnMeshes = false;
         private bool updateRequiredOnGeometry = false;
         private bool updateRequiredOnWindow = false;
         private bool updateCounterparts = false;
@@ -281,9 +267,8 @@ namespace WingProcedural
                             if (logUpdate) DebugLogWithID ("Update", "Non-equal wingWidthRoot");
                             updateRequiredOnGeometry = true;
                             wingWidthRootCached = wingWidthRoot;
-                            if (syncWidth) wingWidthTip = wingWidthTipCached = wingWidthRoot;
                         }
-                        if (wingWidthTip != wingWidthTipCached && !syncWidth)
+                        if (wingWidthTip != wingWidthTipCached)
                         {
                             if (logUpdate) DebugLogWithID ("Update", "Non-equal wingWidthTip");
                             updateRequiredOnGeometry = true;
@@ -294,9 +279,8 @@ namespace WingProcedural
                             if (logUpdate) DebugLogWithID ("Update", "Non-equal wingThicknessRoot");
                             updateRequiredOnGeometry = true;
                             wingThicknessRootCached = wingThicknessRoot;
-                            if (syncThickness) wingThicknessTip = wingThicknessTipCached = wingThicknessRoot;
                         }
-                        if (wingThicknessTip != wingThicknessTipCached && !syncThickness)
+                        if (wingThicknessTip != wingThicknessTipCached)
                         {
                             if (logUpdate) DebugLogWithID ("Update", "Non-equal wingThicknessTip");
                             updateRequiredOnGeometry = true;
@@ -323,14 +307,13 @@ namespace WingProcedural
                         if (wingEdgeTypeTrailing != wingEdgeTypeTrailingCached)
                         {
                             if (logUpdate) DebugLogWithID ("Update", "Non-equal wingEdgeTypeTrailing");
-                            updateRequiredOnMeshes = updateRequiredOnGeometry = true;
+                            updateRequiredOnGeometry = true;
                             wingEdgeTypeTrailingCached = wingEdgeTypeTrailing;
-                            if (syncEdge) wingEdgeTypeLeading = wingEdgeTypeLeadingCached = wingEdgeTypeTrailing;
                         }
-                        if (wingEdgeTypeLeading != wingEdgeTypeLeadingCached && !syncEdge)
+                        if (wingEdgeTypeLeading != wingEdgeTypeLeadingCached)
                         {
                             if (logUpdate) DebugLogWithID ("Update", "Non-equal wingEdgeTypeLeading");
-                            updateRequiredOnMeshes = updateRequiredOnGeometry = true;
+                            updateRequiredOnGeometry = true;
                             wingEdgeTypeLeadingCached = wingEdgeTypeLeading;
                         }
                         if (wingEdgeScaleTrailing != wingEdgeScaleTrailingCached)
@@ -338,54 +321,24 @@ namespace WingProcedural
                             if (logUpdate) DebugLogWithID ("Update", "Non-equal wingEdgeScaleTrailing");
                             updateRequiredOnGeometry = true;
                             wingEdgeScaleTrailingCached = wingEdgeScaleTrailing;
-                            if (syncEdge) wingEdgeScaleLeading = wingEdgeScaleLeadingCached = wingEdgeScaleTrailing;
                         }
-                        if (wingEdgeScaleLeading != wingEdgeScaleLeadingCached && !syncEdge)
+                        if (wingEdgeScaleLeading != wingEdgeScaleLeadingCached)
                         {
                             if (logUpdate) DebugLogWithID ("Update", "Non-equal wingEdgeScaleLeading");
                             updateRequiredOnGeometry = true;
                             wingEdgeScaleLeadingCached = wingEdgeScaleLeading;
                         }
-                        if (wingEdgeTextureTrailing != wingEdgeTextureTrailingCached && !syncEdge)
+                        if (wingEdgeTextureTrailing != wingEdgeTextureTrailingCached)
                         {
                             if (logUpdate) DebugLogWithID ("Update", "Non-equal wingEdgeTextureTrailing");
                             updateRequiredOnGeometry = true;
                             wingEdgeTextureTrailingCached = wingEdgeTextureTrailing;
                         }
-                        if (wingEdgeTextureLeading != wingEdgeTextureLeadingCached && !syncEdge)
+                        if (wingEdgeTextureLeading != wingEdgeTextureLeadingCached)
                         {
                             if (logUpdate) DebugLogWithID ("Update", "Non-equal wingEdgeLeading");
                             updateRequiredOnGeometry = true;
                             wingEdgeTextureLeadingCached = wingEdgeTextureLeading;
-                        }
-                        if (syncEdge != syncEdgeCached)
-                        {
-                            if (logUpdate) DebugLogWithID ("Update", "Non-equal syncEdge");
-                            updateRequiredOnGeometry = updateRequiredOnMeshes = updateRequiredOnWindow = true;
-                            SetFieldVisibility ("wingEdgeTypeLeading", !syncEdge);
-                            SetFieldVisibility ("wingEdgeScaleLeading", !syncEdge);
-                            if (syncEdge)
-                            {
-                                wingEdgeScaleLeading = wingEdgeScaleLeadingCached = wingEdgeScaleTrailing;
-                                wingEdgeTypeLeading = wingEdgeTypeLeadingCached = wingEdgeTypeTrailing;
-                            }
-                            syncEdgeCached = syncEdge;
-                        }
-                        if (syncThickness != syncThicknessCached)
-                        {
-                            if (logUpdate) DebugLogWithID ("Update", "Non-equal syncThickness");
-                            updateRequiredOnGeometry = updateRequiredOnWindow = true;
-                            SetFieldVisibility ("wingThicknessTip", !syncThickness);
-                            if (syncThickness) wingThicknessTip = wingThicknessTip = wingThicknessRoot;
-                            syncThicknessCached = syncThickness;
-                        }
-                        if (syncWidth != syncWidthCached)
-                        {
-                            if (logUpdate) DebugLogWithID ("Update", "Non-equal syncWidth");
-                            updateRequiredOnGeometry = updateRequiredOnWindow = true;
-                            SetFieldVisibility ("wingWidthTip", !syncWidth);
-                            if (syncWidth) wingWidthTip = wingWidthTipCached = wingWidthRoot;
-                            syncWidthCached = syncWidth;
                         }
                     }
                     else
@@ -456,7 +409,7 @@ namespace WingProcedural
                     // Has to be done through a special method that overrides their cached values, preventing feedback loop
                     // Also, a somewhat strange check for attachment after detachment, seems to help in a certain case
 
-                    if (updateRequiredOnMeshes || updateRequiredOnGeometry) updateCounterparts = true;
+                    if (updateRequiredOnGeometry) updateCounterparts = true;
                     else if (justDetached)
                     {
                         justDetached = false;
@@ -469,12 +422,6 @@ namespace WingProcedural
                     // If some updates were marked, execute them
                     // Updates are split into groups to prevent unnecessary use
 
-                    if (updateRequiredOnMeshes)
-                    {
-                        if (logUpdate) DebugLogWithID ("Update", "Update required on meshes");
-                        updateRequiredOnMeshes = false;
-                        UpdateMeshes ();
-                    }
                     if (updateRequiredOnGeometry)
                     {
                         if (logUpdate) DebugLogWithID ("Update", "Update required on geometry");
@@ -551,6 +498,9 @@ namespace WingProcedural
                 float wingThicknessDeviationRoot = wingThicknessRoot / 0.24f;
                 float wingThicknessDeviationTip = wingThicknessTip / 0.24f;
 
+                // First, wing cross section
+                // No need to filter vertices by normals, order is predictable and count is low
+
                 if (meshFilterWingSection != null)
                 {
                     int length = meshReferenceWingSection.vp.Length;
@@ -599,6 +549,10 @@ namespace WingProcedural
                     meshCollider.convex = true;
                     if (logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Wing section | Finished");
                 }
+
+                // Second, wing surfaces
+                // Again, no need for filtering by normals
+
                 if (meshFilterWingSurfaceTop != null)
                 {
                     meshFilterWingSurfaceTop.transform.localPosition = Vector3.zero;
@@ -665,88 +619,99 @@ namespace WingProcedural
                     meshFilterWingSurfaceBottom.mesh.RecalculateBounds ();
                     if (logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Wing surface bottom | Finished");
                 }
-                if (meshFilterWingEdgeA != null && meshFilterWingEdgeB != null && meshFilterWingEdgeC != null)
+
+                // Next, time for leading and trailing edges
+                // Before modifying geometry, we have to show the correct objects for the current selection
+                // As UI only works with floats, we have to cast selections into ints too
+
+                int wingEdgeTypeTrailingInt = Mathf.RoundToInt (wingEdgeTypeTrailing - 1);
+                int wingEdgeTypeLeadingInt = Mathf.RoundToInt (wingEdgeTypeLeading - 1);
+
+                for (int i = 0; i < wingEdgeTypeCount; ++i)
                 {
-                    if (meshFilterWingEdgeTrailing != null)
+                    if (i != wingEdgeTypeTrailingInt) meshFiltersWingEdgeTrailing[i].gameObject.SetActive (false);
+                    else meshFiltersWingEdgeTrailing[i].gameObject.SetActive (true);
+
+                    if (i != wingEdgeTypeLeadingInt) meshFiltersWingEdgeLeading[i].gameObject.SetActive (false);
+                    else meshFiltersWingEdgeLeading[i].gameObject.SetActive (true);
+                }
+
+                // Next, we fetch appropriate mesh reference and mesh filter for the edges and modify the meshes
+                // Geometry is split into groups through simple vertex normal filtering 
+
+                if (meshFiltersWingEdgeTrailing[wingEdgeTypeTrailingInt] != null)
+                {
+                    MeshReference meshReference = meshReferencesWingEdge[wingEdgeTypeTrailingInt];
+                    int length = meshReference.vp.Length;
+                    Vector3[] vp = new Vector3[length];
+                    Array.Copy (meshReference.vp, vp, length);
+                    Vector3[] nm = new Vector3[length];
+                    Array.Copy (meshReference.nm, nm, length);
+                    Vector2[] uv = new Vector2[length];
+                    Array.Copy (meshReference.uv, uv, length);
+                    Color[] cl = new Color[length];
+
+                    if (logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Wing edge trailing | Passed array setup");
+                    for (int i = 0; i < vp.Length; ++i)
                     {
-                        meshFilterWingEdgeTrailing.transform.localPosition = Vector3.zero;
-                        meshFilterWingEdgeTrailing.transform.localRotation = Quaternion.Euler (0f, 0f, 0f);
-
-                        MeshReference meshReference = GetWingEdgeReference (wingEdgeTypeTrailing);
-                        int length = meshReference.vp.Length;
-                        Vector3[] vp = new Vector3[length];
-                        Array.Copy (meshReference.vp, vp, length);
-                        Vector3[] nm = new Vector3[length];
-                        Array.Copy (meshReference.nm, nm, length);
-                        Vector2[] uv = new Vector2[length];
-                        Array.Copy (meshReference.uv, uv, length);
-                        Color[] cl = new Color[length];
-                        if (logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Wing edge trailing | Passed array setup");
-
-                        for (int i = 0; i < vp.Length; ++i)
+                        if (nm[i].x == -1.0f) vp[i] = new Vector3 (-wingSpan, vp[i].y * wingThicknessDeviationTip, Mathf.Lerp (2f, vp[i].z, wingEdgeScaleTrailing) - 2f + wingWidthTip / 2f + wingOffset); // Tip section
+                        else if (nm[i].x == 1.0f) vp[i] = new Vector3 (0f, vp[i].y * wingThicknessDeviationRoot, Mathf.Lerp (2f, vp[i].z, wingEdgeScaleTrailing) - 2f + wingWidthRoot / 2f); // Root section
+                        else
                         {
-                            if (nm[i].x == -1.0f) vp[i] = new Vector3 (-wingSpan, vp[i].y * wingThicknessDeviationTip, Mathf.Lerp (2f, vp[i].z, wingEdgeScaleTrailing) - 2f + wingWidthTip / 2f + wingOffset); // Tip section
-                            else if (nm[i].x == 1.0f) vp[i] = new Vector3 (0f, vp[i].y * wingThicknessDeviationRoot, Mathf.Lerp (2f, vp[i].z, wingEdgeScaleTrailing) - 2f + wingWidthRoot / 2f); // Root section
-                            else
+                            if (vp[i].x < -0.1f)
                             {
-                                if (vp[i].x < -0.1f)
-                                {
-                                    vp[i] = new Vector3 (-wingSpan, vp[i].y * wingThicknessDeviationTip, Mathf.Lerp (2f, vp[i].z, wingEdgeScaleTrailing) - 2f + wingWidthTip / 2f + wingOffset); // Tip edge
-                                    uv[i] = new Vector2 (wingSpan, uv[i].y);
-                                }
-                                else vp[i] = new Vector3 (0f, vp[i].y * wingThicknessDeviationRoot, Mathf.Lerp (2f, vp[i].z, wingEdgeScaleTrailing) - 2f + wingWidthRoot / 2f); // Root edge
+                                vp[i] = new Vector3 (-wingSpan, vp[i].y * wingThicknessDeviationTip, Mathf.Lerp (2f, vp[i].z, wingEdgeScaleTrailing) - 2f + wingWidthTip / 2f + wingOffset); // Tip edge
+                                uv[i] = new Vector2 (wingSpan, uv[i].y);
                             }
-
-                            // Colors
-                            cl[i] = new Color (0f, 0f, 0f, GetMaterialVertexAlpha (wingEdgeTextureTrailing));
+                            else vp[i] = new Vector3 (0f, vp[i].y * wingThicknessDeviationRoot, Mathf.Lerp (2f, vp[i].z, wingEdgeScaleTrailing) - 2f + wingWidthRoot / 2f); // Root edge
                         }
 
-                        meshFilterWingEdgeTrailing.mesh.vertices = vp;
-                        meshFilterWingEdgeTrailing.mesh.uv = uv;
-                        meshFilterWingEdgeTrailing.mesh.colors = cl;
-                        meshFilterWingEdgeTrailing.mesh.RecalculateBounds ();
-                        if (logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Wing edge trailing | Finished");
+                        // Colors
+                        cl[i] = new Color (0f, 0f, 0f, GetMaterialVertexAlpha (wingEdgeTextureTrailing));
                     }
-                    if (meshFilterWingEdgeLeading != null)
+
+                    meshFiltersWingEdgeTrailing[wingEdgeTypeTrailingInt].mesh.vertices = vp;
+                    meshFiltersWingEdgeTrailing[wingEdgeTypeTrailingInt].mesh.uv = uv;
+                    meshFiltersWingEdgeTrailing[wingEdgeTypeTrailingInt].mesh.colors = cl;
+                    meshFiltersWingEdgeTrailing[wingEdgeTypeTrailingInt].mesh.RecalculateBounds ();
+                    if (logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Wing edge trailing | Finished");
+                }
+                if (meshFiltersWingEdgeLeading[wingEdgeTypeLeadingInt] != null)
+                {
+                    MeshReference meshReference = meshReferencesWingEdge [wingEdgeTypeLeadingInt];
+                    int length = meshReference.vp.Length;
+                    Vector3[] vp = new Vector3[length];
+                    Array.Copy (meshReference.vp, vp, length);
+                    Vector3[] nm = new Vector3[length];
+                    Array.Copy (meshReference.nm, nm, length);
+                    Vector2[] uv = new Vector2[length];
+                    Array.Copy (meshReference.uv, uv, length);
+                    Color[] cl = new Color[length];
+                    if (logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Wing edge leading | Passed array setup");
+
+                    for (int i = 0; i < vp.Length; ++i)
                     {
-                        meshFilterWingEdgeLeading.transform.localPosition = Vector3.zero;
-                        meshFilterWingEdgeLeading.transform.localRotation = Quaternion.Euler (180f, 0f, 0f);
-
-                        MeshReference meshReference = GetWingEdgeReference (wingEdgeTypeLeading);
-                        int length = meshReference.vp.Length;
-                        Vector3[] vp = new Vector3[length];
-                        Array.Copy (meshReference.vp, vp, length);
-                        Vector3[] nm = new Vector3[length];
-                        Array.Copy (meshReference.nm, nm, length);
-                        Vector2[] uv = new Vector2[length];
-                        Array.Copy (meshReference.uv, uv, length);
-                        Color[] cl = new Color[length];
-                        if (logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Wing edge leading | Passed array setup");
-
-                        for (int i = 0; i < vp.Length; ++i)
+                        if (nm[i].x == -1.0f) vp[i] = new Vector3 (-wingSpan, vp[i].y * wingThicknessDeviationTip, Mathf.Lerp (2f, vp[i].z, wingEdgeScaleLeading) - 2f + wingWidthTip / 2f - wingOffset); // Tip section
+                        else if (nm[i].x == 1.0f) vp[i] = new Vector3 (0f, vp[i].y * wingThicknessDeviationRoot, Mathf.Lerp (2f, vp[i].z, wingEdgeScaleLeading) - 2f + wingWidthRoot / 2f); // Root section
+                        else
                         {
-                            if (nm[i].x == -1.0f) vp[i] = new Vector3 (-wingSpan, vp[i].y * wingThicknessDeviationTip, Mathf.Lerp (2f, vp[i].z, wingEdgeScaleLeading) - 2f + wingWidthTip / 2f - wingOffset); // Tip section
-                            else if (nm[i].x == 1.0f) vp[i] = new Vector3 (0f, vp[i].y * wingThicknessDeviationRoot, Mathf.Lerp (2f, vp[i].z, wingEdgeScaleLeading) - 2f + wingWidthRoot / 2f); // Root section
-                            else
+                            if (vp[i].x < -0.1f)
                             {
-                                if (vp[i].x < -0.1f)
-                                {
-                                    vp[i] = new Vector3 (-wingSpan, vp[i].y * wingThicknessDeviationTip, Mathf.Lerp (2f, vp[i].z, wingEdgeScaleLeading) - 2f + wingWidthTip / 2f - wingOffset); // Tip edge
-                                    uv[i] = new Vector2 (wingSpan, uv[i].y);
-                                }
-                                else vp[i] = new Vector3 (0f, vp[i].y * wingThicknessDeviationRoot, Mathf.Lerp (2f, vp[i].z, wingEdgeScaleLeading) - 2f + wingWidthRoot / 2f); // Root edge
+                                vp[i] = new Vector3 (-wingSpan, vp[i].y * wingThicknessDeviationTip, Mathf.Lerp (2f, vp[i].z, wingEdgeScaleLeading) - 2f + wingWidthTip / 2f - wingOffset); // Tip edge
+                                uv[i] = new Vector2 (wingSpan, uv[i].y);
                             }
-
-                            // Colors
-                            cl[i] = new Color (0f, 0f, 0f, GetMaterialVertexAlpha (wingEdgeTextureLeading));
+                            else vp[i] = new Vector3 (0f, vp[i].y * wingThicknessDeviationRoot, Mathf.Lerp (2f, vp[i].z, wingEdgeScaleLeading) - 2f + wingWidthRoot / 2f); // Root edge
                         }
 
-                        meshFilterWingEdgeLeading.mesh.vertices = vp;
-                        meshFilterWingEdgeLeading.mesh.uv = uv;
-                        meshFilterWingEdgeLeading.mesh.colors = cl;
-                        meshFilterWingEdgeLeading.mesh.RecalculateBounds ();
-                        if (logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Wing edge leading | Finished");
+                        // Colors
+                        cl[i] = new Color (0f, 0f, 0f, GetMaterialVertexAlpha (wingEdgeTextureLeading));
                     }
+
+                    meshFiltersWingEdgeLeading[wingEdgeTypeLeadingInt].mesh.vertices = vp;
+                    meshFiltersWingEdgeLeading[wingEdgeTypeLeadingInt].mesh.uv = uv;
+                    meshFiltersWingEdgeLeading[wingEdgeTypeLeadingInt].mesh.colors = cl;
+                    meshFiltersWingEdgeLeading[wingEdgeTypeLeadingInt].mesh.RecalculateBounds ();
+                    if (logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Wing edge leading | Finished");
                 }
             }
             else
@@ -773,90 +738,84 @@ namespace WingProcedural
                     Array.Copy (meshReferenceCtrlEdge.uv, uv, length);
                     Color[] cl = new Color[length];
                     if (logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Control surface edge | Passed array setup");
+
+                    // Some math
+
+                    float widthDifference = ctrlWidthRoot - ctrlWidthTip;
+                    float edgeLengthTrailing = Mathf.Sqrt (Mathf.Pow (ctrlSpan, 2) + Mathf.Pow (widthDifference, 2));
+                    float sweepTrailing = 90f - Mathf.Atan (ctrlSpan / widthDifference) * Mathf.Rad2Deg;
+                    DebugLogWithID ("UpdateGeometry", "Control surface trailing edge | WD: " + widthDifference + " | L: " + edgeLengthTrailing + " | SA: " + sweepTrailing);
+
                     for (int i = 0; i < vp.Length; ++i)
                     {
-                        if (nm[i] != new Vector3 (1f, 0f, 0f) && nm[i] != new Vector3 (-1f, 0f, 0f))
-                        {
-                            if (vp[i].z < 0f) vp[i] = new Vector3 (vp[i].x * ctrlThicknessDeviationTip, vp[i].y, -ctrlSpan / 2f);
-                            else vp[i] = new Vector3 (vp[i].x * ctrlThicknessDeviationRoot, vp[i].y, ctrlSpan / 2f);
+                        // Span-based shift & thickness correction
+                        if (vp[i].z < 0f) vp[i] = new Vector3 (vp[i].x * ctrlThicknessDeviationTip, vp[i].y, vp[i].z + 0.5f - ctrlSpan / 2f);
+                        else vp[i] = new Vector3 (vp[i].x * ctrlThicknessDeviationRoot, vp[i].y, vp[i].z - 0.5f + ctrlSpan / 2f);
 
-                            // Sides
-                            if (nm[i] == new Vector3 (0f, 0f, 1f) || nm[i] == new Vector3 (0f, 0f, -1f))
+                        // Left/right sides
+                        if (nm[i] == new Vector3 (0f, 0f, 1f) || nm[i] == new Vector3 (0f, 0f, -1f))
+                        {
+                            // Filtering out trailing edge cross sections
+                            if (uv[i].y > 0.185f)
                             {
-                                if (uv[i].y > 0.185f)
+                                // Filtering out root neighbours
+                                if (vp[i].y < -0.01f)
                                 {
-                                    if (vp[i].y < -0.01f)
+                                    if (vp[i].z < 0f)
                                     {
-                                        if (vp[i].z < 0f)
-                                        {
-                                            vp[i] = new Vector3 (vp[i].x, -ctrlWidthTip, vp[i].z);
-                                            uv[i] = new Vector2 (ctrlWidthTip, uv[i].y);
-                                        }
-                                        else
-                                        {
-                                            vp[i] = new Vector3 (vp[i].x, -ctrlWidthRoot, vp[i].z);
-                                            uv[i] = new Vector2 (ctrlWidthRoot, uv[i].y);
-                                        }
+                                        vp[i] = new Vector3 (vp[i].x, -ctrlWidthTip, vp[i].z);
+                                        uv[i] = new Vector2 (ctrlWidthTip, uv[i].y);
+                                    }
+                                    else
+                                    {
+                                        vp[i] = new Vector3 (vp[i].x, -ctrlWidthRoot, vp[i].z);
+                                        uv[i] = new Vector2 (ctrlWidthRoot, uv[i].y);
                                     }
                                 }
-                                else
-                                {
-                                    if (vp[i].z < 0f) vp[i] = new Vector3 (vp[i].x, vp[i].y + 0.5f - ctrlWidthTip, vp[i].z);
-                                    else vp[i] = new Vector3 (vp[i].x, vp[i].y + 0.5f - ctrlWidthRoot, vp[i].z);
-                                }
                             }
 
-                            // Root
-                            else if (nm[i] == new Vector3 (0f, 1f, 0f))
-                            {
-                                if (vp[i].z < 0f) uv[i] = new Vector2 (ctrlSpan, uv[i].y);
-                            }
-
-                            // Trailing edge
+                            // Trailing edge cross section
                             else
                             {
                                 if (vp[i].z < 0f) vp[i] = new Vector3 (vp[i].x, vp[i].y + 0.5f - ctrlWidthTip, vp[i].z);
                                 else vp[i] = new Vector3 (vp[i].x, vp[i].y + 0.5f - ctrlWidthRoot, vp[i].z);
                             }
-
-                            // Offset
-                            if (vp[i].z < 0f)
-                            {
-                                vp[i] = new Vector3 (vp[i].x, vp[i].y, vp[i].z + vp[i].y * ctrlOffsetTipClamped);
-                                if (nm[i] != new Vector3 (0f, 0f, 1f) && nm[i] != new Vector3 (0f, 0f, -1f)) uv[i] = new Vector2 (uv[i].x - (vp[i].y * ctrlOffsetTipClamped) / 4f, uv[i].y);
-                            }
-                            else
-                            {
-                                vp[i] = new Vector3 (vp[i].x, vp[i].y, vp[i].z + vp[i].y * ctrlOffsetRootClamped);
-                                if (nm[i] != new Vector3 (0f, 0f, 1f) && nm[i] != new Vector3 (0f, 0f, -1f)) uv[i] = new Vector2 (uv[i].x - (vp[i].y * ctrlOffsetRootClamped) / 4f, uv[i].y);
-                            }
-
-                            // Trailing edge UVs
-
-                            if (nm[i] != new Vector3 (0f, 1f, 0f) && nm[i] != new Vector3 (0f, 0f, 1f) && nm[i] != new Vector3 (0f, 0f, -1f))
-                            {
-                                if (vp[i].z < 0f) uv[i] = new Vector2 (vp[i].z, uv[i].y);
-                                else uv[i] = new Vector2 (vp[i].z, uv[i].y);
-                            }
                         }
 
-                        // Border
+                        // Root (only needs UV adjustment)
+                        else if (nm[i] == new Vector3 (0f, 1f, 0f))
+                        {
+                            if (vp[i].z < 0f) uv[i] = new Vector2 (ctrlSpan, uv[i].y);
+                        }
+
+                        // Trailing edge
                         else
                         {
-                            // Span-based shift
-                            if (vp[i].z < 0f) vp[i] = new Vector3 (vp[i].x, vp[i].y, vp[i].z + 0.5f - ctrlSpan / 2f);
-                            else vp[i] = new Vector3 (vp[i].x, vp[i].y, vp[i].z - 0.5f + ctrlSpan / 2f);
-
-                            // Width-based shift
+                            // Filtering out root neighbours
                             if (vp[i].y < -0.1f)
                             {
                                 if (vp[i].z < 0f) vp[i] = new Vector3 (vp[i].x, vp[i].y + 0.5f - ctrlWidthTip, vp[i].z);
                                 else vp[i] = new Vector3 (vp[i].x, vp[i].y + 0.5f - ctrlWidthRoot, vp[i].z);
                             }
+                        }
 
-                            // Offsets && thickness
-                            if (vp[i].z < 0f) vp[i] = new Vector3 (vp[i].x * ctrlThicknessDeviationTip + 0.00f * nm[i].x, vp[i].y, vp[i].z + vp[i].y * ctrlOffsetTipClamped);
-                            else vp[i] = new Vector3 (vp[i].x * ctrlThicknessDeviationRoot + 0.00f * nm[i].x, vp[i].y, vp[i].z + vp[i].y * ctrlOffsetRootClamped);
+                        // Offset-based distortion
+                        if (vp[i].z < 0f)
+                        {
+                            vp[i] = new Vector3 (vp[i].x, vp[i].y, vp[i].z + vp[i].y * ctrlOffsetTipClamped);
+                            if (nm[i] != new Vector3 (0f, 0f, 1f) && nm[i] != new Vector3 (0f, 0f, -1f)) uv[i] = new Vector2 (uv[i].x - (vp[i].y * ctrlOffsetTipClamped) / 4f, uv[i].y);
+                        }
+                        else
+                        {
+                            vp[i] = new Vector3 (vp[i].x, vp[i].y, vp[i].z + vp[i].y * ctrlOffsetRootClamped);
+                            if (nm[i] != new Vector3 (0f, 0f, 1f) && nm[i] != new Vector3 (0f, 0f, -1f)) uv[i] = new Vector2 (uv[i].x - (vp[i].y * ctrlOffsetRootClamped) / 4f, uv[i].y);
+                        }
+
+                        // Trailing edge (UV adjustment, has to be the last as it's based on cumulative vertex positions)
+                        if (nm[i] != new Vector3 (0f, 1f, 0f) && nm[i] != new Vector3 (0f, 0f, 1f) && nm[i] != new Vector3 (0f, 0f, -1f) && uv[i].y > 0.3f)
+                        {
+                            if (vp[i].z < 0f) uv[i] = new Vector2 (vp[i].z, uv[i].y);
+                            else uv[i] = new Vector2 (vp[i].z, uv[i].y);
                         }
 
                         // Colors
@@ -1005,20 +964,6 @@ namespace WingProcedural
 
         // Edge geometry
 
-        public MeshReference GetWingEdgeReference (float selection)
-        {
-            if (selection == 1f) return meshReferenceWingEdgeA;
-            else if (selection == 2f) return meshReferenceWingEdgeB;
-            else return meshReferenceWingEdgeC;
-        }
-
-        public MeshFilter GetWingEdgeFilter (float selection)
-        {
-            if (selection == 1f) return meshFilterWingEdgeA;
-            else if (selection == 2f) return meshFilterWingEdgeB;
-            else return meshFilterWingEdgeC;
-        }
-
         public Vector3[] GetReferenceVertices (MeshFilter source)
         {
             Vector3[] positions = new Vector3[0];
@@ -1031,28 +976,6 @@ namespace WingProcedural
                 }
             }
             return positions;
-        }
-
-        public void UpdateMeshes ()
-        {
-            if (!isCtrlSrf)
-            {
-                if (meshFilterWingEdgeTrailing.mesh != null)
-                {
-                    DebugLogWithID ("UpdateMeshes", "Wing trailing edge | Mesh present | Length: " + meshFilterWingEdgeTrailing.mesh.vertices.Length + " | Removing");
-                    DestroyImmediate (meshFilterWingEdgeTrailing.mesh);
-                }
-                meshFilterWingEdgeTrailing.mesh = Instantiate (GetWingEdgeFilter (wingEdgeTypeTrailing).mesh) as Mesh;
-                DebugLogWithID ("UpdateMeshes", "Wing trailing edge | Mesh created | Length: " + meshFilterWingEdgeTrailing.mesh.vertices.Length);
-
-                if (meshFilterWingEdgeLeading.mesh != null)
-                {
-                    DebugLogWithID ("UpdateMeshes", "Wing leading edge | Mesh present | Length: " + meshFilterWingEdgeLeading.mesh.vertices.Length + " | Removing");
-                    DestroyImmediate (meshFilterWingEdgeLeading.mesh);
-                }
-                meshFilterWingEdgeLeading.mesh = Instantiate (GetWingEdgeFilter (wingEdgeTypeLeading).mesh) as Mesh;
-                DebugLogWithID ("UpdateMeshes", "Wing leading edge | Mesh created | Length: " + meshFilterWingEdgeLeading.mesh.vertices.Length);
-            }
         }
 
 
@@ -1079,8 +1002,11 @@ namespace WingProcedural
                 {
                     SetMaterial (meshFilterWingSurfaceTop, materialLayeredSurface);
                     SetMaterial (meshFilterWingSurfaceBottom, materialLayeredSurface);
-                    SetMaterial (meshFilterWingEdgeTrailing, materialLayeredEdge);
-                    SetMaterial (meshFilterWingEdgeLeading, materialLayeredEdge);
+                    for (int i = 0; i < wingEdgeTypeCount; ++i)
+                    {
+                        SetMaterial (meshFiltersWingEdgeTrailing[i], materialLayeredEdge);
+                        SetMaterial (meshFiltersWingEdgeLeading[i], materialLayeredEdge);
+                    }
                 }
                 else
                 {
@@ -1097,7 +1023,7 @@ namespace WingProcedural
             if (materialLayeredSurface == null) materialLayeredSurface = ResourceExtractor.GetEmbeddedMaterial ("B9_Aerospace_WingStuff.SpecularLayered.txt");
             if (materialLayeredEdge == null) materialLayeredEdge = ResourceExtractor.GetEmbeddedMaterial ("B9_Aerospace_WingStuff.SpecularLayered.txt");
 
-            if (!isCtrlSrf) SetTextures (meshFilterWingSurfaceTop, meshFilterWingEdgeA);
+            if (!isCtrlSrf) SetTextures (meshFilterWingSurfaceTop, meshFiltersWingEdgeTrailing[0]);
             else SetTextures (meshFilterCtrlSurfaceTop, meshFilterCtrlEdge);
 
             if (materialLayeredSurfaceTexture != null)
@@ -1158,7 +1084,6 @@ namespace WingProcedural
             SetupMeshFilters ();
             SetupClamping ();
             SetupFields ();
-            SetupSyncTemporary ();
             SetupMeshReferences ();
             SetupTemporaryCollider ();
             ReportOnMeshReferences ();
@@ -1168,17 +1093,9 @@ namespace WingProcedural
 
         public void SetupRecurring ()
         {
-            UpdateMeshes ();
             UpdateMaterials ();
             UpdateGeometry ();
             UpdateWindow ();
-        }
-
-        public void SetupSyncTemporary ()
-        {
-            syncEdge = syncEdgeCached = false;
-            syncWidth = syncWidthCached = false;
-            syncThickness = syncThicknessCached = false;
         }
 
         public void UpdateCounterparts ()
@@ -1190,21 +1107,18 @@ namespace WingProcedural
                 clone.updateCounterpartsAllowed = false;
                 if (!isCtrlSrf)
                 {
-                    clone.syncWidth =                   clone.syncWidthCached =                 syncWidth;
-                    clone.syncThickness =               clone.syncThicknessCached =             syncThickness;
-                    clone.syncEdge =                    clone.syncEdgeCached =                  syncEdge;
                     clone.wingSpan =                    clone.wingSpanCached =                  wingSpan;
                     clone.wingWidthRoot =               clone.wingWidthRootCached =             wingWidthRoot;
                     clone.wingWidthTip =                clone.wingWidthTipCached =              wingWidthTip;
                     clone.wingThicknessRoot =           clone.wingThicknessRootCached =         wingThicknessRoot;
                     clone.wingThicknessTip =            clone.wingThicknessTipCached =          wingThicknessTip;
                     clone.wingOffset =                  clone.wingOffsetCached =                wingOffset;
+                    clone.wingSurfaceTextureTop =       clone.wingSurfaceTextureTopCached =     wingSurfaceTextureTop;
+                    clone.wingSurfaceTextureBottom =    clone.wingSurfaceTextureBottomCached =  wingSurfaceTextureBottom;
                     clone.wingEdgeScaleTrailing =       clone.wingEdgeScaleTrailingCached =     wingEdgeScaleTrailing;
                     clone.wingEdgeScaleLeading =        clone.wingEdgeScaleLeadingCached =      wingEdgeScaleLeading;
                     clone.wingEdgeTypeTrailing =        clone.wingEdgeTypeTrailingCached =      wingEdgeTypeTrailing;
                     clone.wingEdgeTypeLeading =         clone.wingEdgeTypeLeadingCached =       wingEdgeTypeLeading;
-                    clone.wingSurfaceTextureTop =       clone.wingSurfaceTextureTopCached =     wingSurfaceTextureTop;
-                    clone.wingSurfaceTextureBottom =    clone.wingSurfaceTextureBottomCached =  wingSurfaceTextureBottom;
                     clone.wingEdgeTextureLeading =      clone.wingEdgeTextureLeadingCached =    wingEdgeTextureLeading;
                     clone.wingEdgeTextureTrailing =     clone.wingEdgeTextureTrailingCached =   wingEdgeTextureTrailing;
                 }
@@ -1228,16 +1142,19 @@ namespace WingProcedural
 
         private void SetupMeshFilters ()
         {
+            DebugLogWithID ("SetupMeshFilters", "Started");
             if (!isCtrlSrf)
             {
                 meshFilterWingSurfaceTop = CheckMeshFilter (meshFilterWingSurfaceTop, "surface_top");
                 meshFilterWingSurfaceBottom = CheckMeshFilter (meshFilterWingSurfaceBottom, "surface_bottom");
-                meshFilterWingEdgeTrailing = CheckMeshFilter (meshFilterWingEdgeTrailing, "edge_trailing");
-                meshFilterWingEdgeLeading = CheckMeshFilter (meshFilterWingEdgeLeading, "edge_leading");
-                meshFilterWingSection = CheckMeshFilter (meshFilterWingSection, "proxy_collision");
-                meshFilterWingEdgeA = CheckMeshFilter (meshFilterWingEdgeA, "proxy_edge_a", true);
-                meshFilterWingEdgeB = CheckMeshFilter (meshFilterWingEdgeB, "proxy_edge_b", true);
-                meshFilterWingEdgeC = CheckMeshFilter (meshFilterWingEdgeC, "proxy_edge_c", true);
+                meshFilterWingSection = CheckMeshFilter (meshFilterWingSection, "section"); 
+                for (int i = 0; i < wingEdgeTypeCount; ++i)
+                {
+                    MeshFilter meshFilterWingEdgeTrailing = CheckMeshFilter ("edge_trailing_type" + i);
+                    MeshFilter meshFilterWingEdgeLeading = CheckMeshFilter ("edge_leading_type" + i);
+                    meshFiltersWingEdgeTrailing.Add (meshFilterWingEdgeTrailing);
+                    meshFiltersWingEdgeLeading.Add (meshFilterWingEdgeLeading);
+                }
             }
             else
             {
@@ -1260,7 +1177,8 @@ namespace WingProcedural
                 wingOffset = Mathf.Clamp (wingOffset, wingOffsetLimits.x, wingOffsetLimits.y);
                 wingEdgeScaleTrailing = Mathf.Clamp (wingEdgeScaleTrailing, wingEdgeScaleLimits.x, wingEdgeScaleLimits.y);
                 wingEdgeScaleLeading = Mathf.Clamp (wingEdgeScaleLeading, wingEdgeScaleLimits.x, wingEdgeScaleLimits.y);
-
+                wingEdgeTypeTrailing = Mathf.Clamp (wingEdgeTypeTrailing, wingEdgeTypeLimits.x, wingEdgeTypeLimits.y);
+                wingEdgeTypeLeading = Mathf.Clamp (wingEdgeTypeLeading, wingEdgeTypeLimits.x, wingEdgeTypeLimits.y);
             }
             else
             {
@@ -1362,25 +1280,9 @@ namespace WingProcedural
             bool required = true;
             if (!isCtrlSrf)
             {
-                if 
-                (
-                    meshReferenceWingSection != null &&
-                    meshReferenceWingSurfaceTop != null &&
-                    meshReferenceWingSurfaceBottom != null &&
-                    meshReferenceWingEdgeA != null &&
-                    meshReferenceWingEdgeB != null &&
-                    meshReferenceWingEdgeC != null
-                )
+                if (meshReferenceWingSection != null && meshReferenceWingSurfaceTop != null && meshReferenceWingSurfaceBottom != null && meshReferencesWingEdge[wingEdgeTypeCount - 1] != null)
                 {
-                    if 
-                    (
-                        meshReferenceWingSection.vp.Length > 0 &&
-                        meshReferenceWingSurfaceTop.vp.Length > 0 &&
-                        meshReferenceWingSurfaceBottom.vp.Length > 0 &&
-                        meshReferenceWingEdgeA.vp.Length > 0 &&
-                        meshReferenceWingEdgeB.vp.Length > 0 &&
-                        meshReferenceWingEdgeC.vp.Length > 0
-                    )
+                    if (meshReferenceWingSection.vp.Length > 0 && meshReferenceWingSurfaceTop.vp.Length > 0 && meshReferenceWingSurfaceBottom.vp.Length > 0 && meshReferencesWingEdge[wingEdgeTypeCount - 1].vp.Length > 0)
                     {
                         required = false;
                     }
@@ -1388,19 +1290,9 @@ namespace WingProcedural
             }
             else
             {
-                if 
-                (
-                    meshReferenceCtrlEdge != null &&
-                    meshReferenceCtrlSurfaceTop != null &&
-                    meshReferenceCtrlSurfaceBottom != null
-                )
+                if (meshReferenceCtrlEdge != null && meshReferenceCtrlSurfaceTop != null && meshReferenceCtrlSurfaceBottom != null)
                 {
-                    if 
-                    (
-                        meshReferenceCtrlEdge.vp.Length > 0 &&
-                        meshReferenceCtrlSurfaceTop.vp.Length > 0 &&
-                        meshReferenceCtrlSurfaceBottom.vp.Length > 0
-                    )
+                    if (meshReferenceCtrlEdge.vp.Length > 0 && meshReferenceCtrlSurfaceTop.vp.Length > 0 && meshReferenceCtrlSurfaceBottom.vp.Length > 0)
                     {
                         required = false;
                     }
@@ -1439,9 +1331,6 @@ namespace WingProcedural
                     + " | Section: " + meshReferenceWingSection.vp.Length
                     + " | Top: " + meshReferenceWingSurfaceTop.vp.Length
                     + " | Bottom: " + meshReferenceWingSurfaceBottom.vp.Length
-                    + " | Edge A: " + meshReferenceWingEdgeA.vp.Length
-                    + " | Edge B: " + meshReferenceWingEdgeB.vp.Length
-                    + " | Edge C: " + meshReferenceWingEdgeC.vp.Length
                 );
             }
         }
@@ -1460,9 +1349,11 @@ namespace WingProcedural
                 WingProcedural.meshReferenceWingSection = FillMeshRefererence (meshFilterWingSection);
                 WingProcedural.meshReferenceWingSurfaceTop = FillMeshRefererence (meshFilterWingSurfaceTop);
                 WingProcedural.meshReferenceWingSurfaceBottom = FillMeshRefererence (meshFilterWingSurfaceBottom);
-                WingProcedural.meshReferenceWingEdgeA = FillMeshRefererence (meshFilterWingEdgeA);
-                WingProcedural.meshReferenceWingEdgeB = FillMeshRefererence (meshFilterWingEdgeB);
-                WingProcedural.meshReferenceWingEdgeC = FillMeshRefererence (meshFilterWingEdgeC);
+                for (int i = 0; i < wingEdgeTypeCount; ++i)
+                {
+                    MeshReference meshReferenceWingEdge = FillMeshRefererence (meshFiltersWingEdgeTrailing[i]);
+                    meshReferencesWingEdge.Add (meshReferenceWingEdge);
+                }
             }
         }
 
@@ -1506,6 +1397,7 @@ namespace WingProcedural
 
         private bool logCheckMeshFilter = false;
 
+        private MeshFilter CheckMeshFilter (string name) { return CheckMeshFilter (null, name, false); }
         private MeshFilter CheckMeshFilter (MeshFilter reference, string name) { return CheckMeshFilter (reference, name, false); }
         private MeshFilter CheckMeshFilter (MeshFilter reference, string name, bool disable)
         {
@@ -1519,10 +1411,7 @@ namespace WingProcedural
                     reference = parent.gameObject.GetComponent<MeshFilter> ();
                     if (disable) parent.gameObject.SetActive (false);
                 }
-                else
-                {
-                    if (logCheckMeshFilter) DebugLogWithID ("CheckMeshFilter", "Object " + name + " was not found!");
-                }
+                else { if (logCheckMeshFilter) DebugLogWithID ("CheckMeshFilter", "Object " + name + " was not found!"); }
             }
             return reference;
         }
@@ -1536,13 +1425,17 @@ namespace WingProcedural
         private MeshReference FillMeshRefererence (MeshFilter source)
         {
             MeshReference reference = new MeshReference ();
-            int length = source.mesh.vertices.Length;
-            reference.vp = new Vector3[length];
-            Array.Copy (source.mesh.vertices, reference.vp, length);
-            reference.nm = new Vector3[length];
-            Array.Copy (source.mesh.normals, reference.nm, length);
-            reference.uv = new Vector2[length];
-            Array.Copy (source.mesh.uv, reference.uv, length);
+            if (source != null)
+            {
+                int length = source.mesh.vertices.Length;
+                reference.vp = new Vector3[length];
+                Array.Copy (source.mesh.vertices, reference.vp, length);
+                reference.nm = new Vector3[length];
+                Array.Copy (source.mesh.normals, reference.nm, length);
+                reference.uv = new Vector2[length];
+                Array.Copy (source.mesh.uv, reference.uv, length);
+            }
+            else DebugLogWithID ("FillMeshReference", "Mesh filter reference is null, unable to set up reference arrays");
             return reference;
         }
 
@@ -1638,7 +1531,7 @@ namespace WingProcedural
         public double wingMass;
         public double connectionForce;
 
-        public double meanAerodynamicChord; // MAC
+        public double meanAerodynamicChord;
         public double b_2;
         public double midChordSweep;
         public double taperRatio;
@@ -1646,11 +1539,13 @@ namespace WingProcedural
         public double aspectRatio;
         public double aspectRatioSweepScale;
 
+        private bool logCAV = false;
+
         public void CalculateAerodynamicValues ()
         {
             if (isAttached || HighLogic.LoadedSceneIsFlight)
             {
-                DebugLogWithID ("CalculateAerodynamicValues", "Started");
+                if (logCAV) DebugLogWithID ("CalculateAerodynamicValues", "Started");
 
                 // float offsetLeading = Mathf.Abs (wingWidthRoot / 2f - (wingWidthTip / 2f - wingOffset));
                 // float offsetTrailing = Mathf.Abs (wingWidthRoot / 2f - (wingWidthTip / 2f + wingOffset));
@@ -1676,7 +1571,7 @@ namespace WingProcedural
                     midChordSweep = MathD.Atan ((double) Mathf.Abs (ctrlWidthRoot - ctrlWidthTip) / (double) ctrlSpan) * MathD.Rad2Deg;
                 }
 
-                DebugLogWithID ("CalculateAerodynamicValues", "Passed B2/TR/MAC/MCS");
+                if (logCAV) DebugLogWithID ("CalculateAerodynamicValues", "Passed B2/TR/MAC/MCS");
 
                 surfaceArea = meanAerodynamicChord * b_2;
                 aspectRatio = 2.0f * b_2 / meanAerodynamicChord;
@@ -1691,7 +1586,7 @@ namespace WingProcedural
 
                 connectionForce = MathD.Round (MathD.Clamp (MathD.Sqrt (Cl + ChildrenCl) * (double) connectionFactor, (double) connectionMinimum, double.MaxValue));
 
-                DebugLogWithID ("CalculateAerodynamicValues", "Passed SR/AR/ARSS/mass/Cl/Cd/connection");
+                if (logCAV) DebugLogWithID ("CalculateAerodynamicValues", "Passed SR/AR/ARSS/mass/Cl/Cd/connection");
 
                 // Values always set
 
@@ -1710,7 +1605,7 @@ namespace WingProcedural
                 part.breakingForce = Mathf.Round ((float) connectionForce);
                 part.breakingTorque = Mathf.Round ((float) connectionForce);
 
-                DebugLogWithID ("CalculateAerodynamicValues", "Passed cost/force/torque");
+                if (logCAV) DebugLogWithID ("CalculateAerodynamicValues", "Passed cost/force/torque");
 
                 // Stock-only values
 
@@ -1734,7 +1629,7 @@ namespace WingProcedural
                     }
                 }
 
-                DebugLogWithID ("CalculateAerodynamicValues", "Passed stock drag/deflection/area");
+                if (logCAV) DebugLogWithID ("CalculateAerodynamicValues", "Passed stock drag/deflection/area");
 
                 // FAR values
                 // With reflection stuff from r4m0n
@@ -1766,7 +1661,7 @@ namespace WingProcedural
                     }
                 }
 
-                DebugLogWithID ("CalculateAerodynamicValues", "Passed FAR/NEAR parameter setting");
+                if (logCAV) DebugLogWithID ("CalculateAerodynamicValues", "Passed FAR/NEAR parameter setting");
 
                 // Update GUI values
 
@@ -1783,11 +1678,11 @@ namespace WingProcedural
                 guiSurfaceArea = (float) surfaceArea;
                 guiAspectRatio = (float) aspectRatio;
 
-                DebugLogWithID ("CalculateAerodynamicValues", "Passed GUI setup");
+                if (logCAV) DebugLogWithID ("CalculateAerodynamicValues", "Passed GUI setup");
 
                 if (HighLogic.LoadedSceneIsEditor) GameEvents.onEditorShipModified.Fire (EditorLogic.fetch.ship);
 
-                DebugLogWithID ("CalculateAerodynamicValues", "Finished");
+                if (logCAV) DebugLogWithID ("CalculateAerodynamicValues", "Finished");
             }
         }
 

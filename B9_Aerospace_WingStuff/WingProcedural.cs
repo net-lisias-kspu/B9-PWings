@@ -204,8 +204,13 @@ namespace WingProcedural
         public bool isStarted = false;
         public bool isStartingNow = false;
         public bool justDetached = false;
-        public bool logUpdate = false;
-        public bool logUpdateGeometry = false;
+
+        private bool logUpdate = false;
+        private bool logUpdateGeometry = false;
+        private bool logCAV = false;
+        private bool logUpdateMaterials = false;
+        private bool logMeshReferences = false;
+        private bool logCheckMeshFilter = false;
 
 
 
@@ -955,7 +960,7 @@ namespace WingProcedural
                     if (logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Control surface bottom | Finished");
                 }
             }
-            DebugLogWithID ("UpdateGeometry", "Finished");
+            if (logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Finished");
             CalculateAerodynamicValues ();
         }
 
@@ -1015,7 +1020,7 @@ namespace WingProcedural
                     SetMaterial (meshFilterCtrlEdge, materialLayeredEdge);
                 }
             }
-            else DebugLogWithID ("UpdateMaterials", "Material creation failed");
+            else if (logUpdateMaterials) DebugLogWithID ("UpdateMaterials", "Material creation failed");
         }
 
         private void SetMaterialReferences ()
@@ -1032,7 +1037,7 @@ namespace WingProcedural
                 materialLayeredSurface.SetFloat ("_Shininess", materialPropertyShininess);
                 materialLayeredSurface.SetColor ("_SpecColor", materialPropertySpecular);
             }
-            else DebugLogWithID ("SetMaterialReferences", "Surface texture not found");
+            else if (logUpdateMaterials) DebugLogWithID ("SetMaterialReferences", "Surface texture not found");
 
             if (materialLayeredEdgeTexture != null)
             {
@@ -1040,7 +1045,7 @@ namespace WingProcedural
                 materialLayeredEdge.SetFloat ("_Shininess", materialPropertyShininess);
                 materialLayeredEdge.SetColor ("_SpecColor", materialPropertySpecular);
             }
-            else DebugLogWithID ("SetMaterialReferences", "Edge texture not found");
+            else if (logUpdateMaterials) DebugLogWithID ("SetMaterialReferences", "Edge texture not found");
         }
 
         private void SetMaterial (MeshFilter target, Material material)
@@ -1079,7 +1084,6 @@ namespace WingProcedural
 
         public void Setup ()
         {
-            DebugLogWithID ("Setup", "Started");
             isStartingNow = true;
             SetupMeshFilters ();
             SetupClamping ();
@@ -1100,7 +1104,6 @@ namespace WingProcedural
 
         public void UpdateCounterparts ()
         {
-            DebugLogWithID ("UpdateCounterparts", "Started");
             for (int i = 0; i < this.part.symmetryCounterparts.Count; ++i)
             {
                 var clone = this.part.symmetryCounterparts[i].Modules.OfType<WingProcedural> ().FirstOrDefault ();
@@ -1142,7 +1145,6 @@ namespace WingProcedural
 
         private void SetupMeshFilters ()
         {
-            DebugLogWithID ("SetupMeshFilters", "Started");
             if (!isCtrlSrf)
             {
                 meshFilterWingSurfaceTop = CheckMeshFilter (meshFilterWingSurfaceTop, "surface_top");
@@ -1300,12 +1302,12 @@ namespace WingProcedural
             }
             if (required)
             {
-                DebugLogWithID ("SetupMeshReferences", "References missing | isCtrlSrf: " + isCtrlSrf);
+                if (logMeshReferences) DebugLogWithID ("SetupMeshReferences", "References missing | isCtrlSrf: " + isCtrlSrf);
                 SetupMeshReferencesFromScratch ();
             }
             else
             {
-                DebugLogWithID ("SetupMeshReferences", "Skipped, all references seem to be in order");
+                if (logMeshReferences) DebugLogWithID ("SetupMeshReferences", "Skipped, all references seem to be in order");
             }
         }
 
@@ -1313,7 +1315,7 @@ namespace WingProcedural
         {
             if (isCtrlSrf)
             {
-                DebugLogWithID
+                if (logMeshReferences) DebugLogWithID
                 (
                     "ReportOnMeshReferences",
                     "Control surface reference length check"
@@ -1324,7 +1326,7 @@ namespace WingProcedural
             }
             else
             {
-                DebugLogWithID
+                if (logMeshReferences) DebugLogWithID
                 (
                     "ReportOnMeshReferences",
                     "Wing reference length check"
@@ -1337,7 +1339,7 @@ namespace WingProcedural
 
         private void SetupMeshReferencesFromScratch ()
         {
-            DebugLogWithID ("SetupMeshReferencesFromScratch", "No sources found, creating new references");
+            if (logMeshReferences) DebugLogWithID ("SetupMeshReferencesFromScratch", "No sources found, creating new references");
             if (isCtrlSrf)
             {
                 WingProcedural.meshReferenceCtrlEdge = FillMeshRefererence (meshFilterCtrlEdgeReference);
@@ -1395,8 +1397,6 @@ namespace WingProcedural
 
         // Reference fetching
 
-        private bool logCheckMeshFilter = false;
-
         private MeshFilter CheckMeshFilter (string name) { return CheckMeshFilter (null, name, false); }
         private MeshFilter CheckMeshFilter (MeshFilter reference, string name) { return CheckMeshFilter (reference, name, false); }
         private MeshFilter CheckMeshFilter (MeshFilter reference, string name, bool disable)
@@ -1435,7 +1435,7 @@ namespace WingProcedural
                 reference.uv = new Vector2[length];
                 Array.Copy (source.mesh.uv, reference.uv, length);
             }
-            else DebugLogWithID ("FillMeshReference", "Mesh filter reference is null, unable to set up reference arrays");
+            else if (logMeshReferences) DebugLogWithID ("FillMeshReference", "Mesh filter reference is null, unable to set up reference arrays");
             return reference;
         }
 
@@ -1538,8 +1538,6 @@ namespace WingProcedural
         public double surfaceArea;
         public double aspectRatio;
         public double aspectRatioSweepScale;
-
-        private bool logCAV = false;
 
         public void CalculateAerodynamicValues ()
         {

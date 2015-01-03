@@ -68,22 +68,22 @@ namespace WingProcedural
         public float wingSurfaceTextureBottom = 4f;
         public float wingSurfaceTextureBottomCached = 4f;
 
-        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Edge L (type)"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Edge L (shape)"),
         UI_FloatRange (minValue = 1f, maxValue = 4f, scene = UI_Scene.Editor, stepIncrement = 1f)]
         public float wingEdgeTypeLeading = 3;
         public float wingEdgeTypeLeadingCached = 3f;
 
-        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Edge T (type)"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Edge T (shape)"),
         UI_FloatRange (minValue = 1f, maxValue = 4f, scene = UI_Scene.Editor, stepIncrement = 1f)]
         public float wingEdgeTypeTrailing = 4f;
         public float wingEdgeTypeTrailingCached = 4f;
 
-        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Edge L (material)"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Edge L (type)"),
         UI_FloatRange (minValue = 1f, maxValue = 4f, scene = UI_Scene.Editor, stepIncrement = 1f)]
         public float wingEdgeTextureLeading = 4f;
         public float wingEdgeTextureLeadingCached = 4f;
 
-        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Edge T (material)"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Edge T (type)"),
         UI_FloatRange (minValue = 1f, maxValue = 4f, scene = UI_Scene.Editor, stepIncrement = 1f)]
         public float wingEdgeTextureTrailing = 4f;
         public float wingEdgeTextureTrailingCached = 4f;
@@ -198,9 +198,14 @@ namespace WingProcedural
 
         // Some handy bools
 
+        [KSPField]
+        public bool isCtrlSrf = false;
+
+        [KSPField]
+        public bool isWingAsCtrlSrf = false;
+
         [KSPField (isPersistant = true)]
         public bool isAttached = false;
-
         public bool isStarted = false;
         public bool isStartingNow = false;
         public bool justDetached = false;
@@ -482,7 +487,6 @@ namespace WingProcedural
 
         public void UpdateOnEditorDetach ()
         {
-            // If the root is not null and is a pWing, set its justDetached so it knows to check itself next Update
             if (this.part.parent != null && this.part.parent.Modules.Contains ("WingProcedural"))
                 this.part.parent.Modules.OfType<WingProcedural> ().FirstOrDefault ().justDetached = true;
 
@@ -497,7 +501,7 @@ namespace WingProcedural
 
         public void UpdateGeometry ()
         {
-            DebugLogWithID ("UpdateGeometry", "Started | isCtrlSrf: " + isCtrlSrf);
+            if (logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Started | isCtrlSrf: " + isCtrlSrf);
             if (!isCtrlSrf)
             {
                 float wingThicknessDeviationRoot = wingThicknessRoot / 0.24f;
@@ -1232,10 +1236,6 @@ namespace WingProcedural
                 SetFieldVisibility ("wingEdgeTextureLeading", false);
 
                 SetFieldType ("ctrlSpan", 1, ctrlSpanLimits, 0.125f);
-
-                // SetFieldVisibility ("syncWidth", false);
-                // SetFieldVisibility ("syncThickness", false);
-                // SetFieldVisibility ("syncEdge", false);
             }
         }
 
@@ -1482,6 +1482,7 @@ namespace WingProcedural
                 }
             }
             if (logCAV) DebugLogWithID ("OnStart", "Search results | FAR: " + FARactive + " | NEAR: " + NEARactive + " | FAR mass: " + FARmass);
+            if (isCtrlSrf && isWingAsCtrlSrf) Debug.LogError ("WARNING | PART IS CONFIGURED INCORRECTLY, BOTH BOOL PROPERTIES SHOULD NEVER BE SET TO TRUE");
         }
 
 
@@ -1493,9 +1494,6 @@ namespace WingProcedural
         private bool FARactive = false;
         private bool NEARactive = false;
         private bool FARmass = false;
-
-        [KSPField]
-        public bool isCtrlSrf = true;
 
         [KSPField]
         public float liftFudgeNumber = 0.0775f;
@@ -1626,7 +1624,7 @@ namespace WingProcedural
                 }
                 if (!FARactive && !NEARactive)
                 {
-                    if (!isCtrlSrf)
+                    if (!isCtrlSrf && !isWingAsCtrlSrf)
                     {
                         if (logCAV) DebugLogWithID ("CalculateAerodynamicValues", "FAR/NEAR is inactive, calculating values for winglet part type");
                         ((Winglet) this.part).deflectionLiftCoeff = Mathf.Round ((float) Cl * 100f) / 100f;

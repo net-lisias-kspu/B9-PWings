@@ -1,4 +1,5 @@
 ﻿using KSP;
+using KSP.IO;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -33,12 +34,12 @@ namespace WingProcedural
         public float wingSpan = 4f;
         public float wingSpanCached = 4f;
 
-        [KSPField (isPersistant = true, guiActiveEditor = true, guiActive = false, guiName = "Width (root)", guiFormat = "S4", guiUnits = "m"),
+        [KSPField (isPersistant = true, guiActiveEditor = true, guiActive = false, guiName = "Width R", guiFormat = "S4", guiUnits = "m"),
         UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0.25f, maxValue = 16f, incrementLarge = 1f, incrementSlide = 0.125f)]
         public float wingWidthRoot = 4f;
         public float wingWidthRootCached = 4f;
 
-        [KSPField (isPersistant = true, guiActiveEditor = true, guiActive = false, guiName = "Width (tip)", guiFormat = "S4", guiUnits = "m"),
+        [KSPField (isPersistant = true, guiActiveEditor = true, guiActive = false, guiName = "Width T", guiFormat = "S4", guiUnits = "m"),
         UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0.25f, maxValue = 16f, incrementLarge = 1f, incrementSlide = 0.125f)]
         public float wingWidthTip = 4f;
         public float wingWidthTipCached = 4f;
@@ -48,12 +49,12 @@ namespace WingProcedural
         public float wingOffset = 0f;
         public float wingOffsetCached = 0f;
 
-        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Height (root)"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Height R"),
         UI_FloatRange (minValue = 0.08f, maxValue = 0.48f, scene = UI_Scene.Editor, stepIncrement = 0.04f)]
         public float wingThicknessRoot = 0.24f;
         public float wingThicknessRootCached = 0.24f;
 
-        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Height (tip)"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Height T"),
         UI_FloatRange (minValue = 0.08f, maxValue = 0.48f, scene = UI_Scene.Editor, stepIncrement = 0.04f)]
         public float wingThicknessTip = 0.24f;
         public float wingThicknessTipCached = 0.24f;
@@ -133,12 +134,12 @@ namespace WingProcedural
         public float ctrlSpanCached = 1f;
 
         [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Width R"),
-        UI_FloatRange (minValue = 0.25f, maxValue = 1.5f, scene = UI_Scene.Editor, stepIncrement = 0.25f)]
+        UI_FloatRange (minValue = 0.25f, maxValue = 1.5f, scene = UI_Scene.Editor, stepIncrement = 0.125f)]
         public float ctrlWidthRoot = 0.25f;
         public float ctrlWidthRootCached = 0.25f;
 
         [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Width T"),
-        UI_FloatRange (minValue = 0.25f, maxValue = 1.5f, scene = UI_Scene.Editor, stepIncrement = 0.25f)]
+        UI_FloatRange (minValue = 0.25f, maxValue = 1.5f, scene = UI_Scene.Editor, stepIncrement = 0.125f)]
         public float ctrlWidthTip = 0.25f;
         public float ctrlWidthTipCached = 0.25f;
 
@@ -191,6 +192,9 @@ namespace WingProcedural
         private Vector2 ctrlThicknessLimits = new Vector2 (0.08f, 0.48f);
         private Vector2 ctrlOffsetLimits = new Vector2 (-1f, 1f);
 
+        private float incrementDiscrete = 1f;
+        private float incrementDimensions = 0.125f;
+        private float incrementThickness = 0.04f;
         public Transform temporaryCollider;
 
 
@@ -216,6 +220,7 @@ namespace WingProcedural
         private bool logUpdateMaterials = false;
         private bool logMeshReferences = false;
         private bool logCheckMeshFilter = false;
+        private bool logPropertyWindow = false;
 
 
 
@@ -257,6 +262,7 @@ namespace WingProcedural
                 if (!this.part.OnEditorDetach.GetInvocationList ().Contains (CachedOnEditorDetach)) this.part.OnEditorDetach += CachedOnEditorDetach;
 
                 DebugTimerUpdate ();
+                UpdateUI ();
 
                 if (isStarted)
                 {
@@ -492,6 +498,8 @@ namespace WingProcedural
 
             isAttached = false;
             justDetached = true;
+            uiEditMode = false;
+            uiEditModeTimeout = true;
         }
 
 
@@ -1378,9 +1386,10 @@ namespace WingProcedural
             {
                 if (_myWindow == null)
                 {
-                    foreach (UIPartActionWindow window in FindObjectsOfType (typeof (UIPartActionWindow)))
+                    UIPartActionWindow[] windows = (UIPartActionWindow[]) FindObjectsOfType (typeof (UIPartActionWindow));
+                    for (int i = 0; i < windows.Length; ++i)
                     {
-                        if (window.part == part) _myWindow = window;
+                        if (windows[i].part == part) _myWindow = windows[i];
                     }
                 }
                 return _myWindow;
@@ -1483,6 +1492,12 @@ namespace WingProcedural
             }
             if (logCAV) DebugLogWithID ("OnStart", "Search results | FAR: " + FARactive + " | NEAR: " + NEARactive + " | FAR mass: " + FARmass);
             if (isCtrlSrf && isWingAsCtrlSrf) Debug.LogError ("WARNING | PART IS CONFIGURED INCORRECTLY, BOTH BOOL PROPERTIES SHOULD NEVER BE SET TO TRUE");
+
+            if (state == StartState.Editor)
+            {
+                if (!uiStyleConfigured) InitStyle ();
+                RenderingManager.AddToPostDrawQueue (0, OnDraw);
+            }
         }
 
 
@@ -1495,24 +1510,15 @@ namespace WingProcedural
         private bool NEARactive = false;
         private bool FARmass = false;
 
-        [KSPField]
-        public float liftFudgeNumber = 0.0775f;
-        [KSPField]
-        public float massFudgeNumber = 0.015f;
-        [KSPField]
-        public float dragBaseValue = 0.6f;
-        [KSPField]
-        public float dragMultiplier = 3.3939f;
-        [KSPField]
-        public float connectionFactor = 150f;
-        [KSPField]
-        public float connectionMinimum = 50f;
-        [KSPField]
-        public float costDensity = 5300f;
-        [KSPField]
-        public float costDensityControl = 6500f;
-        [KSPField]
-        public float modelControlSurfaceFraction = 1f;
+        [KSPField] public float liftFudgeNumber = 0.0775f;
+        [KSPField] public float massFudgeNumber = 0.015f;
+        [KSPField] public float dragBaseValue = 0.6f;
+        [KSPField] public float dragMultiplier = 3.3939f;
+        [KSPField] public float connectionFactor = 150f;
+        [KSPField] public float connectionMinimum = 50f;
+        [KSPField] public float costDensity = 5300f;
+        [KSPField] public float costDensityControl = 6500f;
+        [KSPField] public float modelControlSurfaceFraction = 1f;
 
         [KSPField (guiActiveEditor = false, guiName = "Coefficient of Drag", guiFormat = "F3")]
         public float guiCd;
@@ -1602,12 +1608,14 @@ namespace WingProcedural
                 {
                     guiWingCost = (float) wingMass * (1f + (float) aspectRatioSweepScale / 4f) * costDensity;
                     guiWingCost = Mathf.Round (guiWingCost / 5f) * 5f;
+                    part.CoMOffset = new Vector3 (wingSpan / 2f, wingOffset / 2f, 0f);
                 }
                 else
                 {
                     guiWingCost = (float) wingMass * (1f + (float) aspectRatioSweepScale / 4f) * costDensity * (1f - modelControlSurfaceFraction);
                     guiWingCost += (float) wingMass * (1f + (float) aspectRatioSweepScale / 4f) * costDensityControl * modelControlSurfaceFraction;
                     guiWingCost = Mathf.Round (guiWingCost / 5f) * 5f;
+                    part.CoMOffset = new Vector3 (0f, -(ctrlWidthRoot + ctrlWidthTip) / 4f, 0f);
                 }
 
                 part.breakingForce = Mathf.Round ((float) connectionForce);
@@ -1777,12 +1785,444 @@ namespace WingProcedural
 
 
 
-        // Alternative controls
+        // Alternative UI/input
 
-        public string keyTranslation = "g";
-        public string keyTipScale = "t";
-        public string keyRootScale = "r";
+        public KeyCode uiKeyCodeEdit = KeyCode.G;
+        public KeyCode uiKeyCodeNext = KeyCode.J;
+        public KeyCode uiKeyCodePrev = KeyCode.H;
+        public KeyCode uiKeyCodeAdd = KeyCode.N;
+        public KeyCode uiKeyCodeSubtract = KeyCode.B;
 
-        // Actually, let's not do that
+        public static Rect uiRect = new Rect ();
+        public static bool uiStyleConfigured = false;
+        public static bool uiWindowActive = true;
+        public static float uiMouseDeltaCache = 0f;
+
+        public static int uiInstanceIDTarget = 0;
+        private int uiInstanceIDLocal = 0;
+
+        public static int uiPropertySelectionWing = 0;
+        public static int uiPropertySelectionSurface = 0;
+
+        public static bool uiEditMode = false;
+        public static bool uiEditModeTimeout = false;
+        public float uiEditModeTimer = 0f;
+
+        public static bool uiPropertyAdjustTimeout = false;
+        public float uiPropertyAdjustTimer = 0f;
+
+        public static bool uiPropertySwitchTimeout = false;
+        public float uiPropertySwitchTimer = 0f;
+
+        public static GUIStyle uiStyleWindow = new GUIStyle ();
+        public static GUIStyle uiStyleLabelMedium = new GUIStyle ();
+        public static GUIStyle uiStyleLabelHint = new GUIStyle ();
+        public static GUIStyle uiStyleButton = new GUIStyle ();
+
+        private void OnDraw ()
+        {
+            if (uiInstanceIDLocal == 0) uiInstanceIDLocal = part.GetInstanceID ();
+            if (uiInstanceIDTarget == uiInstanceIDLocal || uiInstanceIDTarget == 0)
+            {
+                if (uiWindowActive)
+                {
+                    uiRect = GUILayout.Window (273, uiRect, OnWindow, GetWindowTitle (), uiStyleWindow);
+                    if (uiRect.x == 0f && uiRect.y == 0f) uiRect = uiRect.SetToScreenCenter ();
+                }
+            }
+        }
+
+        private void OnWindow (int window)
+        {
+            GUILayout.BeginHorizontal ();
+            GUILayout.FlexibleSpace ();
+            GUILayout.EndHorizontal ();
+            if (uiEditMode)
+            {
+                if (!isCtrlSrf)
+                {
+                    GUILayout.BeginHorizontal ();
+                    GUILayout.Label ("Editing: " + GetPropertyState (uiPropertySelectionWing), uiStyleLabelMedium);
+                    if (GUILayout.Button ("Close", uiStyleButton, GUILayout.MaxWidth (50f))) uiWindowActive = false;
+                    GUILayout.EndHorizontal ();
+                    GUILayout.Label (GetPropertyDescription (uiPropertySelectionWing) + "\n", uiStyleLabelHint);
+                }
+                else
+                {
+                    GUILayout.BeginHorizontal ();
+                    GUILayout.Label ("Editing: " + GetPropertyState (uiPropertySelectionSurface), uiStyleLabelMedium);
+                    if (GUILayout.Button ("Close", uiStyleButton, GUILayout.MaxWidth (50f))) uiWindowActive = false;
+                    GUILayout.EndHorizontal ();
+                    GUILayout.Label (GetPropertyDescription (uiPropertySelectionWing) + "\n", uiStyleLabelHint);
+                }
+                if (uiEditModeTimeout) GUILayout.Label ("Starting edit mode...", uiStyleLabelMedium);
+                else GUILayout.Label ("G - exit edit mode\nH/J - switch between properties\nB/N or mouse - change the value", uiStyleLabelHint);
+            }
+            else
+            {
+                if (uiEditModeTimeout) GUILayout.Label ("Exiting edit mode...\n", uiStyleLabelMedium);
+                else
+                {
+                    GUILayout.BeginHorizontal ();
+                    GUILayout.Label ("Press G while pointing at a\nprocedural part to edit it", uiStyleLabelMedium);
+                    if (GUILayout.Button ("Close", uiStyleButton, GUILayout.MaxWidth (50f))) uiWindowActive = false;
+                    GUILayout.EndHorizontal ();
+                }
+            }
+            GUI.DragWindow ();
+        }
+
+        private void InitStyle ()
+        {
+            uiStyleWindow = new GUIStyle (HighLogic.Skin.window);
+            uiStyleWindow.fixedWidth = 250f;
+            uiStyleWindow.wordWrap = true;
+
+            uiStyleLabelMedium = new GUIStyle (HighLogic.Skin.label);
+            uiStyleLabelMedium.stretchWidth = true;
+            uiStyleLabelMedium.fontSize = 13;
+
+            uiStyleLabelHint = new GUIStyle (HighLogic.Skin.label);
+            uiStyleLabelHint.stretchWidth = true;
+            uiStyleLabelHint.fontSize = 11;
+
+            uiStyleButton = new GUIStyle (HighLogic.Skin.button);
+            uiStyleButton.stretchWidth = true;
+            uiStyleButton.fontSize = 11;
+            uiStyleConfigured = true;
+        }
+
+        private void OnMouseOver ()
+        {
+            if (HighLogic.LoadedSceneIsEditor)
+            {
+                if (this.part.parent != null && isAttached && !uiEditModeTimeout)
+                {
+                    if (!uiEditMode)
+                    {
+                        if (Input.GetKeyDown (uiKeyCodeEdit))
+                        {
+                            uiInstanceIDTarget = part.GetInstanceID ();
+                            uiEditMode = true;
+                            uiEditModeTimeout = true;
+                            uiWindowActive = true;
+                        }
+                    }
+                    if (uiEditMode)
+                    {
+                        if (Input.GetKeyDown (KeyCode.Escape)) uiEditMode = false;
+                        if (Input.GetKeyDown (KeyCode.Mouse1))
+                        {
+                            uiEditMode = false;
+                            uiWindowActive = false;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void UpdateUI ()
+        {
+            // if (stockButton == null) OnStockButtonSetup ();
+            if (uiInstanceIDLocal != uiInstanceIDTarget) return;
+            if (uiPropertyAdjustTimeout)
+            {
+                uiPropertyAdjustTimer += Time.deltaTime;
+                if (uiPropertyAdjustTimer > 0.5f)
+                {
+                    uiPropertyAdjustTimeout = false;
+                    uiPropertyAdjustTimer = 0.0f;
+                }
+            }
+            if (uiPropertySwitchTimeout)
+            {
+                uiPropertySwitchTimer += Time.deltaTime;
+                if (uiPropertySwitchTimer > 0.5f)
+                {
+                    uiPropertySwitchTimeout = false;
+                    uiPropertySwitchTimer = 0.0f;
+                }
+            }
+            if (uiEditModeTimeout)
+            {
+                uiEditModeTimer += Time.deltaTime;
+                if (uiEditModeTimer > 0.5f)
+                {
+                    uiEditModeTimeout = false;
+                    uiEditModeTimer = 0.0f;
+                }
+            }
+            if (uiEditMode && !uiEditModeTimeout)
+            {
+                if (Input.GetKeyDown (uiKeyCodeEdit) || Input.GetKeyDown (KeyCode.Mouse0))
+                {
+                    uiEditMode = false;
+                    uiEditModeTimeout = true;
+                }
+            }
+            if (uiEditMode)
+            {
+                if (Input.GetKeyDown (uiKeyCodeNext))
+                {
+                    SwitchProperty (true);
+                }
+                else if (Input.GetKeyDown (uiKeyCodePrev))
+                {
+                    SwitchProperty (false);
+                }
+                if (Input.GetKeyDown (uiKeyCodeAdd))
+                {
+                    uiMouseDeltaCache = 1f;
+                    AdjustSelectedProperty ();
+                }
+                else if (Input.GetKeyDown (uiKeyCodeSubtract))
+                {
+                    uiMouseDeltaCache = -1f;
+                    AdjustSelectedProperty ();
+                }
+                else
+                {
+                    float uiMouseDelta = Input.GetAxis ("Mouse X");
+                    if (uiMouseDelta != 0f)
+                    {
+                        uiMouseDeltaCache += uiMouseDelta;
+                        uiPropertyAdjustTimeout = true;
+                        AdjustSelectedProperty ();
+                    }
+                }
+            }
+        }
+
+        private void AdjustSelectedProperty ()
+        {
+            int m = Mathf.RoundToInt (uiMouseDeltaCache);
+            if (m != 0)
+            {
+                if (!isCtrlSrf)
+                {
+                    if (uiPropertySelectionWing == 0)
+                        wingSpan = Mathf.Clamp (wingSpan + incrementDimensions * m, wingSpanLimits.x, wingSpanLimits.y);
+                    else if (uiPropertySelectionWing == 1)
+                        wingWidthRoot = Mathf.Clamp (wingWidthRoot + incrementDimensions * m, wingWidthLimits.x, wingWidthLimits.y);
+                    else if (uiPropertySelectionWing == 2)
+                        wingWidthTip = Mathf.Clamp (wingWidthTip + incrementDimensions * m, wingWidthLimits.x, wingWidthLimits.y);
+                    else if (uiPropertySelectionWing == 3)
+                        wingOffset = Mathf.Clamp (wingOffset + incrementDimensions * m, wingOffsetLimits.x, wingOffsetLimits.y);
+                    else if (uiPropertySelectionWing == 4)
+                        wingThicknessRoot = Mathf.Clamp (wingThicknessRoot + incrementThickness * m, wingThicknessLimits.x, wingThicknessLimits.y);
+                    else if (uiPropertySelectionWing == 5)
+                        wingThicknessTip = Mathf.Clamp (wingThicknessTip + incrementThickness * m, wingThicknessLimits.x, wingThicknessLimits.y);
+                    else if (uiPropertySelectionWing == 6)
+                        wingSurfaceTextureTop = Mathf.Clamp (wingSurfaceTextureTop + incrementDiscrete * m, 1, 4);
+                    else if (uiPropertySelectionWing == 7)
+                        wingSurfaceTextureBottom = Mathf.Clamp (wingSurfaceTextureBottom + incrementDiscrete * m, 1, 4);
+                    else if (uiPropertySelectionWing == 8)
+                        wingEdgeTypeLeading = Mathf.Clamp (wingEdgeTypeLeading + incrementDiscrete * m, 1, 4);
+                    else if (uiPropertySelectionWing == 9)
+                        wingEdgeTypeTrailing = Mathf.Clamp (wingEdgeTypeTrailing + incrementDiscrete * m, 1, 4);
+                    else if (uiPropertySelectionWing == 10)
+                        wingEdgeTextureLeading = Mathf.Clamp (wingEdgeTextureLeading + incrementDiscrete * m, 1, 4);
+                    else if (uiPropertySelectionWing == 11)
+                        wingEdgeTextureTrailing = Mathf.Clamp (wingEdgeTextureTrailing + incrementDiscrete * m, 1, 4);
+                    else if (uiPropertySelectionWing == 12)
+                        wingEdgeScaleLeading = Mathf.Clamp (wingEdgeScaleLeading + incrementDimensions * m, 0, 1);
+                    else if (uiPropertySelectionWing == 13)
+                        wingEdgeScaleTrailing = Mathf.Clamp (wingEdgeScaleTrailing + incrementDimensions * m, 0, 1);
+                }
+                else
+                {
+                    if (uiPropertySelectionSurface == 0)
+                        ctrlSpan = Mathf.Clamp (ctrlSpan + incrementDimensions * m, ctrlSpanLimits.x, ctrlSpanLimits.y);
+                    else if (uiPropertySelectionSurface == 1)
+                        ctrlWidthRoot = Mathf.Clamp (ctrlWidthRoot + incrementDimensions * m, ctrlWidthLimits.x, ctrlWidthLimits.y);
+                    else if (uiPropertySelectionSurface == 2)
+                        ctrlWidthTip = Mathf.Clamp (ctrlWidthTip + incrementDimensions * m, ctrlWidthLimits.x, ctrlWidthLimits.y);
+                    else if (uiPropertySelectionSurface == 3)
+                        ctrlThicknessRoot = Mathf.Clamp (ctrlThicknessRoot + incrementThickness * m, ctrlThicknessLimits.x, ctrlThicknessLimits.y);
+                    else if (uiPropertySelectionSurface == 4)
+                        ctrlThicknessTip = Mathf.Clamp (ctrlThicknessTip + incrementThickness * m, ctrlThicknessLimits.x, ctrlThicknessLimits.y);
+                    else if (uiPropertySelectionSurface == 5)
+                        ctrlOffsetRoot = Mathf.Clamp (ctrlOffsetRoot + incrementDimensions * m, ctrlOffsetLimits.x, ctrlOffsetLimits.y);
+                    else if (uiPropertySelectionSurface == 6)
+                        ctrlOffsetTip = Mathf.Clamp (ctrlOffsetTip + incrementDimensions * m, ctrlOffsetLimits.x, ctrlOffsetLimits.y);
+                    else if (uiPropertySelectionSurface == 7)
+                        ctrlSurfaceTextureTop = Mathf.Clamp (ctrlSurfaceTextureTop + incrementDiscrete * m, 1, 4);
+                    else if (uiPropertySelectionSurface == 8)
+                        ctrlSurfaceTextureBottom = Mathf.Clamp (ctrlSurfaceTextureBottom + incrementDiscrete * m, 1, 4);
+                    else if (uiPropertySelectionSurface == 9)
+                        ctrlEdgeTexture = Mathf.Clamp (ctrlEdgeTexture + incrementDiscrete * m, 1, 4);
+                }
+                uiMouseDeltaCache = 0f;
+            }
+        }
+
+        private void SwitchProperty (bool forward)
+        {
+            int propertyShift = 1;
+            if (!forward) propertyShift = -1;
+            if (!isCtrlSrf)
+            {
+                if (forward && uiPropertySelectionWing == 13) uiPropertySelectionWing = 0;
+                else if (!forward && uiPropertySelectionWing == 0) uiPropertySelectionWing = 13;
+                else uiPropertySelectionWing = Mathf.Clamp (uiPropertySelectionWing + propertyShift, 0, 13);
+            }
+            else
+            {
+                if (forward && uiPropertySelectionSurface == 9) uiPropertySelectionSurface = 0;
+                else if (!forward && uiPropertySelectionSurface == 0) uiPropertySelectionSurface = 9;
+                else uiPropertySelectionSurface = Mathf.Clamp (uiPropertySelectionSurface + propertyShift, 0, 9);
+            }
+            if (logPropertyWindow) DebugLogWithID ("SwitchProperty", "Finished with following values | Wing: " + uiPropertySelectionWing + " | Surface: " + uiPropertySelectionSurface);
+        }
+
+        private float GetMultiplierFromDelta (float delta)
+        {
+            if (delta > 0) return 1f;
+            else return -1f;
+        }
+
+        private string GetPropertyState (int id)
+        {
+            if (!isCtrlSrf && id <= 13 && id >= 0)
+            {
+                if (id == 0)       return "Semispan\n"         + wingSpan.ToString ("F3");
+                else if (id == 1)  return "Width (root)\n"     + wingWidthRoot.ToString ("F3");
+                else if (id == 2)  return "Width (tip)\n"      + wingWidthTip.ToString ("F3");
+                else if (id == 3)  return "Offset\n"           + wingOffset.ToString ("F3");
+                else if (id == 4)  return "Height (root)\n"    + wingThicknessRoot.ToString ("F2");
+                else if (id == 5)  return "Height (tip)\n"     + wingThicknessTip.ToString ("F2");
+                else if (id == 6)  return "Side A (type)\n"    + wingSurfaceTextureTop.ToString ();
+                else if (id == 7)  return "Side B (type)\n"    + wingSurfaceTextureBottom.ToString ();
+                else if (id == 8)  return "Edge L (shape)\n"   + wingEdgeTypeLeading.ToString ();
+                else if (id == 9)  return "Edge T (shape)\n"   + wingEdgeTypeTrailing.ToString ();
+                else if (id == 10) return "Edge L (type)\n"    + wingEdgeTextureLeading.ToString ();
+                else if (id == 11) return "Edge T (type)\n"    + wingEdgeTextureTrailing.ToString ();
+                else if (id == 12) return "Edge L (scale)\n"   + wingEdgeScaleLeading.ToString ();
+                else               return "Edge T (scale)\n"   + wingEdgeScaleTrailing.ToString ();
+            }
+            else if (isCtrlSrf && id <= 7 && id >= 0)
+            {
+                if (id == 0)       return "Length\n"           + ctrlSpan.ToString ("F3");
+                else if (id == 1)  return "Width R\n"          + ctrlWidthRoot.ToString ("F3");
+                else if (id == 2)  return "Width T\n"          + ctrlWidthTip.ToString ("F3");
+                else if (id == 3)  return "Height R\n"         + ctrlThicknessRoot.ToString ("F2");
+                else if (id == 4)  return "Height T\n"         + ctrlThicknessTip.ToString ("F2");
+                else if (id == 5)  return "Offset R\n"         + ctrlOffsetRoot.ToString ("F3");
+                else if (id == 6)  return "Offset T\n"         + ctrlOffsetTip.ToString ("F3");
+                else if (id == 7)  return "Material A\n"       + ctrlSurfaceTextureTop.ToString ();
+                else if (id == 8)  return "Material B\n"       + ctrlSurfaceTextureBottom.ToString ();
+                else               return "Material C\n"       + ctrlEdgeTexture.ToString ();
+            }
+            else return "Invalid property ID";
+        }
+
+        private string GetPropertyDescription (int id)
+        {
+            if (!isCtrlSrf && id <= 13 && id >= 0)
+            {
+                if (id == 0)       return "Lateral measurement of the wing";
+                else if (id == 1)  return "Longitudinal measurement of the wing \nat the root cross section";
+                else if (id == 2)  return "Longitudinal measurement of the wing \nat the tip cross section";
+                else if (id == 3)  return "Distance between midpoints of the cross \nsections on the longitudinal axis";
+                else if (id == 4)  return "Thickness at the root cross section";
+                else if (id == 5)  return "Thickness at the tip cross section";
+                else if (id == 6)  return "Material of the wing surface A \n(usually it's the one on top)";
+                else if (id == 7)  return "Material of the wing surface B \n(usually it's the bottom one)";
+                else if (id == 8)  return "Leading edge cross section shape";
+                else if (id == 9)  return "Trailing edge cross section shape";
+                else if (id == 10) return "Leading edge material";
+                else if (id == 11) return "Trailing edge material";
+                else if (id == 12) return "Leading edge scaling multiplier \non the longitudinal axis";
+                else               return "Trailing edge scaling multiplier \non the longitudinal axis";
+            }
+            else if (isCtrlSrf && id <= 7 && id >= 0)
+            {
+                if (id == 0)       return "Lateral measurement of the root \ncross section of the control surface";
+                else if (id == 1)  return "Longitudinal measurement of the control \nsurface at the left cross section";
+                else if (id == 2)  return "Longitudinal measurement of the control \nsurface at the right cross section";
+                else if (id == 3)  return "Thickness at the left cross section";
+                else if (id == 4)  return "Thickness at the right cross section";
+                else if (id == 5)  return "Offset of the trailing edge left corner \non the lateral axis";
+                else if (id == 6)  return "Offset of the trailing edge right corner \non the lateral axis";
+                else if (id == 7)  return "Material of the flat surface A \n(typically top of the control surface)";
+                else if (id == 8)  return "Material of the flat surface B \n(typically bottom of the control surface)";
+                else               return "Material of the trailing edge";
+            }
+            else return "Invalid property ID";
+        }
+
+        private string GetWindowTitle ()
+        {
+            if (uiEditMode)
+            {
+                if (!isCtrlSrf)
+                {
+                    if (isWingAsCtrlSrf) return "All-moving control surface";
+                    else return "Wing";
+                }
+                else return "Control surface";
+            }
+            else return "Inactive";
+        }
+
+
+
+
+        // Saving/loading
+
+        public override void OnSave (ConfigNode node)
+        {
+            PluginConfiguration config = PluginConfiguration.CreateForType<WingProcedural> ();
+            config.SetValue ("uiRect", uiRect);
+            config.save ();
+        }
+
+        public override void OnLoad (ConfigNode node)
+        {
+            PluginConfiguration config = PluginConfiguration.CreateForType<WingProcedural> ();
+            config.load ();
+            uiRect = config.GetValue<Rect> ("uiRect");
+        }
+
+
+
+
+        // Stock toolbar integration
+
+        /*
+        public static ApplicationLauncherButton stockButton = null;
+
+        private void OnStockButtonSetup ()
+        {
+            stockButton = ApplicationLauncher.Instance.AddModApplication (OnStockButtonClick, OnStockButtonClick, OnStockButtonVoid, OnStockButtonVoid, OnStockButtonVoid, OnStockButtonVoid, ApplicationLauncher.AppScenes.SPH, (Texture) GameDatabase.Instance.GetTexture ("B9_Aerospace/Plugins/icon_stock", false));
+        }
+
+        public void OnStockButtonClick ()
+        {
+            uiWindowActive = !uiWindowActive;
+        }
+
+        private void OnStockButtonVoid ()
+        {
+
+        }
+
+        public void OnDestroy ()
+        {
+            bool stockButtonRemoved = true;
+            for (int i = 0; i < part.vessel.parts.Count; ++i)
+            {
+                if (part.vessel.parts[i] != null)
+                {
+                    if (part.vessel.parts[i].Modules.Contains ("WingProcedural"))
+                    {
+                        stockButtonRemoved = false;
+                        break;
+                    }
+                }
+            }
+            if (stockButtonRemoved) ApplicationLauncher.Instance.RemoveModApplication (stockButton);
+        }
+        */
     }
 }

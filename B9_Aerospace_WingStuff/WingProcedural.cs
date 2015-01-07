@@ -60,12 +60,12 @@ namespace WingProcedural
         public float wingThicknessTipCached = 0.24f;
 
         [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Side A (type)"),
-        UI_FloatRange (minValue = 1f, maxValue = 4f, scene = UI_Scene.Editor, stepIncrement = 1f)]
+        UI_FloatRange (minValue = 0f, maxValue = 4f, scene = UI_Scene.Editor, stepIncrement = 1f)]
         public float wingSurfaceTextureTop = 3f;
         public float wingSurfaceTextureTopCached = 3f;
 
         [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Side B (type)"),
-        UI_FloatRange (minValue = 1f, maxValue = 4f, scene = UI_Scene.Editor, stepIncrement = 1f)]
+        UI_FloatRange (minValue = 0f, maxValue = 4f, scene = UI_Scene.Editor, stepIncrement = 1f)]
         public float wingSurfaceTextureBottom = 4f;
         public float wingSurfaceTextureBottomCached = 4f;
 
@@ -164,12 +164,12 @@ namespace WingProcedural
         public float ctrlOffsetTipCached = 0.0f;
 
         [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Material A"),
-        UI_FloatRange (minValue = 1f, maxValue = 4f, scene = UI_Scene.Editor, stepIncrement = 1f)]
+        UI_FloatRange (minValue = 0f, maxValue = 4f, scene = UI_Scene.Editor, stepIncrement = 1f)]
         public float ctrlSurfaceTextureTop = 1f;
         public float ctrlSurfaceTextureTopCached;
 
         [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Material B"),
-        UI_FloatRange (minValue = 1f, maxValue = 4f, scene = UI_Scene.Editor, stepIncrement = 1f)]
+        UI_FloatRange (minValue = 0f, maxValue = 4f, scene = UI_Scene.Editor, stepIncrement = 1f)]
         public float ctrlSurfaceTextureBottom = 4f;
         public float ctrlSurfaceTextureBottomCached;
 
@@ -498,8 +498,7 @@ namespace WingProcedural
 
             isAttached = false;
             justDetached = true;
-            uiEditMode = false;
-            uiEditModeTimeout = true;
+            if (uiEditMode) uiEditMode = false;
         }
 
 
@@ -595,7 +594,7 @@ namespace WingProcedural
                     uv[3] = new Vector2 (wingSpan / 4f, 1f - 0.5f + wingWidthTip / 8f - wingOffset / 4f);
 
                     Color[] cl = new Color[length];
-                    for (int i = 0; i < length; ++i) cl[i] = new Color (0f, 0f, 0f, GetMaterialVertexAlpha (wingSurfaceTextureTop));
+                    for (int i = 0; i < length; ++i) cl[i] = GetVertexColorFromSelection (wingSurfaceTextureTop);
 
                     meshFilterWingSurfaceTop.mesh.vertices = vp;
                     meshFilterWingSurfaceTop.mesh.uv = uv;
@@ -628,7 +627,7 @@ namespace WingProcedural
                     uv[3] = new Vector2 (wingSpan / 4f, 1f - 0.5f + wingWidthTip / 8f + wingOffset / 4f);
 
                     Color[] cl = new Color[length];
-                    for (int i = 0; i < length; ++i) cl[i] = new Color (0f, 0f, 0f, GetMaterialVertexAlpha (wingSurfaceTextureBottom));
+                    for (int i = 0; i < length; ++i) cl[i] = GetVertexColorFromSelection (wingSurfaceTextureBottom);
 
                     meshFilterWingSurfaceBottom.mesh.vertices = vp;
                     meshFilterWingSurfaceBottom.mesh.uv = uv;
@@ -684,7 +683,7 @@ namespace WingProcedural
                         }
 
                         // Colors
-                        cl[i] = new Color (0f, 0f, 0f, GetMaterialVertexAlpha (wingEdgeTextureTrailing));
+                        cl[i] = GetVertexColorFromSelection (wingEdgeTextureTrailing);
                     }
 
                     meshFiltersWingEdgeTrailing[wingEdgeTypeTrailingInt].mesh.vertices = vp;
@@ -721,7 +720,7 @@ namespace WingProcedural
                         }
 
                         // Colors
-                        cl[i] = new Color (0f, 0f, 0f, GetMaterialVertexAlpha (wingEdgeTextureLeading));
+                        cl[i] = GetVertexColorFromSelection (wingEdgeTextureLeading);
                     }
 
                     meshFiltersWingEdgeLeading[wingEdgeTypeLeadingInt].mesh.vertices = vp;
@@ -836,7 +835,7 @@ namespace WingProcedural
                         }
 
                         // Colors
-                        cl[i] = new Color (0f, 0f, 0f, GetMaterialVertexAlpha (ctrlEdgeTexture));
+                        cl[i] = GetVertexColorFromSelection (ctrlEdgeTexture);
                     }
 
                     meshFilterCtrlEdge.mesh.vertices = vp;
@@ -903,7 +902,7 @@ namespace WingProcedural
                         }
 
                         // Colors
-                        cl[i] = new Color (0f, 0f, 0f, GetMaterialVertexAlpha (ctrlSurfaceTextureTop));
+                        cl[i] = GetVertexColorFromSelection (ctrlSurfaceTextureTop);
                     }
                     meshFilterCtrlSurfaceTop.mesh.vertices = vp;
                     meshFilterCtrlSurfaceTop.mesh.uv = uv;
@@ -963,7 +962,7 @@ namespace WingProcedural
                         }
 
                         // Colors
-                        cl[i] = new Color (0f, 0f, 0f, GetMaterialVertexAlpha (ctrlSurfaceTextureBottom));
+                        cl[i] = GetVertexColorFromSelection (ctrlSurfaceTextureBottom);
                     }
                     meshFilterCtrlSurfaceBottom.mesh.vertices = vp;
                     meshFilterCtrlSurfaceBottom.mesh.uv = uv;
@@ -1083,10 +1082,10 @@ namespace WingProcedural
             }
         }
 
-        private float GetMaterialVertexAlpha (float selection)
+        private Color GetVertexColorFromSelection (float selection)
         {
-            float a = (selection - 1f) / 3f;
-            return a;
+            if (selection == 0) return new Color (0.6f, 1.0f, 0.0f, 0.0f);
+            else return new Color (0.0f, 0.0f, 0.0f, (selection - 1f) / 3f);
         }
 
 
@@ -1456,47 +1455,53 @@ namespace WingProcedural
         public override void OnStart (PartModule.StartState state)
         {
             base.OnStart (state);
-            FARactive = AssemblyLoader.loadedAssemblies.Any (a => a.assembly.GetName ().Name.Equals ("FerramAerospaceResearch.dll", StringComparison.InvariantCultureIgnoreCase));
-            NEARactive = AssemblyLoader.loadedAssemblies.Any (a => a.assembly.GetName ().Name.Equals ("NEAR.dll", StringComparison.InvariantCultureIgnoreCase));
-            if (!FARactive)
+            aeroModelFAR = AssemblyLoader.loadedAssemblies.Any (a => a.assembly.GetName ().Name.Equals ("FerramAerospaceResearch.dll", StringComparison.InvariantCultureIgnoreCase));
+            aeroModelNEAR = AssemblyLoader.loadedAssemblies.Any (a => a.assembly.GetName ().Name.Equals ("NEAR.dll", StringComparison.InvariantCultureIgnoreCase));
+            if (!aeroModelFAR)
             {
                 if (logCAV) DebugLogWithID ("OnStart", "FAR not found, attempting another search");
                 bool FARactiveTemp = AssemblyLoader.loadedAssemblies.Any (a => a.assembly.GetName ().Name.Equals ("FerramAerospaceResearch", StringComparison.InvariantCultureIgnoreCase));
                 if (FARactiveTemp)
                 {
                     if (logCAV) DebugLogWithID ("OnStart", "FAR found using alternative assembly name");
-                    FARactive = true;
+                    aeroModelFAR = true;
                 }
             }
-            if (!NEARactive)
+            if (!aeroModelNEAR)
             {
                 if (logCAV) DebugLogWithID ("OnStart", "NEAR not found, attempting another search");
                 bool NEARactiveTemp = AssemblyLoader.loadedAssemblies.Any (a => a.assembly.GetName ().Name.Equals ("NEAR", StringComparison.InvariantCultureIgnoreCase));
                 if (NEARactiveTemp)
                 {
                     if (logCAV) DebugLogWithID ("OnStart", "NEAR found using alternative assembly name");
-                    NEARactive = true;
+                    aeroModelNEAR = true;
                 }
             }
-            if (FARactive || NEARactive)
+            if (aeroModelFAR || aeroModelNEAR)
             {
-                
-                foreach (ConfigNode node in GameDatabase.Instance.GetConfigNodes ("FARAeroData"))
+                ConfigNode[] nodes = GameDatabase.Instance.GetConfigNodes ("FARAeroData");
+                for (int i = 0; i < nodes.Length; ++i)
                 {
-                    if (node == null)
-                        continue;
-
-                    if (node.HasValue ("massPerWingAreaSupported"))
-                        FARmass = true;
+                    if (nodes[i] == null) continue;
+                    if (nodes[i].HasValue ("massPerWingAreaSupported")) aeroModelFARMass = true;
                 }
             }
-            if (logCAV) DebugLogWithID ("OnStart", "Search results | FAR: " + FARactive + " | NEAR: " + NEARactive + " | FAR mass: " + FARmass);
+            if (logCAV) DebugLogWithID ("OnStart", "Search results | FAR: " + aeroModelFAR + " | NEAR: " + aeroModelNEAR + " | FAR mass: " + aeroModelFARMass);
             if (isCtrlSrf && isWingAsCtrlSrf) Debug.LogError ("WARNING | PART IS CONFIGURED INCORRECTLY, BOTH BOOL PROPERTIES SHOULD NEVER BE SET TO TRUE");
 
-            if (state == StartState.Editor)
+            if (HighLogic.LoadedSceneIsEditor)
             {
                 if (!uiStyleConfigured) InitStyle ();
                 RenderingManager.AddToPostDrawQueue (0, OnDraw);
+            }
+            if (HighLogic.LoadedSceneIsFlight)
+            {
+                if (!isStarted && isAttached && !isStartingNow)
+                {
+                    DebugLogWithID ("OnStart", "Setup started");
+                    Setup ();
+                    isStarted = true;
+                }
             }
         }
 
@@ -1506,63 +1511,63 @@ namespace WingProcedural
         // Aerodynamics value calculation
         // More or less lifted from pWings, so credit goes to DYJ and Taverius
 
-        private bool FARactive = false;
-        private bool NEARactive = false;
-        private bool FARmass = false;
+        private bool aeroModelFAR = false;
+        private bool aeroModelNEAR = false;
+        private bool aeroModelFARMass = false;
 
-        [KSPField] public float liftFudgeNumber = 0.0775f;
-        [KSPField] public float massFudgeNumber = 0.015f;
-        [KSPField] public float dragBaseValue = 0.6f;
-        [KSPField] public float dragMultiplier = 3.3939f;
-        [KSPField] public float connectionFactor = 150f;
-        [KSPField] public float connectionMinimum = 50f;
-        [KSPField] public float costDensity = 5300f;
-        [KSPField] public float costDensityControl = 6500f;
-        [KSPField] public float modelControlSurfaceFraction = 1f;
+        [KSPField] public float aeroConstLiftFudgeNumber = 0.0775f;
+        [KSPField] public float aeroConstMassFudgeNumber = 0.015f;
+        [KSPField] public float aeroConstDragBaseValue = 0.6f;
+        [KSPField] public float aeroConstDragMultiplier = 3.3939f;
+        [KSPField] public float aeroConstConnectionFactor = 150f;
+        [KSPField] public float aeroConstConnectionMinimum = 50f;
+        [KSPField] public float aeroConstCostDensity = 5300f;
+        [KSPField] public float aeroConstCostDensityControl = 6500f;
+        [KSPField] public float aeroConstControlSurfaceFraction = 1f;
 
-        [KSPField (guiActiveEditor = false, guiName = "Coefficient of Drag", guiFormat = "F3")]
-        public float guiCd;
+        [KSPField (guiActiveEditor = false, guiName = "Coefficient of drag", guiFormat = "F3")]
+        public float aeroUICd;
 
-        [KSPField (guiActiveEditor = false, guiName = "Coefficient of Lift", guiFormat = "F3")]
-        public float guiCl;
+        [KSPField (guiActiveEditor = false, guiName = "Coefficient of lift", guiFormat = "F3")]
+        public float aeroUICl;
 
         [KSPField (guiActiveEditor = false, guiName = "Mass", guiFormat = "F3", guiUnits = "t")]
-        public float guiWingMass;
+        public float aeroUIMass;
 
         [KSPField (guiActiveEditor = false, guiName = "Cost")]
-        public float guiWingCost;
+        public float aeroUICost;
 
-        [KSPField (guiActiveEditor = false, guiName = "Mean Aerodynamic Chord", guiFormat = "F3", guiUnits = "m")]
-        public float guiMAC;
+        [KSPField (guiActiveEditor = false, guiName = "Mean aerodynamic chord", guiFormat = "F3", guiUnits = "m")]
+        public float aeroUIMeanAerodynamicChord;
 
-        [KSPField (guiActiveEditor = false, guiName = "Semi-Span", guiFormat = "F3", guiUnits = "m")]
-        public float guiB_2;
+        [KSPField (guiActiveEditor = false, guiName = "Semispan", guiFormat = "F3", guiUnits = "m")]
+        public float aeroUISemispan;
 
-        [KSPField (guiActiveEditor = false, guiName = "Mid-Chord Sweep", guiFormat = "F3", guiUnits = "deg.")]
-        public float guiMidChordSweep;
+        [KSPField (guiActiveEditor = false, guiName = "Mid-chord wweep", guiFormat = "F3", guiUnits = "deg.")]
+        public float aeroUIMidChordSweep;
 
-        [KSPField (guiActiveEditor = false, guiName = "Taper Ratio", guiFormat = "F3")]
-        public float guiTaperRatio;
+        [KSPField (guiActiveEditor = false, guiName = "Taper ratio", guiFormat = "F3")]
+        public float aeroUITaperRatio;
 
-        [KSPField (guiActiveEditor = false, guiName = "Surface Area", guiFormat = "F3", guiUnits = "m²")]
-        public float guiSurfaceArea;
+        [KSPField (guiActiveEditor = false, guiName = "Surface area", guiFormat = "F3", guiUnits = "m²")]
+        public float aeroUISurfaceArea;
 
-        [KSPField (guiActiveEditor = false, guiName = "Aspect Ratio", guiFormat = "F3")]
-        public float guiAspectRatio;
+        [KSPField (guiActiveEditor = false, guiName = "Aspect ratio", guiFormat = "F3")]
+        public float aeroUIAspectRatio;
 
-        public double Cd;
-        public double Cl;
-        public double ChildrenCl;
-        public double wingMass;
-        public double connectionForce;
+        public double aeroStatCd;
+        public double aeroStatCl;
+        public double aeroStatClChildren;
+        public double aeroStatMass;
+        public double aeroStatConnectionForce;
 
-        public double meanAerodynamicChord;
-        public double b_2;
-        public double midChordSweep;
-        public double taperRatio;
-        public double surfaceArea;
-        public double aspectRatio;
-        public double aspectRatioSweepScale;
+        public double aeroStatMeanAerodynamicChord;
+        public double aeroStatSemispan;
+        public double aeroStatMidChordSweep;
+        public double aeroStatTaperRatio;
+        public double aeroStatSurfaceArea;
+        public double aeroStatAspectRatio;
+        public double aeroStatAspectRatioSweepScale;
 
         public void CalculateAerodynamicValues ()
         {
@@ -1570,142 +1575,133 @@ namespace WingProcedural
             {
                 if (logCAV) DebugLogWithID ("CalculateAerodynamicValues", "Started");
 
+                // Base four values
+
                 if (!isCtrlSrf)
                 {
-                    b_2 = wingSpan;
-                    taperRatio = (double) wingWidthTip / (double) wingWidthRoot;
-                    meanAerodynamicChord = (double) (wingWidthTip + wingWidthRoot) / 2.0;
-                    midChordSweep = MathD.Atan ((double) wingOffset / (double) wingSpan) * MathD.Rad2Deg; // (double)(sweepLeading + sweepTrailing) / 2.0;
+                    aeroStatSemispan = wingSpan;
+                    aeroStatTaperRatio = (double) wingWidthTip / (double) wingWidthRoot;
+                    aeroStatMeanAerodynamicChord = (double) (wingWidthTip + wingWidthRoot) / 2.0;
+                    aeroStatMidChordSweep = MathD.Atan ((double) wingOffset / (double) wingSpan) * MathD.Rad2Deg;
                 }
                 else
                 {
-                    b_2 = ctrlSpan;
-                    taperRatio = (double) ctrlWidthTip / (double) ctrlWidthRoot;
-                    meanAerodynamicChord = (double) (ctrlWidthTip + ctrlWidthRoot) / 2.0;
-                    midChordSweep = MathD.Atan ((double) Mathf.Abs (ctrlWidthRoot - ctrlWidthTip) / (double) ctrlSpan) * MathD.Rad2Deg;
+                    aeroStatSemispan = ctrlSpan;
+                    aeroStatTaperRatio = (double) ctrlWidthTip / (double) ctrlWidthRoot;
+                    aeroStatMeanAerodynamicChord = (double) (ctrlWidthTip + ctrlWidthRoot) / 2.0;
+                    aeroStatMidChordSweep = MathD.Atan ((double) Mathf.Abs (ctrlWidthRoot - ctrlWidthTip) / (double) ctrlSpan) * MathD.Rad2Deg;
                 }
-
                 if (logCAV) DebugLogWithID ("CalculateAerodynamicValues", "Passed B2/TR/MAC/MCS");
 
-                surfaceArea = meanAerodynamicChord * b_2;
-                aspectRatio = 2.0f * b_2 / meanAerodynamicChord;
+                // Derived values
 
-                aspectRatioSweepScale = MathD.Pow (aspectRatio / MathD.Cos (MathD.Deg2Rad * midChordSweep), 2.0f) + 4.0f;
-                aspectRatioSweepScale = 2.0f + MathD.Sqrt (aspectRatioSweepScale);
-                aspectRatioSweepScale = (2.0f * MathD.PI) / aspectRatioSweepScale * aspectRatio;
+                aeroStatSurfaceArea = aeroStatMeanAerodynamicChord * aeroStatSemispan;
+                aeroStatAspectRatio = 2.0f * aeroStatSemispan / aeroStatMeanAerodynamicChord;
 
-                wingMass = MathD.Clamp (massFudgeNumber * surfaceArea * ((aspectRatioSweepScale * 2.0) / (3.0 + aspectRatioSweepScale)) * ((1.0 + taperRatio) / 2), 0.01, double.MaxValue);
-                Cd = dragBaseValue / aspectRatioSweepScale * dragMultiplier;
-                Cl = liftFudgeNumber * surfaceArea * aspectRatioSweepScale;
+                aeroStatAspectRatioSweepScale = MathD.Pow (aeroStatAspectRatio / MathD.Cos (MathD.Deg2Rad * aeroStatMidChordSweep), 2.0f) + 4.0f;
+                aeroStatAspectRatioSweepScale = 2.0f + MathD.Sqrt (aeroStatAspectRatioSweepScale);
+                aeroStatAspectRatioSweepScale = (2.0f * MathD.PI) / aeroStatAspectRatioSweepScale * aeroStatAspectRatio;
 
-                connectionForce = MathD.Round (MathD.Clamp (MathD.Sqrt (Cl + ChildrenCl) * (double) connectionFactor, (double) connectionMinimum, double.MaxValue));
-
+                aeroStatMass = MathD.Clamp (aeroConstMassFudgeNumber * aeroStatSurfaceArea * ((aeroStatAspectRatioSweepScale * 2.0) / (3.0 + aeroStatAspectRatioSweepScale)) * ((1.0 + aeroStatTaperRatio) / 2), 0.01, double.MaxValue);
+                aeroStatCd = aeroConstDragBaseValue / aeroStatAspectRatioSweepScale * aeroConstDragMultiplier;
+                aeroStatCl = aeroConstLiftFudgeNumber * aeroStatSurfaceArea * aeroStatAspectRatioSweepScale;
+                aeroStatConnectionForce = MathD.Round (MathD.Clamp (MathD.Sqrt (aeroStatCl + aeroStatClChildren) * (double) aeroConstConnectionFactor, (double) aeroConstConnectionMinimum, double.MaxValue));
                 if (logCAV) DebugLogWithID ("CalculateAerodynamicValues", "Passed SR/AR/ARSS/mass/Cl/Cd/connection");
 
-                // Values always set
+                // Shared parameters
 
                 if (!isCtrlSrf)
                 {
-                    guiWingCost = (float) wingMass * (1f + (float) aspectRatioSweepScale / 4f) * costDensity;
-                    guiWingCost = Mathf.Round (guiWingCost / 5f) * 5f;
+                    aeroUICost = (float) aeroStatMass * (1f + (float) aeroStatAspectRatioSweepScale / 4f) * aeroConstCostDensity;
+                    aeroUICost = Mathf.Round (aeroUICost / 5f) * 5f;
                     part.CoMOffset = new Vector3 (wingSpan / 2f, wingOffset / 2f, 0f);
                 }
                 else
                 {
-                    guiWingCost = (float) wingMass * (1f + (float) aspectRatioSweepScale / 4f) * costDensity * (1f - modelControlSurfaceFraction);
-                    guiWingCost += (float) wingMass * (1f + (float) aspectRatioSweepScale / 4f) * costDensityControl * modelControlSurfaceFraction;
-                    guiWingCost = Mathf.Round (guiWingCost / 5f) * 5f;
+                    aeroUICost = (float) aeroStatMass * (1f + (float) aeroStatAspectRatioSweepScale / 4f) * aeroConstCostDensity * (1f - aeroConstControlSurfaceFraction);
+                    aeroUICost += (float) aeroStatMass * (1f + (float) aeroStatAspectRatioSweepScale / 4f) * aeroConstCostDensityControl * aeroConstControlSurfaceFraction;
+                    aeroUICost = Mathf.Round (aeroUICost / 5f) * 5f;
                     part.CoMOffset = new Vector3 (0f, -(ctrlWidthRoot + ctrlWidthTip) / 4f, 0f);
                 }
-
-                part.breakingForce = Mathf.Round ((float) connectionForce);
-                part.breakingTorque = Mathf.Round ((float) connectionForce);
-
+                part.breakingForce = Mathf.Round ((float) aeroStatConnectionForce);
+                part.breakingTorque = Mathf.Round ((float) aeroStatConnectionForce);
                 if (logCAV) DebugLogWithID ("CalculateAerodynamicValues", "Passed cost/force/torque");
 
                 // Stock-only values
 
-                if ((!FARactive && !NEARactive) || !FARmass)
+                if ((!aeroModelFAR && !aeroModelNEAR) || !aeroModelFARMass)
                 {
                     if (logCAV) DebugLogWithID ("CalculateAerodynamicValues", "FAR/NEAR is inactive or FAR mass is not enabled, calculating stock part mass");
-                    part.mass = Mathf.Round ((float) wingMass * 100f) / 100f;
+                    part.mass = Mathf.Round ((float) aeroStatMass * 100f) / 100f;
                 }
-                if (!FARactive && !NEARactive)
+                if (!aeroModelFAR && !aeroModelNEAR)
                 {
                     if (!isCtrlSrf && !isWingAsCtrlSrf)
                     {
                         if (logCAV) DebugLogWithID ("CalculateAerodynamicValues", "FAR/NEAR is inactive, calculating values for winglet part type");
-                        ((Winglet) this.part).deflectionLiftCoeff = Mathf.Round ((float) Cl * 100f) / 100f;
-                        ((Winglet) this.part).dragCoeff = Mathf.Round ((float) Cd * 100f) / 100f;
+                        ((Winglet) this.part).deflectionLiftCoeff = Mathf.Round ((float) aeroStatCl * 100f) / 100f;
+                        ((Winglet) this.part).dragCoeff = Mathf.Round ((float) aeroStatCd * 100f) / 100f;
                     }
                     else
                     {
                         if (logCAV) DebugLogWithID ("CalculateAerodynamicValues", "FAR/NEAR is inactive, calculating stock control surface module values");
                         var mCtrlSrf = part.Modules.OfType<ModuleControlSurface> ().FirstOrDefault ();
-                        mCtrlSrf.deflectionLiftCoeff = Mathf.Round ((float) Cl * 100f) / 100f;
-                        mCtrlSrf.dragCoeff = Mathf.Round ((float) Cd * 100f) / 100f;
-                        mCtrlSrf.ctrlSurfaceArea = modelControlSurfaceFraction;
+                        mCtrlSrf.deflectionLiftCoeff = Mathf.Round ((float) aeroStatCl * 100f) / 100f;
+                        mCtrlSrf.dragCoeff = Mathf.Round ((float) aeroStatCd * 100f) / 100f;
+                        mCtrlSrf.ctrlSurfaceArea = aeroConstControlSurfaceFraction;
                     }
                 }
-
                 if (logCAV) DebugLogWithID ("CalculateAerodynamicValues", "Passed stock drag/deflection/area");
 
                 // FAR values
                 // With reflection stuff from r4m0n
 
-                if (FARactive || NEARactive)
+                if (aeroModelFAR || aeroModelNEAR)
                 {
                     if (logCAV) DebugLogWithID ("CalculateAerodynamicValues", "Got into FAR/NEAR condition");
                     if (part.Modules.Contains ("FARControllableSurface"))
                     {
-                        if (logCAV) DebugLogWithID ("CalculateAerodynamicValues", "Got into FAR/NEAR control surface");
-                        PartModule FARmodule = part.Modules["FARControllableSurface"];
-                        Type FARtype = FARmodule.GetType ();
-                        FARtype.GetField ("b_2").SetValue (FARmodule, b_2);
-                        FARtype.GetField ("MAC").SetValue (FARmodule, meanAerodynamicChord);
-                        FARtype.GetField ("S").SetValue (FARmodule, surfaceArea);
-                        FARtype.GetField ("MidChordSweep").SetValue (FARmodule, midChordSweep);
-                        FARtype.GetField ("TaperRatio").SetValue (FARmodule, taperRatio);
-                        FARtype.GetField ("ctrlSurfFrac").SetValue (FARmodule, modelControlSurfaceFraction);
-                        if (logCAV) DebugLogWithID ("CalculateAerodynamicValues", "Passed FAR/NEAR value setting");
-                        if (NEARactive) FARtype.GetMethod ("MathAndFunctionInitialization").Invoke (FARmodule, null);
-                        else FARtype.GetMethod ("StartInitialization").Invoke (FARmodule, null); // if (doInteraction)
+                        PartModule moduleFAR = part.Modules["FARControllableSurface"];
+                        Type typeFAR = moduleFAR.GetType ();
+                        typeFAR.GetField ("b_2").SetValue (moduleFAR, aeroStatSemispan);
+                        typeFAR.GetField ("MAC").SetValue (moduleFAR, aeroStatMeanAerodynamicChord);
+                        typeFAR.GetField ("S").SetValue (moduleFAR, aeroStatSurfaceArea);
+                        typeFAR.GetField ("MidChordSweep").SetValue (moduleFAR, aeroStatMidChordSweep);
+                        typeFAR.GetField ("TaperRatio").SetValue (moduleFAR, aeroStatTaperRatio);
+                        typeFAR.GetField ("ctrlSurfFrac").SetValue (moduleFAR, aeroConstControlSurfaceFraction);
+                        if (aeroModelNEAR) typeFAR.GetMethod ("MathAndFunctionInitialization").Invoke (moduleFAR, null);
+                        else typeFAR.GetMethod ("StartInitialization").Invoke (moduleFAR, null);
                     }
                     else if (part.Modules.Contains ("FARWingAerodynamicModel"))
                     {
-                        if (logCAV) DebugLogWithID ("CalculateAerodynamicValues", "Got into FAR/NEAR wing");
-                        PartModule FARmodule = part.Modules["FARWingAerodynamicModel"];
-                        Type FARtype = FARmodule.GetType ();
-                        FARtype.GetField ("b_2").SetValue (FARmodule, b_2);
-                        FARtype.GetField ("MAC").SetValue (FARmodule, meanAerodynamicChord);
-                        FARtype.GetField ("S").SetValue (FARmodule, surfaceArea);
-                        FARtype.GetField ("MidChordSweep").SetValue (FARmodule, midChordSweep);
-                        FARtype.GetField ("TaperRatio").SetValue (FARmodule, taperRatio);
-                        if (logCAV) DebugLogWithID ("CalculateAerodynamicValues", "Passed FAR/NEAR value setting");
-                        if (NEARactive) FARtype.GetMethod ("MathAndFunctionInitialization").Invoke (FARmodule, null);
-                        else FARtype.GetMethod ("StartInitialization").Invoke (FARmodule, null);// if (doInteraction)
+                        PartModule moduleFAR = part.Modules["FARWingAerodynamicModel"];
+                        Type typeFAR = moduleFAR.GetType ();
+                        typeFAR.GetField ("b_2").SetValue (moduleFAR, aeroStatSemispan);
+                        typeFAR.GetField ("MAC").SetValue (moduleFAR, aeroStatMeanAerodynamicChord);
+                        typeFAR.GetField ("S").SetValue (moduleFAR, aeroStatSurfaceArea);
+                        typeFAR.GetField ("MidChordSweep").SetValue (moduleFAR, aeroStatMidChordSweep);
+                        typeFAR.GetField ("TaperRatio").SetValue (moduleFAR, aeroStatTaperRatio);
+                        if (aeroModelNEAR) typeFAR.GetMethod ("MathAndFunctionInitialization").Invoke (moduleFAR, null);
+                        else typeFAR.GetMethod ("StartInitialization").Invoke (moduleFAR, null);
                     }
                 }
-
                 if (logCAV) DebugLogWithID ("CalculateAerodynamicValues", "Passed FAR/NEAR parameter setting");
 
-                // Update GUI values
+                // Update GUI values and finish
 
-                if (!FARactive && !NEARactive)
+                if (!aeroModelFAR && !aeroModelNEAR)
                 {
-                    guiCd = Mathf.Round ((float) Cd * 100f) / 100f;
-                    guiCl = Mathf.Round ((float) Cl * 100f) / 100f;
+                    aeroUICd = Mathf.Round ((float) aeroStatCd * 100f) / 100f;
+                    aeroUICl = Mathf.Round ((float) aeroStatCl * 100f) / 100f;
                 }
-                if ((!FARactive && !NEARactive) || !FARmass) guiWingMass = part.mass;
+                if ((!aeroModelFAR && !aeroModelNEAR) || !aeroModelFARMass) aeroUIMass = part.mass;
 
-                guiMAC = (float) meanAerodynamicChord;
-                guiB_2 = (float) b_2;
-                guiMidChordSweep = (float) midChordSweep;
-                guiTaperRatio = (float) taperRatio;
-                guiSurfaceArea = (float) surfaceArea;
-                guiAspectRatio = (float) aspectRatio;
-                if (logCAV) DebugLogWithID ("CalculateAerodynamicValues", "Passed GUI setup");
-
+                aeroUIMeanAerodynamicChord = (float) aeroStatMeanAerodynamicChord;
+                aeroUISemispan = (float) aeroStatSemispan;
+                aeroUIMidChordSweep = (float) aeroStatMidChordSweep;
+                aeroUITaperRatio = (float) aeroStatTaperRatio;
+                aeroUISurfaceArea = (float) aeroStatSurfaceArea;
+                aeroUIAspectRatio = (float) aeroStatAspectRatio;
                 if (HighLogic.LoadedSceneIsEditor) GameEvents.onEditorShipModified.Fire (EditorLogic.fetch.ship);
                 if (logCAV) DebugLogWithID ("CalculateAerodynamicValues", "Finished");
             }
@@ -1713,24 +1709,24 @@ namespace WingProcedural
 
         public void OnCenterOfLiftQuery (CenterOfLiftQuery qry)
         {
-            if (isAttached && !FARactive)
+            if (isAttached && !aeroModelFAR)
             {
-                qry.lift = (float) Cl;
+                qry.lift = (float) aeroStatCl;
             }
         }
 
         public void GatherChildrenCl ()
         {
-            ChildrenCl = 0;
+            aeroStatClChildren = 0;
 
             // Add up the Cl and ChildrenCl of all our children to our ChildrenCl
-            foreach (Part p in this.part.children)
+            for (int i = 0; i < part.children.Count; ++i)
             {
-                if (p.Modules.Contains ("WingProcedural"))
+                if (part.children[i].Modules.Contains ("WingProcedural"))
                 {
-                    var child = p.Modules.OfType<WingProcedural> ().FirstOrDefault ();
-                    ChildrenCl += child.Cl;
-                    ChildrenCl += child.ChildrenCl;
+                    var child = part.children[i].Modules.OfType<WingProcedural> ().FirstOrDefault ();
+                    aeroStatClChildren += child.aeroStatCl;
+                    aeroStatClChildren += child.aeroStatClChildren;
                 }
             }
 
@@ -1749,32 +1745,31 @@ namespace WingProcedural
         [KSPEvent (guiActiveEditor = true, guiName = "Show wing data")]
         public void InfoToggleEvent ()
         {
-            if (isAttached &&
-                this.part.parent != null)
+            if (isAttached && this.part.parent != null)
             {
                 showWingData = !showWingData;
                 if (showWingData) Events["InfoToggleEvent"].guiName = "Hide wing data";
                 else Events["InfoToggleEvent"].guiName = "Show wing data";
 
-                // If FAR|NEAR arent present, toggle Cl/Cd
-                if (!FARactive && !NEARactive)
+                // If FAR/NEAR aren't present, toggle Cl/Cd
+                if (!aeroModelFAR && !aeroModelNEAR)
                 {
-                    Fields["guiCd"].guiActiveEditor = showWingData;
-                    Fields["guiCl"].guiActiveEditor = showWingData;
+                    Fields["aeroUICd"].guiActiveEditor = showWingData;
+                    Fields["aeroUICl"].guiActiveEditor = showWingData;
                 }
 
                 // If FAR|NEAR are not present, or its a version without wing mass calculations, toggle wing mass
-                if ((!FARactive && !NEARactive) || !FARmass)
-                    Fields["guiWingMass"].guiActive = showWingData;
+                if ((!aeroModelFAR && !aeroModelNEAR) || !aeroModelFARMass)
+                    Fields["aeroUIMass"].guiActive = showWingData;
 
                 // Toggle the rest of the info values
-                Fields["guiWingCost"].guiActiveEditor = showWingData;
-                Fields["guiMAC"].guiActiveEditor = showWingData;
-                Fields["guiB_2"].guiActiveEditor = showWingData;
-                Fields["guiMidChordSweep"].guiActiveEditor = showWingData;
-                Fields["guiTaperRatio"].guiActiveEditor = showWingData;
-                Fields["guiSurfaceArea"].guiActiveEditor = showWingData;
-                Fields["guiAspectRatio"].guiActiveEditor = showWingData;
+                Fields["aeroUICost"].guiActiveEditor = showWingData;
+                Fields["aeroUIMeanAerodynamicChord"].guiActiveEditor = showWingData;
+                Fields["aeroUISemispan"].guiActiveEditor = showWingData;
+                Fields["aeroUIMidChordSweep"].guiActiveEditor = showWingData;
+                Fields["aeroUITaperRatio"].guiActiveEditor = showWingData;
+                Fields["aeroUISurfaceArea"].guiActiveEditor = showWingData;
+                Fields["aeroUIAspectRatio"].guiActiveEditor = showWingData;
 
                 // Force tweakable window to refresh
                 if (myWindow != null)
@@ -1806,13 +1801,8 @@ namespace WingProcedural
 
         public static bool uiEditMode = false;
         public static bool uiEditModeTimeout = false;
-        public float uiEditModeTimer = 0f;
-
-        public static bool uiPropertyAdjustTimeout = false;
-        public float uiPropertyAdjustTimer = 0f;
-
-        public static bool uiPropertySwitchTimeout = false;
-        public float uiPropertySwitchTimer = 0f;
+        private float uiEditModeTimeoutDuration = 0.25f;
+        private float uiEditModeTimer = 0f;
 
         public static GUIStyle uiStyleWindow = new GUIStyle ();
         public static GUIStyle uiStyleLabelMedium = new GUIStyle ();
@@ -1898,7 +1888,15 @@ namespace WingProcedural
             {
                 if (this.part.parent != null && isAttached && !uiEditModeTimeout)
                 {
-                    if (!uiEditMode)
+                    if (uiEditMode)
+                    {
+                        if (Input.GetKeyDown (KeyCode.Mouse1))
+                        {
+                            uiEditMode = false;
+                            uiEditModeTimeout = true;
+                        }
+                    }
+                    else
                     {
                         if (Input.GetKeyDown (uiKeyCodeEdit))
                         {
@@ -1906,15 +1904,6 @@ namespace WingProcedural
                             uiEditMode = true;
                             uiEditModeTimeout = true;
                             uiWindowActive = true;
-                        }
-                    }
-                    if (uiEditMode)
-                    {
-                        if (Input.GetKeyDown (KeyCode.Escape)) uiEditMode = false;
-                        if (Input.GetKeyDown (KeyCode.Mouse1))
-                        {
-                            uiEditMode = false;
-                            uiWindowActive = false;
                         }
                     }
                 }
@@ -1925,69 +1914,51 @@ namespace WingProcedural
         {
             // if (stockButton == null) OnStockButtonSetup ();
             if (uiInstanceIDLocal != uiInstanceIDTarget) return;
-            if (uiPropertyAdjustTimeout)
-            {
-                uiPropertyAdjustTimer += Time.deltaTime;
-                if (uiPropertyAdjustTimer > 0.5f)
-                {
-                    uiPropertyAdjustTimeout = false;
-                    uiPropertyAdjustTimer = 0.0f;
-                }
-            }
-            if (uiPropertySwitchTimeout)
-            {
-                uiPropertySwitchTimer += Time.deltaTime;
-                if (uiPropertySwitchTimer > 0.5f)
-                {
-                    uiPropertySwitchTimeout = false;
-                    uiPropertySwitchTimer = 0.0f;
-                }
-            }
             if (uiEditModeTimeout)
             {
                 uiEditModeTimer += Time.deltaTime;
-                if (uiEditModeTimer > 0.5f)
+                if (uiEditModeTimer > uiEditModeTimeoutDuration)
                 {
                     uiEditModeTimeout = false;
                     uiEditModeTimer = 0.0f;
                 }
             }
-            if (uiEditMode && !uiEditModeTimeout)
+            else
             {
-                if (Input.GetKeyDown (uiKeyCodeEdit) || Input.GetKeyDown (KeyCode.Mouse0))
+                if (uiEditMode)
                 {
-                    uiEditMode = false;
-                    uiEditModeTimeout = true;
-                }
-            }
-            if (uiEditMode)
-            {
-                if (Input.GetKeyDown (uiKeyCodeNext))
-                {
-                    SwitchProperty (true);
-                }
-                else if (Input.GetKeyDown (uiKeyCodePrev))
-                {
-                    SwitchProperty (false);
-                }
-                if (Input.GetKeyDown (uiKeyCodeAdd))
-                {
-                    uiMouseDeltaCache = 1f;
-                    AdjustSelectedProperty ();
-                }
-                else if (Input.GetKeyDown (uiKeyCodeSubtract))
-                {
-                    uiMouseDeltaCache = -1f;
-                    AdjustSelectedProperty ();
-                }
-                else
-                {
-                    float uiMouseDelta = Input.GetAxis ("Mouse X");
-                    if (uiMouseDelta != 0f)
+                    if (Input.GetKeyDown (uiKeyCodeEdit) || Input.GetKeyDown (KeyCode.Mouse0))
                     {
-                        uiMouseDeltaCache += uiMouseDelta;
-                        uiPropertyAdjustTimeout = true;
+                        uiEditMode = false;
+                        uiEditModeTimeout = true;
+                        return;
+                    }
+                    if (Input.GetKeyDown (uiKeyCodeNext))
+                    {
+                        SwitchProperty (true);
+                    }
+                    else if (Input.GetKeyDown (uiKeyCodePrev))
+                    {
+                        SwitchProperty (false);
+                    }
+                    if (Input.GetKeyDown (uiKeyCodeAdd))
+                    {
+                        uiMouseDeltaCache = 1f;
                         AdjustSelectedProperty ();
+                    }
+                    else if (Input.GetKeyDown (uiKeyCodeSubtract))
+                    {
+                        uiMouseDeltaCache = -1f;
+                        AdjustSelectedProperty ();
+                    }
+                    else
+                    {
+                        float uiMouseDelta = Input.GetAxis ("Mouse X");
+                        if (uiMouseDelta != 0f)
+                        {
+                            uiMouseDeltaCache += uiMouseDelta;
+                            AdjustSelectedProperty ();
+                        }
                     }
                 }
             }
@@ -2013,9 +1984,9 @@ namespace WingProcedural
                     else if (uiPropertySelectionWing == 5)
                         wingThicknessTip = Mathf.Clamp (wingThicknessTip + incrementThickness * m, wingThicknessLimits.x, wingThicknessLimits.y);
                     else if (uiPropertySelectionWing == 6)
-                        wingSurfaceTextureTop = Mathf.Clamp (wingSurfaceTextureTop + incrementDiscrete * m, 1, 4);
+                        wingSurfaceTextureTop = Mathf.Clamp (wingSurfaceTextureTop + incrementDiscrete * m, 0, 4);
                     else if (uiPropertySelectionWing == 7)
-                        wingSurfaceTextureBottom = Mathf.Clamp (wingSurfaceTextureBottom + incrementDiscrete * m, 1, 4);
+                        wingSurfaceTextureBottom = Mathf.Clamp (wingSurfaceTextureBottom + incrementDiscrete * m, 0, 4);
                     else if (uiPropertySelectionWing == 8)
                         wingEdgeTypeLeading = Mathf.Clamp (wingEdgeTypeLeading + incrementDiscrete * m, 1, 4);
                     else if (uiPropertySelectionWing == 9)
@@ -2046,9 +2017,9 @@ namespace WingProcedural
                     else if (uiPropertySelectionSurface == 6)
                         ctrlOffsetTip = Mathf.Clamp (ctrlOffsetTip + incrementDimensions * m, ctrlOffsetLimits.x, ctrlOffsetLimits.y);
                     else if (uiPropertySelectionSurface == 7)
-                        ctrlSurfaceTextureTop = Mathf.Clamp (ctrlSurfaceTextureTop + incrementDiscrete * m, 1, 4);
+                        ctrlSurfaceTextureTop = Mathf.Clamp (ctrlSurfaceTextureTop + incrementDiscrete * m, 0, 4);
                     else if (uiPropertySelectionSurface == 8)
-                        ctrlSurfaceTextureBottom = Mathf.Clamp (ctrlSurfaceTextureBottom + incrementDiscrete * m, 1, 4);
+                        ctrlSurfaceTextureBottom = Mathf.Clamp (ctrlSurfaceTextureBottom + incrementDiscrete * m, 0, 4);
                     else if (uiPropertySelectionSurface == 9)
                         ctrlEdgeTexture = Mathf.Clamp (ctrlEdgeTexture + incrementDiscrete * m, 1, 4);
                 }
@@ -2075,12 +2046,6 @@ namespace WingProcedural
             if (logPropertyWindow) DebugLogWithID ("SwitchProperty", "Finished with following values | Wing: " + uiPropertySelectionWing + " | Surface: " + uiPropertySelectionSurface);
         }
 
-        private float GetMultiplierFromDelta (float delta)
-        {
-            if (delta > 0) return 1f;
-            else return -1f;
-        }
-
         private string GetPropertyState (int id)
         {
             if (!isCtrlSrf && id <= 13 && id >= 0)
@@ -2091,16 +2056,16 @@ namespace WingProcedural
                 else if (id == 3)  return "Offset\n"           + wingOffset.ToString ("F3");
                 else if (id == 4)  return "Height (root)\n"    + wingThicknessRoot.ToString ("F2");
                 else if (id == 5)  return "Height (tip)\n"     + wingThicknessTip.ToString ("F2");
-                else if (id == 6)  return "Side A (type)\n"    + wingSurfaceTextureTop.ToString ();
-                else if (id == 7)  return "Side B (type)\n"    + wingSurfaceTextureBottom.ToString ();
+                else if (id == 6)  return "Side A (type)\n"    + GetMaterialValueTranslation (wingSurfaceTextureTop);
+                else if (id == 7)  return "Side B (type)\n"    + GetMaterialValueTranslation (wingSurfaceTextureBottom);
                 else if (id == 8)  return "Edge L (shape)\n"   + wingEdgeTypeLeading.ToString ();
                 else if (id == 9)  return "Edge T (shape)\n"   + wingEdgeTypeTrailing.ToString ();
-                else if (id == 10) return "Edge L (type)\n"    + wingEdgeTextureLeading.ToString ();
-                else if (id == 11) return "Edge T (type)\n"    + wingEdgeTextureTrailing.ToString ();
+                else if (id == 10) return "Edge L (type)\n"    + GetMaterialValueTranslation (wingEdgeTextureLeading);
+                else if (id == 11) return "Edge T (type)\n"    + GetMaterialValueTranslation (wingEdgeTextureTrailing);
                 else if (id == 12) return "Edge L (scale)\n"   + wingEdgeScaleLeading.ToString ();
                 else               return "Edge T (scale)\n"   + wingEdgeScaleTrailing.ToString ();
             }
-            else if (isCtrlSrf && id <= 7 && id >= 0)
+            else if (isCtrlSrf && id <= 9 && id >= 0)
             {
                 if (id == 0)       return "Length\n"           + ctrlSpan.ToString ("F3");
                 else if (id == 1)  return "Width R\n"          + ctrlWidthRoot.ToString ("F3");
@@ -2109,9 +2074,9 @@ namespace WingProcedural
                 else if (id == 4)  return "Height T\n"         + ctrlThicknessTip.ToString ("F2");
                 else if (id == 5)  return "Offset R\n"         + ctrlOffsetRoot.ToString ("F3");
                 else if (id == 6)  return "Offset T\n"         + ctrlOffsetTip.ToString ("F3");
-                else if (id == 7)  return "Material A\n"       + ctrlSurfaceTextureTop.ToString ();
-                else if (id == 8)  return "Material B\n"       + ctrlSurfaceTextureBottom.ToString ();
-                else               return "Material C\n"       + ctrlEdgeTexture.ToString ();
+                else if (id == 7)  return "Material A\n"       + GetMaterialValueTranslation (ctrlSurfaceTextureTop);
+                else if (id == 8)  return "Material B\n"       + GetMaterialValueTranslation (ctrlSurfaceTextureBottom);
+                else               return "Material C\n"       + GetMaterialValueTranslation (ctrlEdgeTexture);
             }
             else return "Invalid property ID";
         }
@@ -2135,7 +2100,7 @@ namespace WingProcedural
                 else if (id == 12) return "Leading edge scaling multiplier \non the longitudinal axis";
                 else               return "Trailing edge scaling multiplier \non the longitudinal axis";
             }
-            else if (isCtrlSrf && id <= 7 && id >= 0)
+            else if (isCtrlSrf && id <= 9 && id >= 0)
             {
                 if (id == 0)       return "Lateral measurement of the root \ncross section of the control surface";
                 else if (id == 1)  return "Longitudinal measurement of the control \nsurface at the left cross section";
@@ -2149,6 +2114,16 @@ namespace WingProcedural
                 else               return "Material of the trailing edge";
             }
             else return "Invalid property ID";
+        }
+
+        private string GetMaterialValueTranslation (float value)
+        {
+            if (value == 0f)      return "Uniform coating";
+            else if (value == 1f) return "Standard alloys";
+            else if (value == 2f) return "Reinforced composites";
+            else if (value == 3f) return "LRSI thermal protection";
+            else if (value == 4f) return "HRSI thermal protection";
+            else return "Unknown material";
         }
 
         private string GetWindowTitle ()
@@ -2189,40 +2164,33 @@ namespace WingProcedural
 
         // Stock toolbar integration
 
-        /*
-        public static ApplicationLauncherButton stockButton = null;
+        //public static ApplicationLauncherButton stockButton = null;
 
-        private void OnStockButtonSetup ()
-        {
-            stockButton = ApplicationLauncher.Instance.AddModApplication (OnStockButtonClick, OnStockButtonClick, OnStockButtonVoid, OnStockButtonVoid, OnStockButtonVoid, OnStockButtonVoid, ApplicationLauncher.AppScenes.SPH, (Texture) GameDatabase.Instance.GetTexture ("B9_Aerospace/Plugins/icon_stock", false));
-        }
+        //private void OnStockButtonSetup ()
+        //{
+        //    stockButton = ApplicationLauncher.Instance.AddModApplication (OnStockButtonClick, OnStockButtonClick, OnStockButtonVoid, OnStockButtonVoid, OnStockButtonVoid, OnStockButtonVoid, ApplicationLauncher.AppScenes.SPH, (Texture) GameDatabase.Instance.GetTexture ("B9_Aerospace/Plugins/icon_stock", false));
+        //}
 
-        public void OnStockButtonClick ()
-        {
-            uiWindowActive = !uiWindowActive;
-        }
+        //public void OnStockButtonClick ()
+        //{
+        //    uiWindowActive = !uiWindowActive;
+        //}
 
-        private void OnStockButtonVoid ()
-        {
+        //private void OnStockButtonVoid ()
+        //{
 
-        }
+        //}
 
-        public void OnDestroy ()
-        {
-            bool stockButtonRemoved = true;
-            for (int i = 0; i < part.vessel.parts.Count; ++i)
-            {
-                if (part.vessel.parts[i] != null)
-                {
-                    if (part.vessel.parts[i].Modules.Contains ("WingProcedural"))
-                    {
-                        stockButtonRemoved = false;
-                        break;
-                    }
-                }
-            }
-            if (stockButtonRemoved) ApplicationLauncher.Instance.RemoveModApplication (stockButton);
-        }
-        */
+        //public void OnDestroy ()
+        //{
+        //    bool stockButtonRemoved = true;
+        //    ConfigNode[] nodes = GameDatabase.Instance ("");
+        //    for (int i = 0; i < nodes.Length; ++i)
+        //    {
+        //        if (nodes[i] == null) continue;
+        //        if (nodes[i].HasValue ("massPerWingAreaSupported")) aeroModelFARMass = true;
+        //    }
+        //    if (stockButtonRemoved) ApplicationLauncher.Instance.RemoveModApplication (stockButton);
+        //}
     }
 }

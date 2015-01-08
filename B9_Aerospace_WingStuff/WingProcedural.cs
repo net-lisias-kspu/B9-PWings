@@ -11,6 +11,8 @@ using KSPAPIExtensions;
 
 namespace WingProcedural
 {
+    
+    
     public class WingProcedural : PartModule
     {
         // Neater way to cache mesh properties
@@ -214,13 +216,14 @@ namespace WingProcedural
         public bool isStartingNow = false;
         public bool justDetached = false;
 
+        private bool logCAV = false;
         private bool logUpdate = false;
         private bool logUpdateGeometry = false;
-        private bool logCAV = false;
         private bool logUpdateMaterials = false;
         private bool logMeshReferences = false;
         private bool logCheckMeshFilter = false;
         private bool logPropertyWindow = false;
+        private bool logFlightSetup = true;
 
 
 
@@ -760,7 +763,7 @@ namespace WingProcedural
                     float widthDifference = ctrlWidthRoot - ctrlWidthTip;
                     float edgeLengthTrailing = Mathf.Sqrt (Mathf.Pow (ctrlSpan, 2) + Mathf.Pow (widthDifference, 2));
                     float sweepTrailing = 90f - Mathf.Atan (ctrlSpan / widthDifference) * Mathf.Rad2Deg;
-                    DebugLogWithID ("UpdateGeometry", "Control surface trailing edge | WD: " + widthDifference + " | L: " + edgeLengthTrailing + " | SA: " + sweepTrailing);
+                    if (logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Control surface trailing edge | WD: " + widthDifference + " | L: " + edgeLengthTrailing + " | SA: " + sweepTrailing);
 
                     for (int i = 0; i < vp.Length; ++i)
                     {
@@ -972,7 +975,7 @@ namespace WingProcedural
                 }
             }
             if (logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Finished");
-            CalculateAerodynamicValues ();
+            if (HighLogic.LoadedSceneIsEditor) CalculateAerodynamicValues ();
         }
 
 
@@ -1452,43 +1455,12 @@ namespace WingProcedural
 
         // Events
 
+        public bool assembliesChecked = false;
+
         public override void OnStart (PartModule.StartState state)
         {
             base.OnStart (state);
-            aeroModelFAR = AssemblyLoader.loadedAssemblies.Any (a => a.assembly.GetName ().Name.Equals ("FerramAerospaceResearch.dll", StringComparison.InvariantCultureIgnoreCase));
-            aeroModelNEAR = AssemblyLoader.loadedAssemblies.Any (a => a.assembly.GetName ().Name.Equals ("NEAR.dll", StringComparison.InvariantCultureIgnoreCase));
-            if (!aeroModelFAR)
-            {
-                if (logCAV) DebugLogWithID ("OnStart", "FAR not found, attempting another search");
-                bool FARactiveTemp = AssemblyLoader.loadedAssemblies.Any (a => a.assembly.GetName ().Name.Equals ("FerramAerospaceResearch", StringComparison.InvariantCultureIgnoreCase));
-                if (FARactiveTemp)
-                {
-                    if (logCAV) DebugLogWithID ("OnStart", "FAR found using alternative assembly name");
-                    aeroModelFAR = true;
-                }
-            }
-            if (!aeroModelNEAR)
-            {
-                if (logCAV) DebugLogWithID ("OnStart", "NEAR not found, attempting another search");
-                bool NEARactiveTemp = AssemblyLoader.loadedAssemblies.Any (a => a.assembly.GetName ().Name.Equals ("NEAR", StringComparison.InvariantCultureIgnoreCase));
-                if (NEARactiveTemp)
-                {
-                    if (logCAV) DebugLogWithID ("OnStart", "NEAR found using alternative assembly name");
-                    aeroModelNEAR = true;
-                }
-            }
-            if (aeroModelFAR || aeroModelNEAR)
-            {
-                ConfigNode[] nodes = GameDatabase.Instance.GetConfigNodes ("FARAeroData");
-                for (int i = 0; i < nodes.Length; ++i)
-                {
-                    if (nodes[i] == null) continue;
-                    if (nodes[i].HasValue ("massPerWingAreaSupported")) aeroModelFARMass = true;
-                }
-            }
-            if (logCAV) DebugLogWithID ("OnStart", "Search results | FAR: " + aeroModelFAR + " | NEAR: " + aeroModelNEAR + " | FAR mass: " + aeroModelFARMass);
-            if (isCtrlSrf && isWingAsCtrlSrf) Debug.LogError ("WARNING | PART IS CONFIGURED INCORRECTLY, BOTH BOOL PROPERTIES SHOULD NEVER BE SET TO TRUE");
-
+            CheckAssemblies (true);
             if (HighLogic.LoadedSceneIsEditor)
             {
                 if (!uiStyleConfigured) InitStyle ();
@@ -1499,8 +1471,114 @@ namespace WingProcedural
                 if (!isStarted && isAttached && !isStartingNow)
                 {
                     DebugLogWithID ("OnStart", "Setup started");
-                    Setup ();
+                    SetupReorderedForFlight ();
                     isStarted = true;
+                }
+            }
+        }
+
+        public void CheckAssemblies (bool forced)
+        {
+            if (!assembliesChecked || forced)
+            {
+                aeroModelFAR = AssemblyLoader.loadedAssemblies.Any (a => a.assembly.GetName ().Name.Equals ("FerramAerospaceResearch", StringComparison.InvariantCultureIgnoreCase));
+                aeroModelNEAR = AssemblyLoader.loadedAssemblies.Any (a => a.assembly.GetName ().Name.Equals ("NEAR", StringComparison.InvariantCultureIgnoreCase));
+                if (aeroModelFAR || aeroModelNEAR)
+                {
+                    ConfigNode[] nodes = GameDatabase.Instance.GetConfigNodes ("FARAeroData");
+                    for (int i = 0; i < nodes.Length; ++i)
+                    {
+                        if (nodes[i] == null) continue;
+                        if (nodes[i].HasValue ("massPerWingAreaSupported")) aeroModelFARMass = true;
+                    }
+                }
+                if (logCAV) DebugLogWithID ("OnStart", "Search results | FAR: " + aeroModelFAR + " | NEAR: " + aeroModelNEAR + " | FAR mass: " + aeroModelFARMass);
+                if (isCtrlSrf && isWingAsCtrlSrf) Debug.LogError ("WARNING | PART IS CONFIGURED INCORRECTLY, BOTH BOOL PROPERTIES SHOULD NEVER BE SET TO TRUE");
+                assembliesChecked = true;
+            }
+        }
+
+
+
+
+
+        // Delayed aero value setup
+        // Must be run after all geometry setups, otherwise FAR checks will be done before surrounding parts take shape, producing incorrect results
+
+        public class VesselStatus
+        {
+            public Vessel vessel = null;
+            public bool isUpdated = false;
+
+            public VesselStatus (Vessel v, bool state)
+            {
+                vessel = v;
+                isUpdated = state;
+            }
+        }
+
+        public static List<VesselStatus> vesselList = new List<VesselStatus> ();
+
+        public void SetupReorderedForFlight ()
+        {
+            // First we need to determine whether the vessel this part is attached to is included into the status list
+            // If it's included, we need to fetch it's index in that list
+
+            bool vesselListInclusive = false;
+            int vesselID = vessel.GetInstanceID ();
+            int vesselStatusIndex = 0;
+            int vesselListCount = vesselList.Count;
+            for (int i = 0; i < vesselListCount; ++i)
+            {
+                if (vesselList[i].vessel.GetInstanceID () == vesselID)
+                {
+                    if (logFlightSetup) DebugLogWithID ("SetupReorderedForFlight", "Vessel " + vesselID + " found in the status list");
+                    vesselListInclusive = true;
+                    vesselStatusIndex = i;
+                }
+            }
+
+            // If it was not included, we add it to the list
+            // Correct index is then fairly obvious
+
+            if (!vesselListInclusive)
+            {
+                if (logFlightSetup) DebugLogWithID ("SetupReorderedForFlight", "Vessel " + vesselID + " was not found in the status list, adding it");
+                vesselList.Add (new VesselStatus (vessel, false));
+                vesselStatusIndex = vesselList.Count - 1;
+            }
+
+            // Using the index for the status list we obtained, we check whether it was updated yet
+            // So that only one part can run the following part
+
+            if (!vesselList[vesselStatusIndex].isUpdated)
+            {
+                if (logFlightSetup) DebugLogWithID ("SetupReorderedForFlight", "Vessel " + vesselID + " was not updated yet (this message should only appear once)");
+                vesselList[vesselStatusIndex].isUpdated = true;
+                List<WingProcedural> moduleList = new List<WingProcedural> ();
+
+                // First we get a list of all relevant parts in the vessel
+                // Found modules are added to a list
+
+                int vesselPartsCount = vessel.parts.Count;
+                for (int i = 0; i < vesselPartsCount; ++i)
+                {
+                    if (vessel.parts[i].Modules.Contains ("WingProcedural"))
+                        moduleList.Add ((WingProcedural) vessel.parts[i].Modules["WingProcedural"]);
+                }
+
+                // After that we make two separate runs through that list
+                // First one setting up all geometry and second one setting up aerodynamic values
+
+                if (logFlightSetup) DebugLogWithID ("SetupReorderedForFlight", "Vessel " + vesselID + " contained " + vesselPartsCount + " parts, of which " + moduleList.Count + " should be set up");
+                int moduleListCount = moduleList.Count;
+                for (int i = 0; i < moduleListCount; ++i)
+                {
+                    moduleList[i].Setup ();
+                }
+                for (int i = 0; i < moduleListCount; ++i)
+                {
+                    moduleList[i].CalculateAerodynamicValues ();
                 }
             }
         }
@@ -1574,6 +1652,7 @@ namespace WingProcedural
             if (isAttached || HighLogic.LoadedSceneIsFlight)
             {
                 if (logCAV) DebugLogWithID ("CalculateAerodynamicValues", "Started");
+                CheckAssemblies (false);
 
                 // Base four values
 

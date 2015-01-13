@@ -82,12 +82,12 @@ namespace WingProcedural
         public float wingEdgeTypeTrailingCached = 4f;
 
         [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Edge L (type)"),
-        UI_FloatRange (minValue = 1f, maxValue = 4f, scene = UI_Scene.Editor, stepIncrement = 1f)]
+        UI_FloatRange (minValue = 0f, maxValue = 4f, scene = UI_Scene.Editor, stepIncrement = 1f)]
         public float wingEdgeTextureLeading = 4f;
         public float wingEdgeTextureLeadingCached = 4f;
 
         [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Edge T (type)"),
-        UI_FloatRange (minValue = 1f, maxValue = 4f, scene = UI_Scene.Editor, stepIncrement = 1f)]
+        UI_FloatRange (minValue = 0f, maxValue = 4f, scene = UI_Scene.Editor, stepIncrement = 1f)]
         public float wingEdgeTextureTrailing = 4f;
         public float wingEdgeTextureTrailingCached = 4f;
 
@@ -123,6 +123,7 @@ namespace WingProcedural
         private Vector2 wingOffsetLimits = new Vector2 (-8f, 8f);
         private Vector2 wingEdgeScaleLimits = new Vector2 (0f, 1f);
         private Vector2 wingEdgeTypeLimits = new Vector2 (1f, 4f);
+        private Vector2 wingTextureLimits = new Vector2 (0f, 4f);
         private int     wingEdgeTypeCount = 4;
 
 
@@ -176,7 +177,7 @@ namespace WingProcedural
         public float ctrlSurfaceTextureBottomCached;
 
         [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Material C"),
-        UI_FloatRange (minValue = 1f, maxValue = 4f, scene = UI_Scene.Editor, stepIncrement = 1f)]
+        UI_FloatRange (minValue = 0f, maxValue = 4f, scene = UI_Scene.Editor, stepIncrement = 1f)]
         public float ctrlEdgeTexture = 4f;
         public float ctrlEdgeTextureCached = 4f;
 
@@ -193,6 +194,7 @@ namespace WingProcedural
         private Vector2 ctrlWidthLimits = new Vector2 (0.25f, 1.5f);
         private Vector2 ctrlThicknessLimits = new Vector2 (0.08f, 0.48f);
         private Vector2 ctrlOffsetLimits = new Vector2 (-1f, 1f);
+        private Vector2 ctrlTextureLimits = new Vector2 (0f, 4f);
 
         private float incrementDiscrete = 1f;
         private float incrementDimensions = 0.125f;
@@ -597,7 +599,7 @@ namespace WingProcedural
                     uv[3] = new Vector2 (wingSpan / 4f, 1f - 0.5f + wingWidthTip / 8f - wingOffset / 4f);
 
                     Color[] cl = new Color[length];
-                    for (int i = 0; i < length; ++i) cl[i] = GetVertexColorFromSelection (wingSurfaceTextureTop);
+                    for (int i = 0; i < length; ++i) cl[i] = GetVertexColorFromSelection (wingSurfaceTextureTop, 0.6f);
 
                     meshFilterWingSurfaceTop.mesh.vertices = vp;
                     meshFilterWingSurfaceTop.mesh.uv = uv;
@@ -630,7 +632,7 @@ namespace WingProcedural
                     uv[3] = new Vector2 (wingSpan / 4f, 1f - 0.5f + wingWidthTip / 8f + wingOffset / 4f);
 
                     Color[] cl = new Color[length];
-                    for (int i = 0; i < length; ++i) cl[i] = GetVertexColorFromSelection (wingSurfaceTextureBottom);
+                    for (int i = 0; i < length; ++i) cl[i] = GetVertexColorFromSelection (wingSurfaceTextureBottom, 0.6f);
 
                     meshFilterWingSurfaceBottom.mesh.vertices = vp;
                     meshFilterWingSurfaceBottom.mesh.uv = uv;
@@ -683,10 +685,8 @@ namespace WingProcedural
                                 uv[i] = new Vector2 (wingSpan, uv[i].y);
                             }
                             else vp[i] = new Vector3 (0f, vp[i].y * wingThicknessDeviationRoot, Mathf.Lerp (2f, vp[i].z, wingEdgeScaleTrailing) - 2f + wingWidthRoot / 2f); // Root edge
+                            cl[i] = GetVertexColorFromSelection (wingEdgeTextureTrailing, 0.75f);
                         }
-
-                        // Colors
-                        cl[i] = GetVertexColorFromSelection (wingEdgeTextureTrailing);
                     }
 
                     meshFiltersWingEdgeTrailing[wingEdgeTypeTrailingInt].mesh.vertices = vp;
@@ -720,10 +720,8 @@ namespace WingProcedural
                                 uv[i] = new Vector2 (wingSpan, uv[i].y);
                             }
                             else vp[i] = new Vector3 (0f, vp[i].y * wingThicknessDeviationRoot, Mathf.Lerp (2f, vp[i].z, wingEdgeScaleLeading) - 2f + wingWidthRoot / 2f); // Root edge
+                            cl[i] = GetVertexColorFromSelection (wingEdgeTextureLeading, 0.75f);
                         }
-
-                        // Colors
-                        cl[i] = GetVertexColorFromSelection (wingEdgeTextureLeading);
                     }
 
                     meshFiltersWingEdgeLeading[wingEdgeTypeLeadingInt].mesh.vertices = vp;
@@ -835,10 +833,10 @@ namespace WingProcedural
                         {
                             if (vp[i].z < 0f) uv[i] = new Vector2 (vp[i].z, uv[i].y);
                             else uv[i] = new Vector2 (vp[i].z, uv[i].y);
-                        }
 
-                        // Colors
-                        cl[i] = GetVertexColorFromSelection (ctrlEdgeTexture);
+                            // Color has to be applied there to avoid blanking out cross sections
+                            cl[i] = GetVertexColorFromSelection (ctrlEdgeTexture, 0.75f);
+                        }
                     }
 
                     meshFilterCtrlEdge.mesh.vertices = vp;
@@ -905,7 +903,7 @@ namespace WingProcedural
                         }
 
                         // Colors
-                        cl[i] = GetVertexColorFromSelection (ctrlSurfaceTextureTop);
+                        cl[i] = GetVertexColorFromSelection (ctrlSurfaceTextureTop, 0.6f);
                     }
                     meshFilterCtrlSurfaceTop.mesh.vertices = vp;
                     meshFilterCtrlSurfaceTop.mesh.uv = uv;
@@ -965,7 +963,7 @@ namespace WingProcedural
                         }
 
                         // Colors
-                        cl[i] = GetVertexColorFromSelection (ctrlSurfaceTextureBottom);
+                        cl[i] = GetVertexColorFromSelection (ctrlSurfaceTextureBottom, 0.6f);
                     }
                     meshFilterCtrlSurfaceBottom.mesh.vertices = vp;
                     meshFilterCtrlSurfaceBottom.mesh.uv = uv;
@@ -1085,9 +1083,9 @@ namespace WingProcedural
             }
         }
 
-        private Color GetVertexColorFromSelection (float selection)
+        private Color GetVertexColorFromSelection (float selection, float preferredFill)
         {
-            if (selection == 0) return new Color (0.6f, 1.0f, 0.0f, 0.0f);
+            if (selection == 0) return new Color (Mathf.Clamp (preferredFill, 0f, 1f), 1.0f, 0.0f, 0.0f);
             else return new Color (0.0f, 0.0f, 0.0f, (selection - 1f) / 3f);
         }
 
@@ -1227,6 +1225,16 @@ namespace WingProcedural
                 SetFieldType ("wingWidthRoot", 1, wingWidthLimits, 0.125f);
                 SetFieldType ("wingWidthTip", 1, wingWidthLimits, 0.125f);
                 SetFieldType ("wingOffset", 1, wingOffsetLimits, 0.125f);
+                SetFieldType ("wingThicknessRoot", 0, wingThicknessLimits, 0.04f);
+                SetFieldType ("wingThicknessTip", 0, wingThicknessLimits, 0.04f);
+                SetFieldType ("wingSurfaceTextureTop", 0, wingTextureLimits, 1f);
+                SetFieldType ("wingSurfaceTextureBottom", 0, wingTextureLimits, 1f);
+                SetFieldType ("wingEdgeTypeLeading", 0, wingEdgeTypeLimits, 1f);
+                SetFieldType ("wingEdgeTypeTrailing", 0, wingEdgeTypeLimits, 1f);
+                SetFieldType ("wingEdgeTextureLeading", 0, wingTextureLimits, 1f);
+                SetFieldType ("wingEdgeTextureTrailing", 0, wingTextureLimits, 1f);
+                SetFieldType ("wingEdgeScaleLeading", 0, wingEdgeScaleLimits, 0.125f);
+                SetFieldType ("wingEdgeScaleTrailing", 0, wingEdgeScaleLimits, 0.125f);
             }
             else
             {
@@ -1246,6 +1254,15 @@ namespace WingProcedural
                 SetFieldVisibility ("wingEdgeTextureLeading", false);
 
                 SetFieldType ("ctrlSpan", 1, ctrlSpanLimits, 0.125f);
+                SetFieldType ("ctrlWidthRoot", 0, ctrlWidthLimits, 0.125f);
+                SetFieldType ("ctrlWidthTip", 0, ctrlWidthLimits, 0.125f);
+                SetFieldType ("ctrlThicknessRoot", 0, ctrlThicknessLimits, 0.04f);
+                SetFieldType ("ctrlThicknessTip", 0, ctrlThicknessLimits, 0.04f);
+                SetFieldType ("ctrlOffsetRoot", 0, ctrlOffsetLimits, 0.125f);
+                SetFieldType ("ctrlOffsetTip", 0, ctrlOffsetLimits, 0.125f);
+                SetFieldType ("ctrlSurfaceTextureTop", 0, ctrlTextureLimits, 1f);
+                SetFieldType ("ctrlSurfaceTextureBottom", 0, ctrlTextureLimits, 1f);
+                SetFieldType ("ctrlEdgeTexture", 0, ctrlTextureLimits, 1f);
             }
         }
 
@@ -1576,11 +1593,20 @@ namespace WingProcedural
                 {
                     moduleList[i].Setup ();
                 }
-                for (int i = 0; i < moduleListCount; ++i)
-                {
-                    moduleList[i].CalculateAerodynamicValues ();
-                }
+                StartCoroutine (DelayedAerodynamicSetup (moduleList));
             }
+        }
+
+        private IEnumerator DelayedAerodynamicSetup (List<WingProcedural> moduleList)
+        {
+            yield return new WaitForFixedUpdate ();
+            yield return new WaitForFixedUpdate ();
+            int moduleListCount = moduleList.Count;
+            for (int i = 0; i < moduleListCount; ++i)
+            {
+                moduleList[i].CalculateAerodynamicValues ();
+            }
+            yield return null;
         }
 
 
@@ -2063,21 +2089,21 @@ namespace WingProcedural
                     else if (uiPropertySelectionWing == 5)
                         wingThicknessTip = Mathf.Clamp (wingThicknessTip + incrementThickness * m, wingThicknessLimits.x, wingThicknessLimits.y);
                     else if (uiPropertySelectionWing == 6)
-                        wingSurfaceTextureTop = Mathf.Clamp (wingSurfaceTextureTop + incrementDiscrete * m, 0, 4);
+                        wingSurfaceTextureTop = Mathf.Clamp (wingSurfaceTextureTop + incrementDiscrete * m, wingTextureLimits.x, wingTextureLimits.y);
                     else if (uiPropertySelectionWing == 7)
-                        wingSurfaceTextureBottom = Mathf.Clamp (wingSurfaceTextureBottom + incrementDiscrete * m, 0, 4);
+                        wingSurfaceTextureBottom = Mathf.Clamp (wingSurfaceTextureBottom + incrementDiscrete * m, wingTextureLimits.x, wingTextureLimits.y);
                     else if (uiPropertySelectionWing == 8)
-                        wingEdgeTypeLeading = Mathf.Clamp (wingEdgeTypeLeading + incrementDiscrete * m, 1, 4);
+                        wingEdgeTypeLeading = Mathf.Clamp (wingEdgeTypeLeading + incrementDiscrete * m, wingEdgeTypeLimits.x, wingEdgeTypeLimits.y);
                     else if (uiPropertySelectionWing == 9)
-                        wingEdgeTypeTrailing = Mathf.Clamp (wingEdgeTypeTrailing + incrementDiscrete * m, 1, 4);
+                        wingEdgeTypeTrailing = Mathf.Clamp (wingEdgeTypeTrailing + incrementDiscrete * m, wingEdgeTypeLimits.x, wingEdgeTypeLimits.y);
                     else if (uiPropertySelectionWing == 10)
-                        wingEdgeTextureLeading = Mathf.Clamp (wingEdgeTextureLeading + incrementDiscrete * m, 1, 4);
+                        wingEdgeTextureLeading = Mathf.Clamp (wingEdgeTextureLeading + incrementDiscrete * m, wingTextureLimits.x, wingTextureLimits.y);
                     else if (uiPropertySelectionWing == 11)
-                        wingEdgeTextureTrailing = Mathf.Clamp (wingEdgeTextureTrailing + incrementDiscrete * m, 1, 4);
+                        wingEdgeTextureTrailing = Mathf.Clamp (wingEdgeTextureTrailing + incrementDiscrete * m, wingTextureLimits.x, wingTextureLimits.y);
                     else if (uiPropertySelectionWing == 12)
-                        wingEdgeScaleLeading = Mathf.Clamp (wingEdgeScaleLeading + incrementDimensions * m, 0, 1);
+                        wingEdgeScaleLeading = Mathf.Clamp (wingEdgeScaleLeading + incrementDimensions * m, wingEdgeScaleLimits.x, wingEdgeScaleLimits.y);
                     else if (uiPropertySelectionWing == 13)
-                        wingEdgeScaleTrailing = Mathf.Clamp (wingEdgeScaleTrailing + incrementDimensions * m, 0, 1);
+                        wingEdgeScaleTrailing = Mathf.Clamp (wingEdgeScaleTrailing + incrementDimensions * m, wingEdgeScaleLimits.x, wingEdgeScaleLimits.y);
                 }
                 else
                 {
@@ -2096,11 +2122,11 @@ namespace WingProcedural
                     else if (uiPropertySelectionSurface == 6)
                         ctrlOffsetTip = Mathf.Clamp (ctrlOffsetTip + incrementDimensions * m, ctrlOffsetLimits.x, ctrlOffsetLimits.y);
                     else if (uiPropertySelectionSurface == 7)
-                        ctrlSurfaceTextureTop = Mathf.Clamp (ctrlSurfaceTextureTop + incrementDiscrete * m, 0, 4);
+                        ctrlSurfaceTextureTop = Mathf.Clamp (ctrlSurfaceTextureTop + incrementDiscrete * m, ctrlTextureLimits.x, ctrlTextureLimits.y);
                     else if (uiPropertySelectionSurface == 8)
-                        ctrlSurfaceTextureBottom = Mathf.Clamp (ctrlSurfaceTextureBottom + incrementDiscrete * m, 0, 4);
+                        ctrlSurfaceTextureBottom = Mathf.Clamp (ctrlSurfaceTextureBottom + incrementDiscrete * m, ctrlTextureLimits.x, ctrlTextureLimits.y);
                     else if (uiPropertySelectionSurface == 9)
-                        ctrlEdgeTexture = Mathf.Clamp (ctrlEdgeTexture + incrementDiscrete * m, 1, 4);
+                        ctrlEdgeTexture = Mathf.Clamp (ctrlEdgeTexture + incrementDiscrete * m, ctrlTextureLimits.x, ctrlTextureLimits.y);
                 }
                 uiMouseDeltaCache = 0f;
             }

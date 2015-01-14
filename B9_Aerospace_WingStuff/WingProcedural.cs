@@ -199,7 +199,7 @@ namespace WingProcedural
         private float incrementDiscrete = 1f;
         private float incrementDimensions = 0.125f;
         private float incrementThickness = 0.04f;
-        public Transform temporaryCollider;
+        // public Transform temporaryCollider;
 
 
 
@@ -225,7 +225,7 @@ namespace WingProcedural
         private bool logMeshReferences = false;
         private bool logCheckMeshFilter = false;
         private bool logPropertyWindow = false;
-        private bool logFlightSetup = true;
+        private bool logFlightSetup = false;
 
 
 
@@ -1101,7 +1101,7 @@ namespace WingProcedural
             SetupClamping ();
             SetupFields ();
             SetupMeshReferences ();
-            SetupTemporaryCollider ();
+            // SetupTemporaryCollider ();
             ReportOnMeshReferences ();
             SetupRecurring ();
             isStartingNow = false;
@@ -1111,6 +1111,7 @@ namespace WingProcedural
         {
             UpdateMaterials ();
             UpdateGeometry ();
+            UpdateCollidersForFAR ();
             UpdateWindow ();
         }
 
@@ -1386,11 +1387,11 @@ namespace WingProcedural
             }
         }
 
-        private void SetupTemporaryCollider ()
-        {
-            temporaryCollider = CheckTransform ("proxy_collision_temporary");
-            if (temporaryCollider != null) temporaryCollider.gameObject.SetActive (false);
-        }
+        //private void SetupTemporaryCollider ()
+        //{
+        //    temporaryCollider = CheckTransform ("proxy_collision_temporary");
+        //    if (temporaryCollider != null) temporaryCollider.gameObject.SetActive (false);
+        //}
 
 
 
@@ -1488,7 +1489,7 @@ namespace WingProcedural
                 if (!isStarted && isAttached && !isStartingNow)
                 {
                     DebugLogWithID ("OnStart", "Setup started");
-                    SetupReorderedForFlight ();
+                    StartCoroutine (SetupReorderedForFlight ());
                     isStarted = true;
                 }
             }
@@ -1536,7 +1537,7 @@ namespace WingProcedural
 
         public static List<VesselStatus> vesselList = new List<VesselStatus> ();
 
-        public void SetupReorderedForFlight ()
+        public IEnumerator SetupReorderedForFlight ()
         {
             // First we need to determine whether the vessel this part is attached to is included into the status list
             // If it's included, we need to fetch it's index in that list
@@ -1593,20 +1594,17 @@ namespace WingProcedural
                 {
                     moduleList[i].Setup ();
                 }
-                StartCoroutine (DelayedAerodynamicSetup (moduleList));
-            }
-        }
 
-        private IEnumerator DelayedAerodynamicSetup (List<WingProcedural> moduleList)
-        {
-            yield return new WaitForFixedUpdate ();
-            yield return new WaitForFixedUpdate ();
-            int moduleListCount = moduleList.Count;
-            for (int i = 0; i < moduleListCount; ++i)
-            {
-                moduleList[i].CalculateAerodynamicValues ();
+                yield return new WaitForFixedUpdate ();
+                yield return new WaitForFixedUpdate ();
+
+                if (logFlightSetup) DebugLogWithID ("SetupReorderedForFlight", "Vessel " + vesselID + " waited for updates, starting aero value calculation");
+                for (int i = 0; i < moduleListCount; ++i)
+                {
+                    moduleList[i].CalculateAerodynamicValues ();
+                }
+                yield return null;
             }
-            yield return null;
         }
 
 
@@ -1768,7 +1766,8 @@ namespace WingProcedural
                     {
                         PartModule moduleFAR = part.Modules["FARControllableSurface"];
                         Type typeFAR = moduleFAR.GetType ();
-                        typeFAR.GetField ("b_2").SetValue (moduleFAR, aeroStatSemispan);
+
+                        typeFAR.GetField ("b_2").SetValue (moduleFAR, aeroStatSemispan); 
                         typeFAR.GetField ("MAC").SetValue (moduleFAR, aeroStatMeanAerodynamicChord);
                         typeFAR.GetField ("S").SetValue (moduleFAR, aeroStatSurfaceArea);
                         typeFAR.GetField ("MidChordSweep").SetValue (moduleFAR, aeroStatMidChordSweep);
@@ -1781,6 +1780,7 @@ namespace WingProcedural
                     {
                         PartModule moduleFAR = part.Modules["FARWingAerodynamicModel"];
                         Type typeFAR = moduleFAR.GetType ();
+
                         typeFAR.GetField ("b_2").SetValue (moduleFAR, aeroStatSemispan);
                         typeFAR.GetField ("MAC").SetValue (moduleFAR, aeroStatMeanAerodynamicChord);
                         typeFAR.GetField ("S").SetValue (moduleFAR, aeroStatSurfaceArea);
@@ -1809,6 +1809,19 @@ namespace WingProcedural
                 aeroUIAspectRatio = (float) aeroStatAspectRatio;
                 if (HighLogic.LoadedSceneIsEditor) GameEvents.onEditorShipModified.Fire (EditorLogic.fetch.ship);
                 if (logCAV) DebugLogWithID ("CalculateAerodynamicValues", "Finished");
+            }
+        }
+
+        private void UpdateCollidersForFAR ()
+        {
+            if (aeroModelFAR && aeroModelNEAR)
+            {
+                if (part.Modules.Contains ("FARWingAerodynamicModel"))
+                {
+                    PartModule moduleFAR = part.Modules["FARWingAerodynamicModel"];
+                    Type typeFAR = moduleFAR.GetType ();
+                    typeFAR.GetMethod ("TriggerPartColliderUpdate").Invoke (moduleFAR, null);
+                }
             }
         }
 
@@ -1880,6 +1893,62 @@ namespace WingProcedural
                 if (myWindow != null)
                     myWindow.displayDirty = true;
             }
+        }
+
+
+
+
+        [KSPEvent (guiActive = true, guiActiveEditor = true, guiName = "Dump interaction data")]
+        public void DumpInteractionData ()
+        {
+            if (part.Modules.Contains ("FARWingAerodynamicModel"))
+            {
+                PartModule moduleFAR = part.Modules["FARWingAerodynamicModel"];
+                Type typeFAR = moduleFAR.GetType ();
+
+                var referenceInteraction = typeFAR.GetField ("wingInteraction", BindingFlags.Instance | BindingFlags.NonPublic).GetValue (moduleFAR);
+                if (referenceInteraction != null)
+                {
+                    string report = "";
+                    Type typeInteraction = referenceInteraction.GetType ();
+                    Type runtimeListType = typeof (List<>).MakeGenericType (typeFAR);
+
+                    FieldInfo forwardExposureInfo = typeInteraction.GetField ("forwardExposure", BindingFlags.NonPublic | BindingFlags.Instance);
+                    double forwardExposure = (double) forwardExposureInfo.GetValue (referenceInteraction);
+                    FieldInfo backwardExposureInfo = typeInteraction.GetField ("backwardExposure", BindingFlags.NonPublic | BindingFlags.Instance);
+                    double backwardExposure = (double) backwardExposureInfo.GetValue (referenceInteraction);
+                    FieldInfo leftwardExposureInfo = typeInteraction.GetField ("leftwardExposure", BindingFlags.NonPublic | BindingFlags.Instance);
+                    double leftwardExposure = (double) leftwardExposureInfo.GetValue (referenceInteraction);
+                    FieldInfo rightwardExposureInfo = typeInteraction.GetField ("rightwardExposure", BindingFlags.NonPublic | BindingFlags.Instance);
+                    double rightwardExposure = (double) rightwardExposureInfo.GetValue (referenceInteraction);
+                    report += "Exposure (fwd/back/left/right): " + forwardExposure.ToString ("F2") + ", " + backwardExposure.ToString ("F2") + ", " + leftwardExposure.ToString ("F2") + ", " + rightwardExposure.ToString ("F2");
+                    DebugLogWithID ("DumpInteractionData", report);
+
+                    /*
+                    FieldInfo fieldInfoForward = typeInteraction.GetField ("nearbyWingModulesForwardList", BindingFlags.NonPublic | BindingFlags.Instance);
+                    object listObjectForward = fieldInfoForward.GetValue (referenceInteraction);
+                    object[] thingArrayForward = (object[]) runtimeListType.GetMethod ("ToArray").Invoke (listObjectForward, null);
+                    report += " | Forward module list: \n";
+                    for (int i = 0; i < thingArrayForward.Length; ++i)
+                    {
+                        if (thingArrayForward[i] != null) report += i + " : present\n";
+                        else report += i + " : null\n";
+                    }
+
+                    FieldInfo fieldInfoBackward = typeInteraction.GetField ("nearbyWingModulesBackwardList", BindingFlags.NonPublic | BindingFlags.Instance);
+                    object listObjectBackward = fieldInfoBackward.GetValue (referenceInteraction);
+                    object[] thingArrayBackward = (object[]) runtimeListType.GetMethod ("ToArray").Invoke (listObjectBackward, null);
+                    report += " | Backward module list: \n";
+                    for (int i = 0; i < thingArrayForward.Length; ++i)
+                    {
+                        if (thingArrayForward[i] != null) report += i + " : present\n";
+                        else report += i + " : null\n";
+                    }
+                    */
+                }
+                else DebugLogWithID ("DumpInteractionData", "Interaction reference is null, report failed");
+            }
+            else DebugLogWithID ("DumpInteractionData", "FAR module not found, report failed");
         }
 
 

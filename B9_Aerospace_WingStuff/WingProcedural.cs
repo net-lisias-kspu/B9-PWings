@@ -54,12 +54,12 @@ namespace WingProcedural
         public float wingSpan = 4f;
         public float wingSpanCached = 4f;
 
-        [KSPField (isPersistant = true, guiActiveEditor = true, guiActive = false, guiName = "Width R", guiFormat = "S4", guiUnits = "m"),
+        [KSPField (isPersistant = true, guiActiveEditor = true, guiActive = false, guiName = "Width (root)", guiFormat = "S4", guiUnits = "m"),
         UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0.25f, maxValue = 16f, incrementLarge = 1f, incrementSlide = 0.125f)]
         public float wingWidthRoot = 4f;
         public float wingWidthRootCached = 4f;
 
-        [KSPField (isPersistant = true, guiActiveEditor = true, guiActive = false, guiName = "Width T", guiFormat = "S4", guiUnits = "m"),
+        [KSPField (isPersistant = true, guiActiveEditor = true, guiActive = false, guiName = "Width (tip)", guiFormat = "S4", guiUnits = "m"),
         UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0.25f, maxValue = 16f, incrementLarge = 1f, incrementSlide = 0.125f)]
         public float wingWidthTip = 4f;
         public float wingWidthTipCached = 4f;
@@ -69,13 +69,13 @@ namespace WingProcedural
         public float wingOffset = 0f;
         public float wingOffsetCached = 0f;
 
-        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Height R"),
-        UI_FloatRange (minValue = 0.08f, maxValue = 1f, scene = UI_Scene.Editor, stepIncrement = 0.04f)]
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Thickness (root)", guiFormat = "S3"),
+        UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0.08f, maxValue = 1f, incrementSlide = 0.04f)]
         public float wingThicknessRoot = 0.24f;
         public float wingThicknessRootCached = 0.24f;
 
-        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Height T"),
-        UI_FloatRange (minValue = 0.08f, maxValue = 1f, scene = UI_Scene.Editor, stepIncrement = 0.04f)]
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Thickness (tip)", guiFormat = "S3"),
+        UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0.08f, maxValue = 1f, incrementSlide = 0.04f)]
         public float wingThicknessTip = 0.24f;
         public float wingThicknessTipCached = 0.24f;
 
@@ -88,18 +88,18 @@ namespace WingProcedural
         public static bool wingFieldGroupEdgeLeadingStatic = false;
         private static string[] wingFieldGroupEdgeLeadingArray = new string[] { "wingEdgeTypeLeading", "wingEdgeWidthLeadingRoot", "wingEdgeWidthLeadingTip" };
 
-        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Shape"),
-        UI_FloatRange (minValue = 1f, maxValue = 4f, scene = UI_Scene.Editor, stepIncrement = 1f)]
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Shape", guiFormat = "S3"),
+        UI_FloatEdit (scene = UI_Scene.Editor, minValue = 1f, maxValue = 4f, incrementSlide = 1f)]
         public float wingEdgeTypeLeading = 2f;
         public float wingEdgeTypeLeadingCached = 2f;
 
-        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Width (root)"),
-        UI_FloatRange (minValue = 0f, maxValue = 1f, scene = UI_Scene.Editor, stepIncrement = 0.04f)]
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Width (root)", guiFormat = "S3"),
+        UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.04f)]
         public float wingEdgeWidthLeadingRoot = 0.24f;
         public float wingEdgeWidthLeadingRootCached = 0.24f;
 
-        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Width (tip)"),
-        UI_FloatRange (minValue = 0f, maxValue = 1f, scene = UI_Scene.Editor, stepIncrement = 0.04f)]
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Width (tip)", guiFormat = "S3"),
+        UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.04f)]
         public float wingEdgeWidthLeadingTip = 0.24f;
         public float wingEdgeWidthLeadingTipCached = 0.24f;
 
@@ -112,49 +112,52 @@ namespace WingProcedural
         public static bool wingFieldGroupEdgeTrailingStatic = false;
         private static string[] wingFieldGroupEdgeTrailingArray = new string[] { "wingEdgeTypeTrailing", "wingEdgeWidthTrailingRoot", "wingEdgeWidthTrailingTip" };
 
-        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Shape"),
-        UI_FloatRange (minValue = 1f, maxValue = 4f, scene = UI_Scene.Editor, stepIncrement = 1f)]
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Shape", guiFormat = "S3"),
+        UI_FloatEdit (scene = UI_Scene.Editor, minValue = 1f, maxValue = 4f, incrementSlide = 1f)]
         public float wingEdgeTypeTrailing = 3f;
         public float wingEdgeTypeTrailingCached = 3f;
 
-        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Width (root)"),
-        UI_FloatRange (minValue = 0f, maxValue = 1f, scene = UI_Scene.Editor, stepIncrement = 0.04f)]
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Width (root)", guiFormat = "S3"),
+        UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.04f)]
         public float wingEdgeWidthTrailingRoot = 0.48f;
         public float wingEdgeWidthTrailingRootCached = 0.48f;
 
-        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Width (tip)"),
-        UI_FloatRange (minValue = 0f, maxValue = 1f, scene = UI_Scene.Editor, stepIncrement = 0.04f)]
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Width (tip)", guiFormat = "S3"),
+        UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.04f)]
         public float wingEdgeWidthTrailingTip = 0.48f;
         public float wingEdgeWidthTrailingTipCached = 0.48f;
 
         // Wing properties / Surface materials
 
-        [KSPField (guiActiveEditor = true, guiActive = false, guiName = "| Materials"),
-        UI_Toggle (scene = UI_Scene.Editor, disabledText = "", enabledText = "")]
-        public bool wingFieldGroupMaterials = false;
-        public bool wingFieldGroupMaterialsCached = false;
-        public static bool wingFieldGroupMaterialsStatic = false;
-        private static string[] wingFieldGroupMaterialsArray = new string[] { "wingSurfaceTextureTop", "wingSurfaceTextureBottom", "wingEdgeTextureLeading", "wingEdgeTextureTrailing" };
+        //[KSPField (guiActiveEditor = true, guiActive = false, guiName = "| Materials"),
+        //UI_Toggle (scene = UI_Scene.Editor, disabledText = "", enabledText = "")]
+        //public bool wingFieldGroupMaterials = false;
+        //public bool wingFieldGroupMaterialsCached = false;
+        //public static bool wingFieldGroupMaterialsStatic = false;
+        //private static string[] wingFieldGroupMaterialsArray = new string[] { "wingSurfaceTextureTop", "wingSurfaceTextureBottom", "wingEdgeTextureLeading", "wingEdgeTextureTrailing" };
 
-        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Side A"),
-        UI_FloatRange (minValue = 0f, maxValue = 4f, scene = UI_Scene.Editor, stepIncrement = 1f)]
-        public float wingSurfaceTextureTop = 3f;
-        public float wingSurfaceTextureTopCached = 3f;
+        //[KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Material (top)", guiFormat = "S3"),
+        //UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 4f, incrementSlide = 1f)]
+        //public float wingSurfaceTextureTop = 3f;
+        //public float wingSurfaceTextureTopCached = 3f;
 
-        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Side B"),
-        UI_FloatRange (minValue = 0f, maxValue = 4f, scene = UI_Scene.Editor, stepIncrement = 1f)]
-        public float wingSurfaceTextureBottom = 4f;
-        public float wingSurfaceTextureBottomCached = 4f;
+        //[KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Material (bottom)", guiFormat = "S3"),
+        //UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 4f, incrementSlide = 1f)]
+        //public float wingSurfaceTextureBottom = 4f;
+        //public float wingSurfaceTextureBottomCached = 4f;
 
-        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Edge L"),
-        UI_FloatRange (minValue = 0f, maxValue = 4f, scene = UI_Scene.Editor, stepIncrement = 1f)]
-        public float wingEdgeTextureLeading = 4f;
-        public float wingEdgeTextureLeadingCached = 4f;
+        //[KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Material (leading)", guiFormat = "S3"),
+        //UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 4f, incrementSlide = 1f)]
+        //public float wingEdgeTextureLeading = 4f;
+        //public float wingEdgeTextureLeadingCached = 4f;
 
-        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Edge T"),
-        UI_FloatRange (minValue = 0f, maxValue = 4f, scene = UI_Scene.Editor, stepIncrement = 1f)]
-        public float wingEdgeTextureTrailing = 4f;
-        public float wingEdgeTextureTrailingCached = 4f;
+        //[KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Material (trailing)", guiFormat = "S3"),
+        //UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 4f, incrementSlide = 1f)]
+        //public float wingEdgeTextureTrailing = 4f;
+        //public float wingEdgeTextureTrailingCached = 4f;
+
+
+
 
         // Other
 
@@ -173,7 +176,7 @@ namespace WingProcedural
         private Vector2 wingOffsetLimits = new Vector2 (-8f, 8f);
         private Vector2 wingEdgeWidthLimits = new Vector2 (0f, 1f);
         private Vector2 wingEdgeTypeLimits = new Vector2 (1f, 4f);
-        private Vector2 wingTextureLimits = new Vector2 (0f, 4f);
+        // private Vector2 wingTextureLimits = new Vector2 (0f, 4f);
         private int     wingEdgeTypeCount = 4;
 
 
@@ -193,23 +196,23 @@ namespace WingProcedural
         public float ctrlSpan = 1f;
         public float ctrlSpanCached = 1f;
 
-        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Width R"),
-        UI_FloatRange (minValue = 0.25f, maxValue = 1.5f, scene = UI_Scene.Editor, stepIncrement = 0.125f)]
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Width (root)", guiFormat = "S3"),
+        UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0.25f, maxValue = 1.5f, incrementSlide = 0.125f)]
         public float ctrlWidthRoot = 0.25f;
         public float ctrlWidthRootCached = 0.25f;
 
-        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Width T"),
-        UI_FloatRange (minValue = 0.25f, maxValue = 1.5f, scene = UI_Scene.Editor, stepIncrement = 0.125f)]
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Width (tip)", guiFormat = "S3"),
+        UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0.25f, maxValue = 1.5f, incrementSlide = 0.125f)]
         public float ctrlWidthTip = 0.25f;
         public float ctrlWidthTipCached = 0.25f;
 
-        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Height R"),
-        UI_FloatRange (minValue = 0.08f, maxValue = 0.48f, scene = UI_Scene.Editor, stepIncrement = 0.04f)]
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Thickness (root)", guiFormat = "S3"),
+        UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0.08f, maxValue = 0.48f, incrementSlide = 0.04f)]
         public float ctrlThicknessRoot = 0.24f;
         public float ctrlThicknessRootCached = 0.24f;
 
-        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Height T"),
-        UI_FloatRange (minValue = 0.08f, maxValue = 0.48f, scene = UI_Scene.Editor, stepIncrement = 0.04f)]
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Thickness (tip)", guiFormat = "S3"),
+        UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0.08f, maxValue = 0.48f, incrementSlide = 0.04f)]
         public float ctrlThicknessTip = 0.24f;
         public float ctrlThicknessTipCached = 0.24f;
 
@@ -222,54 +225,54 @@ namespace WingProcedural
         public static bool ctrlFieldGroupEdgeStatic = false;
         private static string[] ctrlFieldGroupEdgeArray = new string[] { "ctrlEdgeType", "ctrlEdgeWidthRoot", "ctrlEdgeWidthTip", "ctrlOffsetRoot", "ctrlOffsetTip" };
 
-        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Shape"),
-        UI_FloatRange (minValue = 1f, maxValue = 3f, scene = UI_Scene.Editor, stepIncrement = 1f)]
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Shape", guiFormat = "S3"),
+        UI_FloatEdit (scene = UI_Scene.Editor, minValue = 1f, maxValue = 3f, incrementSlide = 1f)]
         public float ctrlEdgeType = 2f;
         public float ctrlEdgeTypeCached = 2f;
 
-        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Width (root)"),
-        UI_FloatRange (minValue = 0.24f, maxValue = 1f, scene = UI_Scene.Editor, stepIncrement = 0.04f)]
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Width (root)", guiFormat = "S3"),
+        UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0.24f, maxValue = 1f, incrementSlide = 0.04f)]
         public float ctrlEdgeWidthRoot = 0.48f;
         public float ctrlEdgeWidthRootCached = 0.48f;
 
-        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Width (tip)"),
-        UI_FloatRange (minValue = 0.24f, maxValue = 1f, scene = UI_Scene.Editor, stepIncrement = 0.04f)]
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Width (tip)", guiFormat = "S3"),
+        UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0.24f, maxValue = 1f, incrementSlide = 0.04f)]
         public float ctrlEdgeWidthTip = 0.48f;
         public float ctrlEdgeWidthTipCached = 0.48f;
 
-        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Sweep (root)"),
-        UI_FloatRange (minValue = -1f, maxValue = 1f, scene = UI_Scene.Editor, stepIncrement = 0.125f)]
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Sweep (root)", guiFormat = "S3"),
+        UI_FloatEdit (scene = UI_Scene.Editor, minValue = -1f, maxValue = 1f, incrementSlide = 0.125f)]
         public float ctrlOffsetRoot = 0.0f;
         public float ctrlOffsetRootCached = 0.0f;
 
-        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Sweep (tip)"),
-        UI_FloatRange (minValue = -1f, maxValue = 1f, scene = UI_Scene.Editor, stepIncrement = 0.125f)]
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Sweep (tip)", guiFormat = "S3"),
+        UI_FloatEdit (scene = UI_Scene.Editor, minValue = -1f, maxValue = 1f, incrementSlide = 0.125f)]
         public float ctrlOffsetTip = 0.0f;
         public float ctrlOffsetTipCached = 0.0f;
 
         // Materials
 
-        [KSPField (guiActiveEditor = true, guiActive = false, guiName = "| Materials"),
-        UI_Toggle (scene = UI_Scene.Editor, disabledText = "", enabledText = "")]
-        public bool ctrlFieldGroupMaterials = false;
-        public bool ctrlFieldGroupMaterialsCached = false;
-        public static bool ctrlFieldGroupMaterialsStatic = false;
-        private static string[] ctrlFieldGroupMaterialsArray = new string[] { "ctrlSurfaceTextureTop", "ctrlSurfaceTextureBottom", "ctrlEdgeTexture" };
+        //[KSPField (guiActiveEditor = true, guiActive = false, guiName = "| Materials"),
+        //UI_Toggle (scene = UI_Scene.Editor, disabledText = "", enabledText = "")]
+        //public bool ctrlFieldGroupMaterials = false;
+        //public bool ctrlFieldGroupMaterialsCached = false;
+        //public static bool ctrlFieldGroupMaterialsStatic = false;
+        //private static string[] ctrlFieldGroupMaterialsArray = new string[] { "ctrlSurfaceTextureTop", "ctrlSurfaceTextureBottom", "ctrlEdgeTexture" };
 
-        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Side A"),
-        UI_FloatRange (minValue = 0f, maxValue = 4f, scene = UI_Scene.Editor, stepIncrement = 1f)]
-        public float ctrlSurfaceTextureTop = 1f;
-        public float ctrlSurfaceTextureTopCached;
+        //[KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Side A", guiFormat = "S3"),
+        //UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 4f, incrementSlide = 1f)]
+        //public float ctrlSurfaceTextureTop = 1f;
+        //public float ctrlSurfaceTextureTopCached;
 
-        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Side B"),
-        UI_FloatRange (minValue = 0f, maxValue = 4f, scene = UI_Scene.Editor, stepIncrement = 1f)]
-        public float ctrlSurfaceTextureBottom = 4f;
-        public float ctrlSurfaceTextureBottomCached;
+        //[KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Side B", guiFormat = "S3"),
+        //UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 4f, incrementSlide = 1f)]
+        //public float ctrlSurfaceTextureBottom = 4f;
+        //public float ctrlSurfaceTextureBottomCached;
 
-        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Edge"),
-        UI_FloatRange (minValue = 0f, maxValue = 4f, scene = UI_Scene.Editor, stepIncrement = 1f)]
-        public float ctrlEdgeTexture = 4f;
-        public float ctrlEdgeTextureCached = 4f;
+        //[KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Edge", guiFormat = "S3"),
+        //UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 4f, incrementSlide = 1f)]
+        //public float ctrlEdgeTexture = 4f;
+        //public float ctrlEdgeTextureCached = 4f;
 
         // Other
 
@@ -285,10 +288,152 @@ namespace WingProcedural
         private Vector2 ctrlWidthLimits = new Vector2 (0.25f, 1.5f);
         private Vector2 ctrlThicknessLimits = new Vector2 (0.08f, 0.48f);
         private Vector2 ctrlOffsetLimits = new Vector2 (-1f, 1f);
-        private Vector2 ctrlTextureLimits = new Vector2 (0f, 4f);
+        // private Vector2 ctrlTextureLimits = new Vector2 (0f, 4f);
         private Vector2 ctrlEdgeWidthLimits = new Vector2 (0f, 1f);
         private Vector2 ctrlEdgeTypeLimits = new Vector2 (1f, 3f);
         private int     ctrlEdgeTypeCount = 3;
+
+
+
+
+        // Shared properties
+
+        private Vector2 sharedMaterialLimits = new Vector2 (0f, 4f);
+        private Vector2 sharedColorLimits = new Vector2 (0f, 1f);
+
+        private float sharedIncrementDiscrete = 1f;
+        private float sharedIncrementColor = 0.01f;
+
+        [KSPField (guiActiveEditor = true, guiActive = false, guiName = "| Paint A"),
+        UI_Toggle (scene = UI_Scene.Editor, disabledText = "", enabledText = "")]
+        public bool sharedFieldGroupColorST = false;
+        public bool sharedFieldGroupColorSTCached = false;
+        public bool sharedFieldGroupColorSTStatic = false;
+        private static string[] sharedFieldGroupColorSTArray = new string[] { "sharedMaterialST", "sharedColorSTOpacity", "sharedColorSTHue", "sharedColorSTSaturation", "sharedColorSTBrightness" };
+
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Material", guiFormat = "S3"),
+        UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 4f, incrementSlide = 1f)]
+        public float sharedMaterialST = 1f;
+        public float sharedMaterialSTCached = 1f;
+
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Opacity", guiFormat = "S3"),
+        UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.01f)]
+        public float sharedColorSTOpacity = 0f;
+        public float sharedColorSTOpacityCached = 0f;
+
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Color (H)", guiFormat = "S3"),
+        UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.01f)]
+        public float sharedColorSTHue = 0.10f;
+        public float sharedColorSTHueCached = 0.10f;
+
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Color (S)", guiFormat = "S3"),
+        UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.01f)]
+        public float sharedColorSTSaturation = 0.75f;
+        public float sharedColorSTSaturationCached = 0.75f;
+
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Color (B)", guiFormat = "S3"),
+        UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.01f)]
+        public float sharedColorSTBrightness = 0.6f;
+        public float sharedColorSTBrightnessCached = 0.6f;
+
+
+        [KSPField (guiActiveEditor = true, guiActive = false, guiName = "| Paint B"),
+        UI_Toggle (scene = UI_Scene.Editor, disabledText = "", enabledText = "")]
+        public bool sharedFieldGroupColorSB = false;
+        public bool sharedFieldGroupColorSBCached = false;
+        public bool sharedFieldGroupColorSBStatic = false;
+        private static string[] sharedFieldGroupColorSBArray = new string[] { "sharedMaterialSB", "sharedColorSBOpacity", "sharedColorSBHue", "sharedColorSBSaturation", "sharedColorSBBrightness" };
+
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Material", guiFormat = "S3"),
+        UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 4f, incrementSlide = 1f)]
+        public float sharedMaterialSB = 4f;
+        public float sharedMaterialSBCached = 4f;
+
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Opacity", guiFormat = "S3"),
+        UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.01f)]
+        public float sharedColorSBOpacity = 0f;
+        public float sharedColorSBOpacityCached = 0f;
+
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Color (H)", guiFormat = "S3"),
+        UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.01f)]
+        public float sharedColorSBHue = 0.10f;
+        public float sharedColorSBHueCached = 0.10f;
+
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Color (S)", guiFormat = "S3"),
+        UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.01f)]
+        public float sharedColorSBSaturation = 0.75f;
+        public float sharedColorSBSaturationCached = 0.75f;
+
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Color (B)", guiFormat = "S3"),
+        UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.01f)]
+        public float sharedColorSBBrightness = 0.6f;
+        public float sharedColorSBBrightnessCached = 0.6f;
+
+
+        [KSPField (guiActiveEditor = true, guiActive = false, guiName = "| Paint T"),
+        UI_Toggle (scene = UI_Scene.Editor, disabledText = "", enabledText = "")]
+        public bool sharedFieldGroupColorET = false;
+        public bool sharedFieldGroupColorETCached = false;
+        public bool sharedFieldGroupColorETStatic = false;
+        private static string[] sharedFieldGroupColorETArray = new string[] { "sharedMaterialET", "sharedColorETOpacity", "sharedColorETHue", "sharedColorETSaturation", "sharedColorETBrightness" };
+
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Material", guiFormat = "S3"),
+        UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 4f, incrementSlide = 1f)]
+        public float sharedMaterialET = 4f;
+        public float sharedMaterialETCached = 4f;
+
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Opacity", guiFormat = "S3"),
+        UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.01f)]
+        public float sharedColorETOpacity = 0f;
+        public float sharedColorETOpacityCached = 0f;
+
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Color (H)", guiFormat = "S3"),
+        UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.01f)]
+        public float sharedColorETHue = 0.10f;
+        public float sharedColorETHueCached = 0.10f;
+
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Color (S)", guiFormat = "S3"),
+        UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.01f)]
+        public float sharedColorETSaturation = 0.75f;
+        public float sharedColorETSaturationCached = 0.75f;
+
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Color (B)", guiFormat = "S3"),
+        UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.01f)]
+        public float sharedColorETBrightness = 0.6f;
+        public float sharedColorETBrightnessCached = 0.6f;
+
+
+        [KSPField (guiActiveEditor = true, guiActive = false, guiName = "| Paint L"),
+        UI_Toggle (scene = UI_Scene.Editor, disabledText = "", enabledText = "")]
+        public bool sharedFieldGroupColorEL = false;
+        public bool sharedFieldGroupColorELCached = false;
+        public bool sharedFieldGroupColorELStatic = false;
+        private static string[] sharedFieldGroupColorELArray = new string[] { "sharedMaterialEL", "sharedColorELOpacity", "sharedColorELHue", "sharedColorELSaturation", "sharedColorELBrightness" };
+
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Material", guiFormat = "S3"),
+        UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 4f, incrementSlide = 1f)]
+        public float sharedMaterialEL = 4f;
+        public float sharedMaterialELCached = 4f;
+
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Opacity", guiFormat = "S3"),
+        UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.01f)]
+        public float sharedColorELOpacity = 0f;
+        public float sharedColorELOpacityCached = 0f;
+
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Color (H)", guiFormat = "S3"),
+        UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.01f)]
+        public float sharedColorELHue = 0.10f;
+        public float sharedColorELHueCached = 0.10f;
+
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Color (S)", guiFormat = "S3"),
+        UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.01f)]
+        public float sharedColorELSaturation = 0.75f;
+        public float sharedColorELSaturationCached = 0.75f;
+
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Color (B)", guiFormat = "S3"),
+        UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.01f)]
+        public float sharedColorELBrightness = 0.6f;
+        public float sharedColorELBrightnessCached = 0.6f;
 
 
 
@@ -307,14 +452,14 @@ namespace WingProcedural
         public bool isStartingNow = false;
         public bool justDetached = false;
 
-        private bool logCAV = false;
+        private bool logCAV = true;
         private bool logUpdate = false;
         private bool logUpdateGeometry = false;
         private bool logUpdateMaterials = false;
         private bool logMeshReferences = false;
         private bool logCheckMeshFilter = false;
         private bool logPropertyWindow = false;
-        private bool logFlightSetup = false;
+        private bool logFlightSetup = true;
 
 
 
@@ -375,13 +520,8 @@ namespace WingProcedural
                         CheckFieldValue (wingThicknessTip, ref wingThicknessTipCached);
                         CheckFieldValue (wingOffset, ref wingOffsetCached);
 
-                        CheckFieldValue (wingSurfaceTextureTop, ref wingSurfaceTextureTopCached);
-                        CheckFieldValue (wingSurfaceTextureBottom, ref wingSurfaceTextureBottomCached);
-
                         CheckFieldValue (wingEdgeTypeTrailing, ref wingEdgeTypeTrailingCached);
                         CheckFieldValue (wingEdgeTypeLeading, ref wingEdgeTypeLeadingCached);
-                        CheckFieldValue (wingEdgeTextureTrailing, ref wingEdgeTextureTrailingCached);
-                        CheckFieldValue (wingEdgeTextureLeading, ref wingEdgeTextureLeadingCached);
 
                         CheckFieldValue (wingEdgeWidthLeadingRoot, ref wingEdgeWidthLeadingRootCached);
                         CheckFieldValue (wingEdgeWidthLeadingTip, ref wingEdgeWidthLeadingTipCached);
@@ -391,7 +531,13 @@ namespace WingProcedural
                         CheckFieldGroup (wingFieldGroupBase, ref wingFieldGroupBaseCached, ref wingFieldGroupBaseStatic, wingFieldGroupBaseArray, false);
                         CheckFieldGroup (wingFieldGroupEdgeLeading, ref wingFieldGroupEdgeLeadingCached, ref wingFieldGroupEdgeLeadingStatic, wingFieldGroupEdgeLeadingArray, false);
                         CheckFieldGroup (wingFieldGroupEdgeTrailing, ref wingFieldGroupEdgeTrailingCached, ref wingFieldGroupEdgeTrailingStatic, wingFieldGroupEdgeTrailingArray, false);
-                        CheckFieldGroup (wingFieldGroupMaterials, ref wingFieldGroupMaterialsCached, ref wingFieldGroupMaterialsStatic, wingFieldGroupMaterialsArray, false);
+
+                        CheckFieldGroup (sharedFieldGroupColorEL, ref sharedFieldGroupColorELCached, ref sharedFieldGroupColorELStatic, sharedFieldGroupColorELArray, false);
+                        CheckFieldValue (sharedMaterialEL, ref sharedMaterialELCached);
+                        CheckFieldValue (sharedColorELOpacity, ref sharedColorELOpacityCached);
+                        CheckFieldValue (sharedColorELHue, ref sharedColorELHueCached);
+                        CheckFieldValue (sharedColorELSaturation, ref sharedColorELSaturationCached);
+                        CheckFieldValue (sharedColorELBrightness, ref sharedColorELBrightnessCached);
                     }
                     else
                     {
@@ -406,15 +552,28 @@ namespace WingProcedural
                         CheckFieldValue (ctrlOffsetRoot, ref ctrlOffsetRootCached);
                         CheckFieldValue (ctrlOffsetTip, ref ctrlOffsetTipCached);
 
-                        CheckFieldValue (ctrlSurfaceTextureTop, ref ctrlSurfaceTextureTopCached);
-                        CheckFieldValue (ctrlSurfaceTextureBottom, ref ctrlSurfaceTextureBottomCached);
-                        CheckFieldValue (ctrlEdgeTexture, ref ctrlEdgeTextureCached);
                         CheckFieldValue (ctrlEdgeType, ref ctrlEdgeTypeCached);
 
                         CheckFieldGroup (ctrlFieldGroupBase, ref ctrlFieldGroupBaseCached, ref ctrlFieldGroupBaseStatic, ctrlFieldGroupBaseArray, false);
                         CheckFieldGroup (ctrlFieldGroupEdge, ref ctrlFieldGroupEdgeCached, ref ctrlFieldGroupEdgeStatic, ctrlFieldGroupEdgeArray, false);
-                        CheckFieldGroup (ctrlFieldGroupMaterials, ref ctrlFieldGroupMaterialsCached, ref ctrlFieldGroupMaterialsStatic, ctrlFieldGroupMaterialsArray, false);
                     }
+
+                    CheckFieldGroup (sharedFieldGroupColorST, ref sharedFieldGroupColorSTCached, ref sharedFieldGroupColorSTStatic, sharedFieldGroupColorSTArray, false);
+                    CheckFieldGroup (sharedFieldGroupColorSB, ref sharedFieldGroupColorSBCached, ref sharedFieldGroupColorSBStatic, sharedFieldGroupColorSBArray, false);
+                    CheckFieldGroup (sharedFieldGroupColorET, ref sharedFieldGroupColorETCached, ref sharedFieldGroupColorETStatic, sharedFieldGroupColorETArray, false);
+                    CheckFieldValue (sharedColorSTOpacity, ref sharedColorSTOpacityCached);
+                    CheckFieldValue (sharedColorSBOpacity, ref sharedColorSBOpacityCached);
+                    CheckFieldValue (sharedColorETOpacity, ref sharedColorETOpacityCached);
+                    CheckFieldValue (sharedColorSTHue, ref sharedColorSTHueCached);
+                    CheckFieldValue (sharedColorSBHue, ref sharedColorSBHueCached);
+                    CheckFieldValue (sharedColorETHue, ref sharedColorETHueCached);
+                    CheckFieldValue (sharedColorSTSaturation, ref sharedColorSTSaturationCached);
+                    CheckFieldValue (sharedColorSBSaturation, ref sharedColorSBSaturationCached);
+                    CheckFieldValue (sharedColorETSaturation, ref sharedColorETSaturationCached);
+                    CheckFieldValue (sharedColorSTBrightness, ref sharedColorSTBrightnessCached);
+                    CheckFieldValue (sharedColorSBBrightness, ref sharedColorSBBrightnessCached);
+                    CheckFieldValue (sharedColorETBrightness, ref sharedColorETBrightnessCached);
+
 
                     // Trigger update of the counterparts
                     // Has to be done through a special method that overrides their cached values, preventing feedback loop
@@ -618,8 +777,9 @@ namespace WingProcedural
                     Vector2[] uv = new Vector2[length];
                     Array.Copy (meshReferenceWingSurface.uv, uv, length);
                     Color[] cl = new Color[length];
-                    if (logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Wing surface top | Passed array setup");
+                    Vector2[] uv2 = new Vector2[length];
 
+                    if (logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Wing surface top | Passed array setup");
                     for (int i = 0; i < length; ++i)
                     {
                         // Root/tip filtering followed by leading/trailing filtering
@@ -651,12 +811,21 @@ namespace WingProcedural
                         }
 
                         // Top/bottom filtering
-                        if (vp[i].y > 0f) cl[i] = GetVertexColorFromSelection (wingSurfaceTextureTop, 0.6f);
-                        else cl[i] = GetVertexColorFromSelection (wingSurfaceTextureBottom, 0.6f);
+                        if (vp[i].y > 0f)
+                        {
+                            cl[i] = GetVertexColor (0);
+                            uv2[i] = GetVertexUV2 (sharedMaterialST);
+                        }
+                        else
+                        {
+                            cl[i] = GetVertexColor (1);
+                            uv2[i] = GetVertexUV2 (sharedMaterialSB);
+                        }
                     }
 
                     meshFilterWingSurface.mesh.vertices = vp;
                     meshFilterWingSurface.mesh.uv = uv;
+                    meshFilterWingSurface.mesh.uv2 = uv2;
                     meshFilterWingSurface.mesh.colors = cl;
                     meshFilterWingSurface.mesh.RecalculateBounds ();
                     if (logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Wing surface | Finished");
@@ -700,6 +869,7 @@ namespace WingProcedural
                     Vector2[] uv = new Vector2[length];
                     Array.Copy (meshReference.uv, uv, length);
                     Color[] cl = new Color[length];
+                    Vector2[] uv2 = new Vector2[length];
 
                     if (logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Wing edge trailing | Passed array setup");
                     for (int i = 0; i < vp.Length; ++i)
@@ -710,11 +880,16 @@ namespace WingProcedural
                             if (nm[i].x == 0f) uv[i] = new Vector2 (wingSpan, uv[i].y);
                         }
                         else vp[i] = new Vector3 (0f, vp[i].y * wingThicknessDeviationRoot, vp[i].z * wingEdgeWidthTrailingRootDeviation + wingWidthRoot / 2f); // Root edge
-                        if (nm[i].x == 0f) cl[i] = GetVertexColorFromSelection (wingEdgeTextureTrailing, 0.5f);
+                        if (nm[i].x == 0f && wingEdgeTypeTrailing != 1)
+                        {
+                            cl[i] = GetVertexColor (2);
+                            uv2[i] = GetVertexUV2 (sharedMaterialET);
+                        }
                     }
 
                     meshFiltersWingEdgeTrailing[wingEdgeTypeTrailingInt].mesh.vertices = vp;
                     meshFiltersWingEdgeTrailing[wingEdgeTypeTrailingInt].mesh.uv = uv;
+                    meshFiltersWingEdgeTrailing[wingEdgeTypeTrailingInt].mesh.uv2 = uv2;
                     meshFiltersWingEdgeTrailing[wingEdgeTypeTrailingInt].mesh.colors = cl;
                     meshFiltersWingEdgeTrailing[wingEdgeTypeTrailingInt].mesh.RecalculateBounds ();
                     if (logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Wing edge trailing | Finished");
@@ -730,8 +905,9 @@ namespace WingProcedural
                     Vector2[] uv = new Vector2[length];
                     Array.Copy (meshReference.uv, uv, length);
                     Color[] cl = new Color[length];
-                    if (logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Wing edge leading | Passed array setup");
+                    Vector2[] uv2 = new Vector2[length];
 
+                    if (logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Wing edge leading | Passed array setup");
                     for (int i = 0; i < vp.Length; ++i)
                     {
                         if (vp[i].x < -0.1f)
@@ -740,11 +916,16 @@ namespace WingProcedural
                             if (nm[i].x == 0f) uv[i] = new Vector2 (wingSpan, uv[i].y);
                         }
                         else vp[i] = new Vector3 (0f, vp[i].y * wingThicknessDeviationRoot, vp[i].z * wingEdgeWidthLeadingRootDeviation + wingWidthRoot / 2f); // Root edge
-                        if (nm[i].x == 0f) cl[i] = GetVertexColorFromSelection (wingEdgeTextureLeading, 0.5f);
+                        if (nm[i].x == 0f && wingEdgeTypeLeading != 1)
+                        {
+                            cl[i] = GetVertexColor (3);
+                            uv2[i] = GetVertexUV2 (sharedMaterialEL);
+                        }
                     }
 
                     meshFiltersWingEdgeLeading[wingEdgeTypeLeadingInt].mesh.vertices = vp;
                     meshFiltersWingEdgeLeading[wingEdgeTypeLeadingInt].mesh.uv = uv;
+                    meshFiltersWingEdgeLeading[wingEdgeTypeLeadingInt].mesh.uv2 = uv2;
                     meshFiltersWingEdgeLeading[wingEdgeTypeLeadingInt].mesh.colors = cl;
                     meshFiltersWingEdgeLeading[wingEdgeTypeLeadingInt].mesh.RecalculateBounds ();
                     if (logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Wing edge leading | Finished");
@@ -754,8 +935,8 @@ namespace WingProcedural
             {
                 // Some reusable values
 
-                float ctrlOffsetRootLimit = (ctrlSpan / 2f) / (ctrlWidthRoot + 1f);
-                float ctrlOffsetTipLimit = (ctrlSpan / 2f) / (ctrlWidthTip + 1f);
+                float ctrlOffsetRootLimit = (ctrlSpan / 2f) / (ctrlWidthRoot + ctrlEdgeWidthRoot);
+                float ctrlOffsetTipLimit = (ctrlSpan / 2f) / (ctrlWidthTip + ctrlEdgeWidthTip);
 
                 float ctrlOffsetRootClamped = Mathf.Clamp (ctrlOffsetRoot, -ctrlOffsetRootLimit, ctrlOffsetRootLimit);
                 float ctrlOffsetTipClamped = Mathf.Clamp (ctrlOffsetTip, -ctrlOffsetTipLimit, ctrlOffsetTipLimit);
@@ -777,8 +958,9 @@ namespace WingProcedural
                     Vector2[] uv = new Vector2[length];
                     Array.Copy (meshReferenceCtrlFrame.uv, uv, length);
                     Color[] cl = new Color[length];
-                    if (logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Control surface frame | Passed array setup");
+                    Vector2[] uv2 = new Vector2[length];
 
+                    if (logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Control surface frame | Passed array setup");
                     for (int i = 0; i < vp.Length; ++i)
                     {
                         // Span-based shift & thickness correction
@@ -806,15 +988,6 @@ namespace WingProcedural
                                     }
                                 }
                             }
-
-                            /*
-                            // Trailing edge cross section
-                            else
-                            {
-                                if (vp[i].z < 0f) vp[i] = new Vector3 (vp[i].x, vp[i].y + 0.5f - ctrlWidthTip, vp[i].z);
-                                else vp[i] = new Vector3 (vp[i].x, vp[i].y + 0.5f - ctrlWidthRoot, vp[i].z);
-                            }
-                            */
                         }
 
                         // Root (only needs UV adjustment)
@@ -846,21 +1019,14 @@ namespace WingProcedural
                             if (nm[i] != new Vector3 (0f, 0f, 1f) && nm[i] != new Vector3 (0f, 0f, -1f)) uv[i] = new Vector2 (uv[i].x - (vp[i].y * ctrlOffsetRootClamped) / 4f, uv[i].y);
                         }
 
-                        /*
-                        // Trailing edge (UV adjustment, has to be the last as it's based on cumulative vertex positions)
-                        if (nm[i] != new Vector3 (0f, 1f, 0f) && nm[i] != new Vector3 (0f, 0f, 1f) && nm[i] != new Vector3 (0f, 0f, -1f) && uv[i].y > 0.3f)
-                        {
-                            if (vp[i].z < 0f) uv[i] = new Vector2 (vp[i].z, uv[i].y);
-                            else uv[i] = new Vector2 (vp[i].z, uv[i].y);
-
-                            // Color has to be applied there to avoid blanking out cross sections
-                            cl[i] = GetVertexColorFromSelection (ctrlEdgeTexture, 0.75f);
-                        }
-                        */
+                        // Just blanks
+                        cl[i] = new Color (0f, 0f, 0f, 0f);
+                        uv2[i] = Vector2.zero;
                     }
 
                     meshFilterCtrlFrame.mesh.vertices = vp;
                     meshFilterCtrlFrame.mesh.uv = uv;
+                    meshFilterCtrlFrame.mesh.uv2 = uv2;
                     meshFilterCtrlFrame.mesh.colors = cl;
                     meshFilterCtrlFrame.mesh.RecalculateBounds ();
 
@@ -897,11 +1063,12 @@ namespace WingProcedural
                     Vector2[] uv = new Vector2[length];
                     Array.Copy (meshReference.uv, uv, length);
                     Color[] cl = new Color[length];
-                    if (logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Control surface edge | Passed array setup");
+                    Vector2[] uv2 = new Vector2[length];
 
                     float ctrlEdgeWidthRootDeviation = ctrlEdgeWidthRoot / 0.24f;
                     float ctrlEdgeWidthTipDeviation = ctrlEdgeWidthTip / 0.24f;
 
+                    if (logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Control surface edge | Passed array setup");
                     for (int i = 0; i < vp.Length; ++i)
                     {
                         // Thickness correction (X), edge width correction (Y) and span-based offset (Z)
@@ -945,12 +1112,14 @@ namespace WingProcedural
                             else uv[i] = new Vector2 (vp[i].z, uv[i].y);
 
                             // Color has to be applied there to avoid blanking out cross sections
-                            cl[i] = GetVertexColorFromSelection (ctrlEdgeTexture, 0.5f);
+                            cl[i] = GetVertexColor (2);
+                            uv2[i] = GetVertexUV2 (sharedMaterialET);
                         }
                     }
 
                     meshFiltersCtrlEdge[ctrlEdgeTypeInt].mesh.vertices = vp;
                     meshFiltersCtrlEdge[ctrlEdgeTypeInt].mesh.uv = uv;
+                    meshFiltersCtrlEdge[ctrlEdgeTypeInt].mesh.uv2 = uv2;
                     meshFiltersCtrlEdge[ctrlEdgeTypeInt].mesh.colors = cl;
                     meshFiltersCtrlEdge[ctrlEdgeTypeInt].mesh.RecalculateBounds ();
                     if (logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Control surface edge | Finished");
@@ -966,6 +1135,8 @@ namespace WingProcedural
                     Vector2[] uv = new Vector2[length];
                     Array.Copy (meshReferenceCtrlSurface.uv, uv, length);
                     Color[] cl = new Color[length];
+                    Vector2[] uv2 = new Vector2[length];
+
                     if (logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Control surface top | Passed array setup");
                     for (int i = 0; i < vp.Length; ++i)
                     {
@@ -1010,11 +1181,20 @@ namespace WingProcedural
                         }
 
                         // Colors
-                        if (vp[i].x > 0f) cl[i] = GetVertexColorFromSelection (ctrlSurfaceTextureTop, 0.6f);
-                        else cl[i] = GetVertexColorFromSelection (ctrlSurfaceTextureBottom, 0.6f);
+                        if (vp[i].x > 0f)
+                        {
+                            cl[i] = GetVertexColor (0);
+                            uv2[i] = GetVertexUV2 (sharedMaterialST);
+                        }
+                        else
+                        {
+                            cl[i] = GetVertexColor (1);
+                            uv2[i] = GetVertexUV2 (sharedMaterialSB);
+                        }
                     }
                     meshFilterCtrlSurface.mesh.vertices = vp;
                     meshFilterCtrlSurface.mesh.uv = uv;
+                    meshFilterCtrlSurface.mesh.uv2 = uv2;
                     meshFilterCtrlSurface.mesh.colors = cl;
                     meshFilterCtrlSurface.mesh.RecalculateBounds ();
                     if (logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Control surface top | Finished");
@@ -1050,10 +1230,12 @@ namespace WingProcedural
 
 
         public static Material materialLayeredSurface;
-        public static Texture materialLayeredSurfaceTexture;
+        public static Texture materialLayeredSurfaceTextureMain;
+        public static Texture materialLayeredSurfaceTextureMask;
 
         public static Material materialLayeredEdge;
-        public static Texture materialLayeredEdgeTexture;
+        public static Texture materialLayeredEdgeTextureMain;
+        public static Texture materialLayeredEdgeTextureMask;
 
         private float materialPropertyShininess = 0.078125f;
         private Color materialPropertySpecular = new Color (0.5f, 0.5f, 0.5f, 1.0f);
@@ -1093,21 +1275,23 @@ namespace WingProcedural
             if (!isCtrlSrf) SetTextures (meshFilterWingSurface, meshFiltersWingEdgeTrailing[0]);
             else SetTextures (meshFilterCtrlSurface, meshFilterCtrlFrame);
 
-            if (materialLayeredSurfaceTexture != null)
+            if (materialLayeredSurfaceTextureMain != null && materialLayeredSurfaceTextureMask != null)
             {
-                materialLayeredSurface.SetTexture ("_MainTex", materialLayeredSurfaceTexture);
+                materialLayeredSurface.SetTexture ("_MainTex", materialLayeredSurfaceTextureMain);
+                materialLayeredSurface.SetTexture ("_Emissive", materialLayeredSurfaceTextureMask);
                 materialLayeredSurface.SetFloat ("_Shininess", materialPropertyShininess);
                 materialLayeredSurface.SetColor ("_SpecColor", materialPropertySpecular);
             }
-            else if (logUpdateMaterials) DebugLogWithID ("SetMaterialReferences", "Surface texture not found");
+            else if (logUpdateMaterials) DebugLogWithID ("SetMaterialReferences", "Surface textures not found");
 
-            if (materialLayeredEdgeTexture != null)
+            if (materialLayeredEdgeTextureMain != null && materialLayeredEdgeTextureMask != null)
             {
-                materialLayeredEdge.SetTexture ("_MainTex", materialLayeredEdgeTexture);
+                materialLayeredEdge.SetTexture ("_MainTex", materialLayeredEdgeTextureMain);
+                materialLayeredEdge.SetTexture ("_Emissive", materialLayeredEdgeTextureMask);
                 materialLayeredEdge.SetFloat ("_Shininess", materialPropertyShininess);
                 materialLayeredEdge.SetColor ("_SpecColor", materialPropertySpecular);
             }
-            else if (logUpdateMaterials) DebugLogWithID ("SetMaterialReferences", "Edge texture not found");
+            else if (logUpdateMaterials) DebugLogWithID ("SetMaterialReferences", "Edge textures not found");
         }
 
         private void SetMaterial (MeshFilter target, Material material)
@@ -1124,19 +1308,23 @@ namespace WingProcedural
             if (sourceSurface != null)
             {
                 Renderer r = sourceSurface.gameObject.GetComponent<Renderer> ();
-                if (r != null) materialLayeredSurfaceTexture = r.sharedMaterial.GetTexture ("_MainTex");
+                if (r != null)
+                {
+                    materialLayeredSurfaceTextureMain = r.sharedMaterial.GetTexture ("_MainTex");
+                    materialLayeredSurfaceTextureMask = r.sharedMaterial.GetTexture ("_Emissive");
+                    if (logUpdateMaterials) DebugLogWithID ("SetTextures", "Main: " + materialLayeredSurfaceTextureMain.ToString () + " | Mask: " + materialLayeredSurfaceTextureMask);
+                }
             }
             if (sourceEdge != null)
             {
                 Renderer r = sourceEdge.gameObject.GetComponent<Renderer> ();
-                if (r != null) materialLayeredEdgeTexture = r.sharedMaterial.GetTexture ("_MainTex");
+                if (r != null)
+                {
+                    materialLayeredEdgeTextureMain = r.sharedMaterial.GetTexture ("_MainTex");
+                    materialLayeredEdgeTextureMask = r.sharedMaterial.GetTexture ("_Emissive");
+                    if (logUpdateMaterials) DebugLogWithID ("SetTextures", "Main: " + materialLayeredEdgeTextureMain.ToString () + " | Mask: " + materialLayeredEdgeTextureMask);
+                }
             }
-        }
-
-        private Color GetVertexColorFromSelection (float selection, float preferredFill)
-        {
-            if (selection == 0) return new Color (Mathf.Clamp (preferredFill, 0f, 1f), 1.0f, 0.0f, 0.0f);
-            else return new Color (0.0f, 0.0f, 0.0f, (selection - 1f) / 3f);
         }
 
 
@@ -1179,13 +1367,8 @@ namespace WingProcedural
                     clone.wingThicknessRoot =           clone.wingThicknessRootCached =         wingThicknessRoot;
                     clone.wingThicknessTip =            clone.wingThicknessTipCached =          wingThicknessTip;
                     clone.wingOffset =                  clone.wingOffsetCached =                wingOffset;
-                    clone.wingSurfaceTextureTop =       clone.wingSurfaceTextureTopCached =     wingSurfaceTextureTop;
-                    clone.wingSurfaceTextureBottom =    clone.wingSurfaceTextureBottomCached =  wingSurfaceTextureBottom;
-
                     clone.wingEdgeTypeTrailing =        clone.wingEdgeTypeTrailingCached =      wingEdgeTypeTrailing;
                     clone.wingEdgeTypeLeading =         clone.wingEdgeTypeLeadingCached =       wingEdgeTypeLeading;
-                    clone.wingEdgeTextureLeading =      clone.wingEdgeTextureLeadingCached =    wingEdgeTextureLeading;
-                    clone.wingEdgeTextureTrailing =     clone.wingEdgeTextureTrailingCached =   wingEdgeTextureTrailing;
 
                     clone.wingEdgeWidthLeadingRoot =    clone.wingEdgeWidthLeadingRootCached =  wingEdgeWidthLeadingRoot;
                     clone.wingEdgeWidthLeadingTip =     clone.wingEdgeWidthLeadingTipCached =   wingEdgeWidthLeadingTip;
@@ -1204,12 +1387,34 @@ namespace WingProcedural
                     clone.ctrlThicknessTip =            clone.ctrlThicknessTipCached =          ctrlThicknessTip;
                     clone.ctrlOffsetRoot =              clone.ctrlOffsetRootCached =            ctrlOffsetRoot;
                     clone.ctrlOffsetTip =               clone.ctrlOffsetTipCached =             ctrlOffsetTip;
-
-                    clone.ctrlSurfaceTextureTop =       clone.ctrlSurfaceTextureTopCached =     ctrlSurfaceTextureTop;
-                    clone.ctrlSurfaceTextureBottom =    clone.ctrlSurfaceTextureBottomCached =  ctrlSurfaceTextureBottom;
-                    clone.ctrlEdgeTexture =             clone.ctrlEdgeTextureCached =           ctrlEdgeTexture;
                     clone.ctrlEdgeType =                clone.ctrlEdgeTypeCached =              ctrlEdgeType;
                 }
+
+                clone.sharedMaterialST = clone.sharedMaterialSTCached = sharedMaterialST;
+                clone.sharedMaterialSB = clone.sharedMaterialSBCached = sharedMaterialSB;
+                clone.sharedMaterialET = clone.sharedMaterialETCached = sharedMaterialET;
+                clone.sharedMaterialEL = clone.sharedMaterialELCached = sharedMaterialEL;
+
+                clone.sharedColorSTBrightness = clone.sharedColorSTBrightnessCached = sharedColorSTBrightness;
+                clone.sharedColorSBBrightness = clone.sharedColorSBBrightnessCached = sharedColorSBBrightness;
+                clone.sharedColorETBrightness = clone.sharedColorETBrightnessCached = sharedColorETBrightness;
+                clone.sharedColorELBrightness = clone.sharedColorELBrightnessCached = sharedColorELBrightness;
+
+                clone.sharedColorSTOpacity = clone.sharedColorSTOpacityCached = sharedColorSTOpacity;
+                clone.sharedColorSBOpacity = clone.sharedColorSBOpacityCached = sharedColorSBOpacity;
+                clone.sharedColorETOpacity = clone.sharedColorETOpacityCached = sharedColorETOpacity;
+                clone.sharedColorELOpacity = clone.sharedColorELOpacityCached = sharedColorELOpacity;
+
+                clone.sharedColorSTHue = clone.sharedColorSTHueCached = sharedColorSTHue;
+                clone.sharedColorSBHue = clone.sharedColorSBHueCached = sharedColorSBHue;
+                clone.sharedColorETHue = clone.sharedColorETHueCached = sharedColorETHue;
+                clone.sharedColorELHue = clone.sharedColorELHueCached = sharedColorELHue;
+
+                clone.sharedColorSTSaturation = clone.sharedColorSTSaturationCached = sharedColorSTSaturation;
+                clone.sharedColorSBSaturation = clone.sharedColorSBSaturationCached = sharedColorSBSaturation;
+                clone.sharedColorETSaturation = clone.sharedColorETSaturationCached = sharedColorETSaturation;
+                clone.sharedColorELSaturation = clone.sharedColorELSaturationCached = sharedColorELSaturation;
+
                 clone.SetupRecurring ();
                 clone.updateCounterpartsAllowed = true;
             }
@@ -1248,18 +1453,11 @@ namespace WingProcedural
                 ClampFieldValue (ref wingSpan, wingSpanLimits);
                 ClampFieldValue (ref wingWidthRoot, wingWidthLimits);
                 ClampFieldValue (ref wingWidthTip, wingWidthLimits);
-
                 ClampFieldValue (ref wingThicknessRoot, wingThicknessLimits);
                 ClampFieldValue (ref wingThicknessTip, wingThicknessLimits);
                 ClampFieldValue (ref wingOffset, wingOffsetLimits);
-                ClampFieldValue (ref wingSurfaceTextureTop, wingTextureLimits);
-                ClampFieldValue (ref wingSurfaceTextureBottom, wingTextureLimits);
-
                 ClampFieldValue (ref wingEdgeTypeTrailing, wingEdgeTypeLimits);
                 ClampFieldValue (ref wingEdgeTypeLeading, wingEdgeTypeLimits);
-                ClampFieldValue (ref wingEdgeTextureLeading, wingTextureLimits);
-                ClampFieldValue (ref wingEdgeTextureTrailing, wingTextureLimits);
-
                 ClampFieldValue (ref wingEdgeWidthLeadingRoot, wingEdgeWidthLimits);
                 ClampFieldValue (ref wingEdgeWidthLeadingTip, wingEdgeWidthLimits);
                 ClampFieldValue (ref wingEdgeWidthTrailingRoot, wingEdgeWidthLimits);
@@ -1276,9 +1474,6 @@ namespace WingProcedural
                 ClampFieldValue (ref ctrlThicknessTip, ctrlThicknessLimits);
                 ClampFieldValue (ref ctrlOffsetRoot, ctrlOffsetLimits);
                 ClampFieldValue (ref ctrlOffsetTip, ctrlOffsetLimits);
-                ClampFieldValue (ref ctrlSurfaceTextureTop, ctrlTextureLimits);
-                ClampFieldValue (ref ctrlSurfaceTextureBottom, ctrlTextureLimits);
-                ClampFieldValue (ref ctrlEdgeTexture, ctrlTextureLimits);
                 ClampFieldValue (ref ctrlEdgeType, ctrlEdgeTypeLimits);
             }
         }
@@ -1299,40 +1494,63 @@ namespace WingProcedural
             SetFieldVisibility ("ctrlFieldGroupEdge", isCtrlSrf);
             SetFieldVisibility ("ctrlFieldGroupMaterials", isCtrlSrf);
 
+            SetFieldVisibility ("sharedFieldGroupColorST", true);
+            SetFieldVisibility ("sharedFieldGroupColorSB", true);
+            SetFieldVisibility ("sharedFieldGroupColorET", true);
+            SetFieldVisibility ("sharedFieldGroupColorEL", !isCtrlSrf);
+
+            SetFieldType ("sharedMaterialST", 2, sharedMaterialLimits, sharedIncrementDiscrete, false);
+            SetFieldType ("sharedMaterialSB", 2, sharedMaterialLimits, sharedIncrementDiscrete, false);
+            SetFieldType ("sharedMaterialET", 2, sharedMaterialLimits, sharedIncrementDiscrete, false);
+            SetFieldType ("sharedMaterialEL", 2, sharedMaterialLimits, sharedIncrementDiscrete, false);
+
+            SetFieldType ("sharedColorSTOpacity", 2, sharedColorLimits, sharedIncrementColor, false);
+            SetFieldType ("sharedColorSBOpacity", 2, sharedColorLimits, sharedIncrementColor, false);
+            SetFieldType ("sharedColorETOpacity", 2, sharedColorLimits, sharedIncrementColor, false);
+            SetFieldType ("sharedColorELOpacity", 2, sharedColorLimits, sharedIncrementColor, false);
+
+            SetFieldType ("sharedColorSTHue", 2, sharedColorLimits, sharedIncrementColor, false);
+            SetFieldType ("sharedColorSBHue", 2, sharedColorLimits, sharedIncrementColor, false);
+            SetFieldType ("sharedColorETHue", 2, sharedColorLimits, sharedIncrementColor, false);
+            SetFieldType ("sharedColorELHue", 2, sharedColorLimits, sharedIncrementColor, false);
+
+            SetFieldType ("sharedColorSTSaturation", 2, sharedColorLimits, sharedIncrementColor, false);
+            SetFieldType ("sharedColorSBSaturation", 2, sharedColorLimits, sharedIncrementColor, false);
+            SetFieldType ("sharedColorETSaturation", 2, sharedColorLimits, sharedIncrementColor, false);
+            SetFieldType ("sharedColorELSaturation", 2, sharedColorLimits, sharedIncrementColor, false);
+
+            SetFieldType ("sharedColorSTBrightness", 2, sharedColorLimits, sharedIncrementColor, false);
+            SetFieldType ("sharedColorSBBrightness", 2, sharedColorLimits, sharedIncrementColor, false);
+            SetFieldType ("sharedColorETBrightness", 2, sharedColorLimits, sharedIncrementColor, false);
+            SetFieldType ("sharedColorELBrightness", 2, sharedColorLimits, sharedIncrementColor, false);
+
             SetFieldType ("wingSpan", 1, wingSpanLimits, incrementMain, false);
             SetFieldType ("wingWidthRoot", 1, wingWidthLimits, incrementMain, false);
             SetFieldType ("wingWidthTip", 1, wingWidthLimits, incrementMain, false);
 
             SetFieldType ("wingOffset", 1, wingOffsetLimits, incrementMain, false);
-            SetFieldType ("wingThicknessRoot", 0, wingThicknessLimits, incrementSmall, false);
-            SetFieldType ("wingThicknessTip", 0, wingThicknessLimits, incrementSmall, false);
-            SetFieldType ("wingSurfaceTextureTop", 0, wingTextureLimits, incrementInt, false);
-            SetFieldType ("wingSurfaceTextureBottom", 0, wingTextureLimits, incrementInt, false);
+            SetFieldType ("wingThicknessRoot", 2, wingThicknessLimits, incrementSmall, false);
+            SetFieldType ("wingThicknessTip", 2, wingThicknessLimits, incrementSmall, false);
 
-            SetFieldType ("wingEdgeTypeLeading", 0, wingEdgeTypeLimits, incrementInt, false);
-            SetFieldType ("wingEdgeTypeTrailing", 0, wingEdgeTypeLimits, incrementInt, false);
-            SetFieldType ("wingEdgeTextureLeading", 0, wingTextureLimits, incrementInt, false);
-            SetFieldType ("wingEdgeTextureTrailing", 0, wingTextureLimits, incrementInt, false);
+            SetFieldType ("wingEdgeTypeLeading", 2, wingEdgeTypeLimits, incrementInt, false);
+            SetFieldType ("wingEdgeTypeTrailing", 2, wingEdgeTypeLimits, incrementInt, false);
 
-            SetFieldType ("wingEdgeWidthLeadingRoot", 0, wingEdgeWidthLimits, incrementSmall, false);
-            SetFieldType ("wingEdgeWidthLeadingTip", 0, wingEdgeWidthLimits, incrementSmall, false);
-            SetFieldType ("wingEdgeWidthTrailingRoot", 0, wingEdgeWidthLimits, incrementSmall, false);
-            SetFieldType ("wingEdgeWidthTrailingTip", 0, wingEdgeWidthLimits, incrementSmall, false);
+            SetFieldType ("wingEdgeWidthLeadingRoot", 2, wingEdgeWidthLimits, incrementSmall, false);
+            SetFieldType ("wingEdgeWidthLeadingTip", 2, wingEdgeWidthLimits, incrementSmall, false);
+            SetFieldType ("wingEdgeWidthTrailingRoot", 2, wingEdgeWidthLimits, incrementSmall, false);
+            SetFieldType ("wingEdgeWidthTrailingTip", 2, wingEdgeWidthLimits, incrementSmall, false);
 
             SetFieldType ("ctrlSpan", 1, ctrlSpanLimits, incrementMain, false);
-            SetFieldType ("ctrlWidthRoot", 0, ctrlWidthLimits, incrementMain, false);
-            SetFieldType ("ctrlWidthTip", 0, ctrlWidthLimits, incrementMain, false);
-            SetFieldType ("ctrlEdgeWidthRoot", 0, ctrlEdgeWidthLimits, incrementSmall, false);
-            SetFieldType ("ctrlEdgeWidthTip", 0, ctrlEdgeWidthLimits, incrementSmall, false);
+            SetFieldType ("ctrlWidthRoot", 2, ctrlWidthLimits, incrementMain, false);
+            SetFieldType ("ctrlWidthTip", 2, ctrlWidthLimits, incrementMain, false);
+            SetFieldType ("ctrlEdgeWidthRoot", 2, ctrlEdgeWidthLimits, incrementSmall, false);
+            SetFieldType ("ctrlEdgeWidthTip", 2, ctrlEdgeWidthLimits, incrementSmall, false);
 
-            SetFieldType ("ctrlThicknessRoot", 0, ctrlThicknessLimits, incrementSmall, false);
-            SetFieldType ("ctrlThicknessTip", 0, ctrlThicknessLimits, incrementSmall, false);
-            SetFieldType ("ctrlOffsetRoot", 0, ctrlOffsetLimits, incrementMain, false);
-            SetFieldType ("ctrlOffsetTip", 0, ctrlOffsetLimits, incrementMain, false);
-            SetFieldType ("ctrlSurfaceTextureTop", 0, ctrlTextureLimits, incrementInt, false);
-            SetFieldType ("ctrlSurfaceTextureBottom", 0, ctrlTextureLimits, incrementInt, false);
-            SetFieldType ("ctrlEdgeTexture", 0, ctrlTextureLimits, incrementInt, false);
-            SetFieldType ("ctrlEdgeType", 0, ctrlEdgeTypeLimits, incrementInt, false);
+            SetFieldType ("ctrlThicknessRoot", 2, ctrlThicknessLimits, incrementSmall, false);
+            SetFieldType ("ctrlThicknessTip", 2, ctrlThicknessLimits, incrementSmall, false);
+            SetFieldType ("ctrlOffsetRoot", 2, ctrlOffsetLimits, incrementMain, false);
+            SetFieldType ("ctrlOffsetTip", 2, ctrlOffsetLimits, incrementMain, false);
+            SetFieldType ("ctrlEdgeType", 2, ctrlEdgeTypeLimits, incrementInt, false);
         }
 
         private void SetFieldType (string name, int type, Vector2 limits, float increment, bool visible)
@@ -1345,30 +1563,41 @@ namespace WingProcedural
                 if (type == 0)
                 {
                     UI_FloatRange ui = new UI_FloatRange ();
-                    field.uiControlEditor = ui;
                     ui.minValue = limits.x;
                     ui.maxValue = limits.y;
                     ui.stepIncrement = increment;
                     ui.scene = UI_Scene.Editor;
                     ui.controlEnabled = true;
                     ui.Setup (field);
+                    field.uiControlEditor = ui;
                 }
                 if (type == 1)
                 {
                     UI_FloatEdit ui = new UI_FloatEdit ();
-                    field.uiControlEditor = ui;
+                    field.guiFormat = "S4";
                     ui.minValue = limits.x;
                     ui.maxValue = limits.y;
                     ui.incrementSlide = increment;
                     ui.incrementLarge = 1f;
                     ui.controlEnabled = true;
                     ui.Setup (field);
+                    field.uiControlEditor = ui;
+                }
+                if (type == 2)
+                {
+                    UI_FloatEdit ui = new UI_FloatEdit ();
+                    field.guiFormat = "S3";
+                    ui.minValue = limits.x;
+                    ui.maxValue = limits.y;
+                    ui.incrementSlide = increment;
+                    ui.incrementLarge = 0f;
+                    ui.controlEnabled = true;
+                    ui.Setup (field);
+                    field.uiControlEditor = ui;
                 }
             }
             field.uiControlEditor.controlEnabled = visible;
-            // field.uiControlFlight.controlEnabled = visible;
             field.guiActiveEditor = visible;
-            // field.guiActive = visible;
         }
 
         public void SetupMeshReferences ()
@@ -1479,19 +1708,6 @@ namespace WingProcedural
 
         private void UpdateWindow ()
         {
-            //if (!isCtrlSrf)
-            //{
-            //    CheckFieldGroup (wingFieldGroupBase, ref wingFieldGroupBaseCached, ref wingFieldGroupBaseStatic, wingFieldGroupBaseArray, true);
-            //    CheckFieldGroup (wingFieldGroupEdgeLeading, ref wingFieldGroupEdgeLeadingCached, ref wingFieldGroupEdgeLeadingStatic, wingFieldGroupEdgeLeadingArray, true);
-            //    CheckFieldGroup (wingFieldGroupEdgeTrailing, ref wingFieldGroupEdgeTrailingCached, ref wingFieldGroupEdgeTrailingStatic, wingFieldGroupEdgeTrailingArray, true);
-            //    CheckFieldGroup (wingFieldGroupMaterials, ref wingFieldGroupMaterialsCached, ref wingFieldGroupMaterialsStatic, wingFieldGroupMaterialsArray, true);
-            //}
-            //else
-            //{
-            //    CheckFieldGroup (ctrlFieldGroupBase, ref ctrlFieldGroupBaseCached, ref ctrlFieldGroupBaseStatic, ctrlFieldGroupBaseArray, true);
-            //    CheckFieldGroup (ctrlFieldGroupEdge, ref ctrlFieldGroupEdgeCached, ref ctrlFieldGroupEdgeStatic, ctrlFieldGroupEdgeArray, true);
-            //    CheckFieldGroup (ctrlFieldGroupMaterials, ref ctrlFieldGroupMaterialsCached, ref ctrlFieldGroupMaterialsStatic, ctrlFieldGroupMaterialsArray, true);
-            //}
             if (myWindow != null) myWindow.displayDirty = true;
         }
 
@@ -1732,6 +1948,9 @@ namespace WingProcedural
         [KSPField (guiActiveEditor = false, guiName = "Aspect ratio", guiFormat = "F3")]
         public float aeroUIAspectRatio;
 
+        [KSPField (guiActiveEditor = false, guiName = "Volume", guiFormat = "F3")]
+        public float aeroStatVolume = 0f;
+
         public double aeroStatCd;
         public double aeroStatCl;
         public double aeroStatClChildren;
@@ -1772,16 +1991,21 @@ namespace WingProcedural
 
                 if (!isCtrlSrf)
                 {
-                    aeroStatSemispan = wingSpan;
+                    aeroStatSemispan = (double) wingSpan;
                     aeroStatTaperRatio = (double) wingWidthTipSum / (double) wingWidthRootSum;
                     aeroStatMeanAerodynamicChord = (double) (wingWidthTipSum + wingWidthRootSum) / 2.0;
                     aeroStatMidChordSweep = MathD.Atan ((double) wingOffset / (double) wingSpan) * MathD.Rad2Deg;
+
+                    aeroStatVolume = (wingWidthTipSum * wingThicknessTip * wingSpan) +
+                    ((wingWidthRootSum - wingWidthTipSum) / 2f * wingThicknessTip * wingSpan) +
+                    (wingWidthTipSum * (wingThicknessRoot - wingThicknessTip) / 2f * wingSpan) +
+                    ((wingWidthRootSum - wingWidthTipSum) / 2f * (wingThicknessRoot - wingThicknessTip) / 2f * wingSpan);
                 }
                 else
                 {
-                    aeroStatSemispan = (double) ctrlSpan; // b_2 = 3.96 for SH-4
-                    aeroStatTaperRatio = (double) (ctrlSpan + ctrlWidthTipSum * ctrlOffsetTipClamped - ctrlWidthRootSum * ctrlOffsetRootClamped) / (double) ctrlSpan; // (double) ctrlWidthTip / (double) ctrlWidthRoot;
-                    aeroStatMeanAerodynamicChord = (double) (ctrlWidthTipSum + ctrlWidthRootSum) / 2.0; // (double) (ctrlWidthTip + ctrlWidthRoot) / 2.0;
+                    aeroStatSemispan = (double) ctrlSpan;
+                    aeroStatTaperRatio = (double) (ctrlSpan + ctrlWidthTipSum * ctrlOffsetTipClamped - ctrlWidthRootSum * ctrlOffsetRootClamped) / (double) ctrlSpan;
+                    aeroStatMeanAerodynamicChord = (double) (ctrlWidthTipSum + ctrlWidthRootSum) / 2.0;
                     aeroStatMidChordSweep = MathD.Atan ((double) Mathf.Abs (ctrlWidthRoot - ctrlWidthTip) / (double) ctrlSpan) * MathD.Rad2Deg;
                 }
                 if (logCAV) DebugLogWithID ("CalculateAerodynamicValues", "Passed B2/TR/MAC/MCS");
@@ -1978,6 +2202,7 @@ namespace WingProcedural
                 Fields["aeroUITaperRatio"].guiActiveEditor = showWingData;
                 Fields["aeroUISurfaceArea"].guiActiveEditor = showWingData;
                 Fields["aeroUIAspectRatio"].guiActiveEditor = showWingData;
+                Fields["aeroStatVolume"].guiActiveEditor = showWingData;
 
                 // Force tweakable window to refresh
                 if (myWindow != null)
@@ -2064,6 +2289,9 @@ namespace WingProcedural
             }
         }
 
+        public static bool uiDropdownOpen = false;
+        public float uiValueTestA = 0f;
+
         private void OnWindow (int window)
         {
             GUILayout.BeginHorizontal ();
@@ -2101,6 +2329,15 @@ namespace WingProcedural
                     GUILayout.EndHorizontal ();
                 }
             }
+            /*
+            uiDropdownOpen = GUILayout.Toggle (uiDropdownOpen, "Test");
+            if (uiDropdownOpen)
+            {
+                GUILayout.BeginVertical ("Box");
+                uiValueTestA = GUILayout.HorizontalSlider (uiValueTestA, 0f, 16f);
+                GUILayout.EndVertical ();
+            }
+            */
             GUI.DragWindow ();
         }
 
@@ -2403,6 +2640,90 @@ namespace WingProcedural
             PluginConfiguration config = PluginConfiguration.CreateForType<WingProcedural> ();
             config.load ();
             uiRect = config.GetValue<Rect> ("uiRect");
+        }
+
+
+
+
+        // Coloration
+
+        // XYZ
+        // HSB
+        // RGB
+
+        private Color GetVertexColor (int side)
+        {
+            if (side == 0) 
+                return ColorHSBToRGB (new Vector4 (sharedColorSTHue, sharedColorSTSaturation, sharedColorSTBrightness, sharedColorSTOpacity));
+            else if (side == 1) 
+                return ColorHSBToRGB (new Vector4 (sharedColorSBHue, sharedColorSBSaturation, sharedColorSBBrightness, sharedColorSBOpacity));
+            else if (side == 2) 
+                return ColorHSBToRGB (new Vector4 (sharedColorETHue, sharedColorETSaturation, sharedColorETBrightness, sharedColorETOpacity));
+            else 
+                return ColorHSBToRGB (new Vector4 (sharedColorELHue, sharedColorELSaturation, sharedColorELBrightness, sharedColorELOpacity));
+        }
+
+        private Vector2 GetVertexUV2 (float selectedLayer)
+        {
+            if (selectedLayer == 0) return new Vector2 (0f, 1f);
+            return new Vector2 ((selectedLayer - 1f) / 3f, 0f);
+        }
+
+        private Color ColorHSBToRGB (Vector4 hsbColor)
+        {
+            float r = hsbColor.z;
+            float g = hsbColor.z;
+            float b = hsbColor.z;
+            if (hsbColor.y != 0)
+            {
+                float max = hsbColor.z;
+                float dif = hsbColor.z * hsbColor.y;
+                float min = hsbColor.z - dif;
+                float h = hsbColor.x * 360f;
+                if (h < 60f)
+                {
+                    r = max;
+                    g = h * dif / 60f + min;
+                    b = min;
+                }
+                else if (h < 120f)
+                {
+                    r = -(h - 120f) * dif / 60f + min;
+                    g = max;
+                    b = min;
+                }
+                else if (h < 180f)
+                {
+                    r = min;
+                    g = max;
+                    b = (h - 120f) * dif / 60f + min;
+                }
+                else if (h < 240f)
+                {
+                    r = min;
+                    g = -(h - 240f) * dif / 60f + min;
+                    b = max;
+                }
+                else if (h < 300f)
+                {
+                    r = (h - 240f) * dif / 60f + min;
+                    g = min;
+                    b = max;
+                }
+                else if (h <= 360f)
+                {
+                    r = max;
+                    g = min;
+                    b = -(h - 360f) * dif / 60 + min;
+                }
+                else
+                {
+                    r = 0;
+                    g = 0;
+                    b = 0;
+                }
+            }
+            return new Color (Mathf.Clamp01 (r), Mathf.Clamp01 (g), Mathf.Clamp01 (b), hsbColor.w);
         }
 
 

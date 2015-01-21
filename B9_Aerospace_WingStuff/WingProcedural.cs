@@ -67,7 +67,7 @@ namespace WingProcedural
 
         private static Vector4 sharedBaseLengthLimits = new Vector4 (0.25f, 16f, 0.25f, 8f);
         private static Vector2 sharedBaseThicknessLimits = new Vector2 (0.08f, 1f);
-        private static Vector4 sharedBaseWidthLimits = new Vector4 (0.25f, 16f, 0.25f, 1.5f);
+        private static Vector4 sharedBaseWidthLimits = new Vector4 (0.25f, 16f, 0.125f, 1.5f);
         private static Vector4 sharedBaseOffsetLimits = new Vector4 (-8f, 8f, -2f, 2f);
         private static Vector4 sharedEdgeTypeLimits = new Vector4 (1f, 4f, 1f, 3f);
         private static Vector2 sharedEdgeWidthLimits = new Vector2 (0f, 1f);
@@ -1379,7 +1379,6 @@ namespace WingProcedural
         public void UpdateCounterparts ()
         {
             // Woah, looks like this is unnecessary
-            /*
             for (int i = 0; i < this.part.symmetryCounterparts.Count; ++i)
             {
                 var clone = this.part.symmetryCounterparts[i].Modules.OfType<WingProcedural> ().FirstOrDefault ();
@@ -1429,7 +1428,6 @@ namespace WingProcedural
                 clone.SetupRecurring ();
                 clone.updateCounterpartsAllowed = true;
             }
-            */
         }
 
         private void SetupMeshFilters ()
@@ -1927,11 +1925,21 @@ namespace WingProcedural
                 if (logCAV) DebugLogWithID ("CalculateAerodynamicValues", "Started");
                 CheckAssemblies (false);
 
-                float sharedWidthTipSum = sharedBaseWidthTip + sharedEdgeWidthTrailingTip;
-                if (!isCtrlSrf) sharedWidthTipSum += sharedEdgeWidthLeadingTip;
+                float sharedWidthTipSum = sharedBaseWidthTip;
+                if (!isCtrlSrf)
+                {
+                    if (sharedEdgeTypeLeading != 1) sharedWidthTipSum += sharedEdgeWidthLeadingTip;
+                    if (sharedEdgeTypeTrailing != 1) sharedWidthTipSum += sharedEdgeWidthTrailingTip;
+                }
+                else sharedWidthTipSum += sharedEdgeWidthTrailingTip;
 
-                float sharedWidthRootSum = sharedBaseWidthRoot + sharedEdgeWidthTrailingRoot;
-                if (!isCtrlSrf) sharedWidthTipSum += sharedEdgeWidthLeadingRoot;
+                float sharedWidthRootSum = sharedBaseWidthRoot;
+                if (!isCtrlSrf)
+                {
+                    if (sharedEdgeTypeLeading != 1) sharedWidthRootSum += sharedEdgeWidthLeadingRoot;
+                    if (sharedEdgeTypeTrailing != 1) sharedWidthRootSum += sharedEdgeWidthTrailingRoot;
+                }
+                else sharedWidthRootSum += sharedEdgeWidthTrailingRoot;
 
                 float ctrlOffsetRootLimit = (sharedBaseLength / 2f) / (sharedBaseWidthRoot + sharedEdgeWidthTrailingRoot);
                 float ctrlOffsetTipLimit = (sharedBaseLength / 2f) / (sharedBaseWidthTip + sharedEdgeWidthTrailingTip);

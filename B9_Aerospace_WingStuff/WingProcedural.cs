@@ -18,6 +18,50 @@ namespace WingProcedural
     
     public class WingProcedural : PartModule, IPartCostModifier
     {
+        // Some handy bools
+
+        [KSPField] public bool isCtrlSrf = false;
+        [KSPField] public bool isWingAsCtrlSrf = false;
+
+        [KSPField (isPersistant = true)] public bool isAttached = false;
+        [KSPField (isPersistant = true)] public bool isSetToDefaultValues = false;
+
+        public bool isStarted = false;
+        public bool isStartingNow = false;
+        public bool justDetached = false;
+
+        private bool logCAV = false;
+        private bool logUpdate = false;
+        private bool logUpdateGeometry = false;
+        private bool logUpdateMaterials = false;
+        private bool logMeshReferences = false;
+        private bool logCheckMeshFilter = false;
+        private bool logPropertyWindow = true;
+        private bool logFlightSetup = false;
+        private bool logFieldSetup = false;
+        private bool logFuel = false;
+        private bool logLimits = false;
+        private bool logEvents = false;
+
+
+
+
+        // Debug
+
+        private float debugTimer = 0f;
+
+        private void DebugTimerUpdate ()
+        {
+            debugTimer += Time.deltaTime;
+            if (debugTimer > 1000f) debugTimer = 0f;
+        }
+
+        private void DebugLogWithID (string method, string message)
+        {
+            Debug.Log ("WP | ID: " + part.gameObject.GetInstanceID () + " | T: " + debugTimer.ToString ("F1") + " | " + method + " | " + message);
+        }
+
+
         // Mesh properties
 
         [System.Serializable]
@@ -55,6 +99,7 @@ namespace WingProcedural
 
         private Vector2 GetLimitsFromType (Vector4 set)
         {
+            if (logLimits) DebugLogWithID ("GetLimitsFromType", "Using set: " + set);
             if (!isCtrlSrf) return new Vector2 (set.x, set.y);
             else return new Vector2 (set.z, set.w);
         }
@@ -70,7 +115,7 @@ namespace WingProcedural
         private static Vector4 sharedBaseWidthLimits = new Vector4 (0.25f, 16f, 0.125f, 1.5f);
         private static Vector4 sharedBaseOffsetLimits = new Vector4 (-8f, 8f, -2f, 2f);
         private static Vector4 sharedEdgeTypeLimits = new Vector4 (1f, 4f, 1f, 3f);
-        private static Vector2 sharedEdgeWidthLimits = new Vector4 (0f, 1f, 0.24f, 1f);
+        private static Vector4 sharedEdgeWidthLimits = new Vector4 (0f, 1f, 0.24f, 1f);
         private static Vector2 sharedMaterialLimits = new Vector2 (0f, 4f);
         private static Vector2 sharedColorLimits = new Vector2 (0f, 1f);
 
@@ -554,50 +599,6 @@ namespace WingProcedural
 
 
 
-        // Some handy bools
-
-        [KSPField] public bool isCtrlSrf = false;
-        [KSPField] public bool isWingAsCtrlSrf = false;
-
-        [KSPField (isPersistant = true)] public bool isAttached = false;
-        [KSPField (isPersistant = true)] public bool isSetToDefaultValues = false;
-
-        public bool isStarted = false;
-        public bool isStartingNow = false;
-        public bool justDetached = false;
-
-        private bool logCAV = false;
-        private bool logUpdate = false;
-        private bool logUpdateGeometry = false;
-        private bool logUpdateMaterials = false;
-        private bool logMeshReferences = false;
-        private bool logCheckMeshFilter = false;
-        private bool logPropertyWindow = false;
-        private bool logFlightSetup = false;
-        private bool logFieldSetup = false;
-        private bool logFuel = false;
-
-
-
-
-        // Debug
-
-        private float debugTimer = 0f;
-
-        private void DebugTimerUpdate ()
-        {
-            debugTimer += Time.deltaTime;
-            if (debugTimer > 1000f) debugTimer = 0f;
-        }
-
-        private void DebugLogWithID (string method, string message)
-        {
-            Debug.Log ("WP | ID: " + part.gameObject.GetInstanceID () + " | T: " + debugTimer.ToString ("F1") + " | " + method + " | " + message);
-        }
-
-
-
-
         // Update
         // As nothing like GUI.changed or per-KSPFields change delegates is available, we have to resort to dirty comparisons
         // Performance hit shouldn't be too bad as all KSPFields have snapped sliders that can't spam dozens of values per second
@@ -780,10 +781,10 @@ namespace WingProcedural
         public void UpdateOnEditorAttach ()
         {
             isAttached = true;
-            DebugLogWithID ("UpdateOnEditorAttach", "Setup started");
+            if (logEvents) DebugLogWithID ("UpdateOnEditorAttach", "Setup started");
             Setup ();
             isStarted = true;
-            DebugLogWithID ("UpdateOnEditorAttach", "Setup ended");
+            if (logEvents) DebugLogWithID ("UpdateOnEditorAttach", "Setup ended");
         }
 
         public void UpdateOnEditorDetach ()
@@ -1520,8 +1521,9 @@ namespace WingProcedural
                 for (int i = 0; i < meshTypeCountEdgeWing; ++i)
                 {
                     MeshFilter meshFilterWingEdgeTrailing = CheckMeshFilter ("edge_trailing_type" + i);
-                    MeshFilter meshFilterWingEdgeLeading = CheckMeshFilter ("edge_leading_type" + i);
                     meshFiltersWingEdgeTrailing.Add (meshFilterWingEdgeTrailing);
+
+                    MeshFilter meshFilterWingEdgeLeading = CheckMeshFilter ("edge_leading_type" + i);
                     meshFiltersWingEdgeLeading.Add (meshFilterWingEdgeLeading);
                 }
             }
@@ -1798,6 +1800,7 @@ namespace WingProcedural
 
         public override void OnStart (PartModule.StartState state)
         {
+            if (logEvents) DebugLogWithID ("OnStart", "Invoked");
             base.OnStart (state);
             CheckAssemblies (true);
             if (HighLogic.LoadedSceneIsFlight)
@@ -1813,8 +1816,10 @@ namespace WingProcedural
 
         public void Start ()
         {
+            if (logEvents) DebugLogWithID ("Start", "Invoked");
             if (HighLogic.LoadedSceneIsEditor)
             {
+                uiInstanceIDLocal = uiInstanceIDTarget = 0;
                 if (!uiStyleConfigured) InitStyle ();
                 RenderingManager.AddToPostDrawQueue (0, OnDraw);
             }
@@ -2293,11 +2298,6 @@ namespace WingProcedural
         // Alternative UI/input
 
         public KeyCode uiKeyCodeEdit = KeyCode.J;
-        // public KeyCode uiKeyCodeNext = KeyCode.J;
-        // public KeyCode uiKeyCodePrev = KeyCode.H;
-        // public KeyCode uiKeyCodeAdd = KeyCode.N;
-        // public KeyCode uiKeyCodeSubtract = KeyCode.B;
-
         public static Rect uiRect = new Rect ();
         public static bool uiStyleConfigured = false;
         public static bool uiWindowActive = true;
@@ -2675,6 +2675,7 @@ namespace WingProcedural
         {
             if (HighLogic.LoadedSceneIsEditor)
             {
+                // if (logPropertyWindow) DebugLogWithID ("OnMouseOver", "Parent: " + this.part.parent + " | Attached: " + isAttached + " | Timeout: " + uiEditModeTimeout + " | ID (local): " + uiInstanceIDLocal + " | ID (static): " + uiInstanceIDTarget);
                 if (this.part.parent != null && isAttached && !uiEditModeTimeout)
                 {
                     if (uiEditMode)
@@ -2700,16 +2701,20 @@ namespace WingProcedural
 
         private void UpdateUI ()
         {
-            // if (stockButton == null) OnStockButtonSetup ();
+            if (stockButton == null) OnStockButtonSetup ();
+            if (uiEditModeTimeout && uiInstanceIDTarget == 0)
+            {
+                if (logPropertyWindow) DebugLogWithID ("UpdateUI", "Window timeout was left active on scene reload, resetting the window state");
+                StopWindowTimeout ();
+            }
             if (uiInstanceIDLocal != uiInstanceIDTarget) return;
             if (uiEditModeTimeout)
             {
+                // if (logPropertyWindow) DebugLogWithID ("UpdateUI", "Timeout triggered, current state: " + uiEditModeTimeout + " | Time: " + uiEditModeTimer);
                 uiEditModeTimer += Time.deltaTime;
                 if (uiEditModeTimer > uiEditModeTimeoutDuration)
                 {
-                    uiAdjustWindow = true;
-                    uiEditModeTimeout = false;
-                    uiEditModeTimer = 0.0f;
+                    StopWindowTimeout ();
                 }
             }
             else
@@ -2730,6 +2735,13 @@ namespace WingProcedural
                     }
                 }
             }
+        }
+
+        private void StopWindowTimeout ()
+        {
+            uiAdjustWindow = true;
+            uiEditModeTimeout = false;
+            uiEditModeTimer = 0.0f;
         }
 
         private void ExitEditMode ()
@@ -3262,33 +3274,37 @@ namespace WingProcedural
 
         // Stock toolbar integration
 
-        //public static ApplicationLauncherButton stockButton = null;
+        public static ApplicationLauncherButton stockButton = null;
 
-        //private void OnStockButtonSetup ()
-        //{
-        //    stockButton = ApplicationLauncher.Instance.AddModApplication (OnStockButtonClick, OnStockButtonClick, OnStockButtonVoid, OnStockButtonVoid, OnStockButtonVoid, OnStockButtonVoid, ApplicationLauncher.AppScenes.SPH, (Texture) GameDatabase.Instance.GetTexture ("B9_Aerospace/Plugins/icon_stock", false));
-        //}
+        private void OnStockButtonSetup ()
+        {
+            stockButton = ApplicationLauncher.Instance.AddModApplication (OnStockButtonClick, OnStockButtonClick, OnStockButtonVoid, OnStockButtonVoid, OnStockButtonVoid, OnStockButtonVoid, ApplicationLauncher.AppScenes.SPH, (Texture) GameDatabase.Instance.GetTexture ("B9_Aerospace/Plugins/icon_stock", false));
+        }
 
-        //public void OnStockButtonClick ()
-        //{
-        //    uiWindowActive = !uiWindowActive;
-        //}
+        public void OnStockButtonClick ()
+        {
+            uiWindowActive = !uiWindowActive;
+        }
 
-        //private void OnStockButtonVoid ()
-        //{
+        private void OnStockButtonVoid ()
+        {
 
-        //}
+        }
 
-        //public void OnDestroy ()
-        //{
-        //    bool stockButtonRemoved = true;
-        //    ConfigNode[] nodes = GameDatabase.Instance ("");
-        //    for (int i = 0; i < nodes.Length; ++i)
-        //    {
-        //        if (nodes[i] == null) continue;
-        //        if (nodes[i].HasValue ("massPerWingAreaSupported")) aeroModelFARMass = true;
-        //    }
-        //    if (stockButtonRemoved) ApplicationLauncher.Instance.RemoveModApplication (stockButton);
-        //}
+        public void OnDestroy ()
+        {
+            bool stockButtonCanBeRemoved = true;
+            WingProcedural[] components = GameObject.FindObjectsOfType<WingProcedural> ();
+            if (logEvents) DebugLogWithID ("OnDestroy", "Invoked, with " + components.Length + " remaining components in the scene");
+            for (int i = 0; i < components.Length; ++i)
+            {
+                if (components[i] != null) stockButtonCanBeRemoved = false;
+            }
+            if (stockButtonCanBeRemoved)
+            {
+                uiInstanceIDTarget = 0;
+                ApplicationLauncher.Instance.RemoveModApplication (stockButton);
+            }
+        }
     }
 }

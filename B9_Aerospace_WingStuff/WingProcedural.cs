@@ -16,7 +16,7 @@ namespace WingProcedural
     // Wing/edge limit difference assignment isn't working
     // Alternative UI
     
-    public class WingProcedural : PartModule
+    public class WingProcedural : PartModule, IPartCostModifier
     {
         // Mesh properties
 
@@ -70,7 +70,7 @@ namespace WingProcedural
         private static Vector4 sharedBaseWidthLimits = new Vector4 (0.25f, 16f, 0.125f, 1.5f);
         private static Vector4 sharedBaseOffsetLimits = new Vector4 (-8f, 8f, -2f, 2f);
         private static Vector4 sharedEdgeTypeLimits = new Vector4 (1f, 4f, 1f, 3f);
-        private static Vector2 sharedEdgeWidthLimits = new Vector2 (0f, 1f);
+        private static Vector2 sharedEdgeWidthLimits = new Vector4 (0f, 1f, 0.24f, 1f);
         private static Vector2 sharedMaterialLimits = new Vector2 (0f, 4f);
         private static Vector2 sharedColorLimits = new Vector2 (0f, 1f);
 
@@ -575,6 +575,7 @@ namespace WingProcedural
         private bool logPropertyWindow = false;
         private bool logFlightSetup = false;
         private bool logFieldSetup = false;
+        private bool logFuel = false;
 
 
 
@@ -713,6 +714,7 @@ namespace WingProcedural
                     Setup ();
                     isStarted = true;
                 }
+                if (!isCtrlSrf && !isWingAsCtrlSrf) FuelOnUpdate ();
             }
             else
             {
@@ -1040,8 +1042,8 @@ namespace WingProcedural
                 // float ctrlOffsetRootLimit = (sharedBaseLength / 2f) / (sharedBaseWidthRoot + sharedEdgeWidthTrailingRoot);
                 // float ctrlOffsetTipLimit = (sharedBaseLength / 2f) / (sharedBaseWidthTip + sharedEdgeWidthTrailingTip);
 
-                float ctrlOffsetRootClamped = Mathf.Clamp (sharedBaseOffsetRoot, sharedBaseOffsetLimits.z, sharedBaseOffsetLimits.w - 0.15f); // Mathf.Clamp (sharedBaseOffsetRoot, sharedBaseOffsetLimits.z, ctrlOffsetRootLimit - 0.075f);
-                float ctrlOffsetTipClamped = Mathf.Clamp (sharedBaseOffsetTip, Mathf.Max (sharedBaseOffsetLimits.z + 0.15f, ctrlOffsetRootClamped - sharedBaseLength), sharedBaseOffsetLimits.w); // Mathf.Clamp (sharedBaseOffsetTip, -ctrlOffsetTipLimit + 0.075f, sharedBaseOffsetLimits.w);
+                float ctrlOffsetRootClamped = Mathf.Clamp (sharedBaseOffsetRoot, sharedBaseOffsetLimits.z, sharedBaseOffsetLimits.w + 0.15f); // Mathf.Clamp (sharedBaseOffsetRoot, sharedBaseOffsetLimits.z, ctrlOffsetRootLimit - 0.075f);
+                float ctrlOffsetTipClamped = Mathf.Clamp (sharedBaseOffsetTip, Mathf.Max (sharedBaseOffsetLimits.z - 0.15f, ctrlOffsetRootClamped - sharedBaseLength), sharedBaseOffsetLimits.w); // Mathf.Clamp (sharedBaseOffsetTip, -ctrlOffsetTipLimit + 0.075f, sharedBaseOffsetLimits.w);
 
                 float ctrlThicknessDeviationRoot = sharedBaseThicknessRoot / 0.24f;
                 float ctrlThicknessDeviationTip = sharedBaseThicknessTip / 0.24f;
@@ -1443,6 +1445,7 @@ namespace WingProcedural
             SetupMeshReferences ();
             ReportOnMeshReferences ();
             SetupRecurring ();
+            if (!isCtrlSrf && !isWingAsCtrlSrf) FuelOnStart ();
             isStartingNow = false;
         }
 
@@ -1553,13 +1556,13 @@ namespace WingProcedural
 
             SetFieldVisibility ("sharedFieldGroupEdgeTrailing", true);
             SetFieldType ("sharedEdgeTypeTrailing", 2, GetLimitsFromType (sharedEdgeTypeLimits), sharedIncrementInt, false, GetDefault (sharedEdgeTypeTrailingDefaults));
-            SetFieldType ("sharedEdgeWidthTrailingRoot", 2, sharedEdgeWidthLimits, sharedIncrementSmall, false, GetDefault (sharedEdgeWidthTrailingRootDefaults));
-            SetFieldType ("sharedEdgeWidthTrailingTip", 2, sharedEdgeWidthLimits, sharedIncrementSmall, false, GetDefault (sharedEdgeWidthTrailingTipDefaults));
+            SetFieldType ("sharedEdgeWidthTrailingRoot", 2, GetLimitsFromType (sharedEdgeWidthLimits), sharedIncrementSmall, false, GetDefault (sharedEdgeWidthTrailingRootDefaults));
+            SetFieldType ("sharedEdgeWidthTrailingTip", 2, GetLimitsFromType (sharedEdgeWidthLimits), sharedIncrementSmall, false, GetDefault (sharedEdgeWidthTrailingTipDefaults));
 
             SetFieldVisibility ("sharedFieldGroupEdgeLeading", !isCtrlSrf);
             SetFieldType ("sharedEdgeTypeLeading", 2, GetLimitsFromType (sharedEdgeTypeLimits), sharedIncrementInt, false, GetDefault (sharedEdgeTypeLeadingDefaults));
-            SetFieldType ("sharedEdgeWidthLeadingRoot", 2, sharedEdgeWidthLimits, sharedIncrementSmall, false, GetDefault (sharedEdgeWidthLeadingRootDefaults));
-            SetFieldType ("sharedEdgeWidthLeadingTip", 2, sharedEdgeWidthLimits, sharedIncrementSmall, false, GetDefault (sharedEdgeWidthLeadingTipDefaults));
+            SetFieldType ("sharedEdgeWidthLeadingRoot", 2, GetLimitsFromType (sharedEdgeWidthLimits), sharedIncrementSmall, false, GetDefault (sharedEdgeWidthLeadingRootDefaults));
+            SetFieldType ("sharedEdgeWidthLeadingTip", 2, GetLimitsFromType (sharedEdgeWidthLimits), sharedIncrementSmall, false, GetDefault (sharedEdgeWidthLeadingTipDefaults));
 
             SetFieldVisibility ("sharedFieldGroupColorST", true);
             SetFieldType ("sharedMaterialST", 2, sharedMaterialLimits, sharedIncrementInt, false, GetDefault (sharedMaterialSTDefaults));
@@ -1980,7 +1983,7 @@ namespace WingProcedural
         public float aeroUIAspectRatio;
 
         [KSPField (guiActiveEditor = false, guiName = "Volume", guiFormat = "F3")]
-        public float aeroStatVolume = 0f;
+        public float aeroStatVolume = 3.84f;
 
         public double aeroStatCd;
         public double aeroStatCl;
@@ -2038,6 +2041,8 @@ namespace WingProcedural
                     ((sharedWidthRootSum - sharedWidthTipSum) / 2f * sharedBaseThicknessTip * sharedBaseLength) +
                     (sharedWidthTipSum * (sharedBaseThicknessRoot - sharedBaseThicknessTip) / 2f * sharedBaseLength) +
                     ((sharedWidthRootSum - sharedWidthTipSum) / 2f * (sharedBaseThicknessRoot - sharedBaseThicknessTip) / 2f * sharedBaseLength);
+
+                    FuelUpdateAmountsFromVolume (aeroStatVolume, true);
                 }
                 else
                 {
@@ -2406,8 +2411,8 @@ namespace WingProcedural
                     if (sharedFieldGroupEdgeLeadingStatic)
                     {
                         DrawField (ref sharedEdgeTypeLeading, sharedIncrementInt, GetLimitsFromType (sharedEdgeTypeLimits), "Shape", uiColorSliderEdgeL, 7);
-                        DrawField (ref sharedEdgeWidthLeadingRoot, sharedIncrementSmall, sharedEdgeWidthLimits, "Width (root)", uiColorSliderEdgeL, 8);
-                        DrawField (ref sharedEdgeWidthLeadingTip, sharedIncrementSmall, sharedEdgeWidthLimits, "Width (tip)", uiColorSliderEdgeL, 9);
+                        DrawField (ref sharedEdgeWidthLeadingRoot, sharedIncrementSmall, GetLimitsFromType (sharedEdgeWidthLimits), "Width (root)", uiColorSliderEdgeL, 8);
+                        DrawField (ref sharedEdgeWidthLeadingTip, sharedIncrementSmall, GetLimitsFromType (sharedEdgeWidthLimits), "Width (tip)", uiColorSliderEdgeL, 9);
                     }
                 }
 
@@ -2415,8 +2420,8 @@ namespace WingProcedural
                 if (sharedFieldGroupEdgeTrailingStatic)
                 {
                     DrawField (ref sharedEdgeTypeTrailing, sharedIncrementInt, GetLimitsFromType (sharedEdgeTypeLimits), "Shape", uiColorSliderEdgeT, 10);
-                    DrawField (ref sharedEdgeWidthTrailingRoot, sharedIncrementSmall, sharedEdgeWidthLimits, "Width (root)", uiColorSliderEdgeT, 11);
-                    DrawField (ref sharedEdgeWidthTrailingTip, sharedIncrementSmall, sharedEdgeWidthLimits, "Width (tip)", uiColorSliderEdgeT, 12);
+                    DrawField (ref sharedEdgeWidthTrailingRoot, sharedIncrementSmall, GetLimitsFromType (sharedEdgeWidthLimits), "Width (root)", uiColorSliderEdgeT, 11);
+                    DrawField (ref sharedEdgeWidthTrailingTip, sharedIncrementSmall, GetLimitsFromType (sharedEdgeWidthLimits), "Width (tip)", uiColorSliderEdgeT, 12);
                 }
 
                 DrawFieldGroupHeader (ref sharedFieldGroupColorSTStatic, ref sharedFieldGroupColorST, "Surface (top)");
@@ -2463,6 +2468,11 @@ namespace WingProcedural
                 }
 
                 GUILayout.Label ("_________________________\n\nPress J to exit edit mode\nButtons below allow you to change default values and inherit values from parenting parts", uiStyleLabelHint);
+
+                if (!isCtrlSrf && !isWingAsCtrlSrf)
+                {
+                    if (GUILayout.Button (GetTankSetupName () + " | Next tank setup", uiStyleButton)) FuelNextTankSetupEvent ();
+                }
 
                 GUILayout.BeginHorizontal ();
                 if (GUILayout.Button ("Save as default", uiStyleButton)) ReplaceDefaults ();
@@ -2648,7 +2658,7 @@ namespace WingProcedural
 
             uiStyleButton = new GUIStyle (HighLogic.Skin.button);
             uiStyleButton.font = uiStyleLabelMedium.font;
-            uiStyleButton.fontSize = 13;
+            uiStyleButton.fontSize = 11;
             uiStyleButton.fontStyle = FontStyle.Normal;
             uiStyleButton.normal.textColor = Color.white;
 
@@ -2888,6 +2898,365 @@ namespace WingProcedural
             return new Color (Mathf.Clamp01 (r), Mathf.Clamp01 (g), Mathf.Clamp01 (b), hsbColor.w);
         }
 
+
+
+
+        // Resources
+        // Original code by Snjo
+        // Modified to remove config support and string parsing and to add support for arbitrary volumes
+
+        public class WPResource
+        {
+            public string name;
+            public int ID;
+            public float ratio;
+            public double currentSupply = 0f;
+            public float amount = 0f;
+            public float maxAmount = 0f;
+
+            public WPResource(string _name, float _ratio)
+            {
+                name = _name;
+                ID = _name.GetHashCode();
+                ratio = _ratio;
+            }
+
+            public WPResource(string _name)
+            {
+                name = _name;
+                ID = _name.GetHashCode();
+                ratio = 1f;
+            }
+        }
+
+        public class WPInnerTank
+        {
+            public List<WPResource> resources = new List<WPResource> ();
+        }
+
+        private List<WPInnerTank> fuelTankList = new List<WPInnerTank> ();
+        private List<float> fuelWeightList = new List<float> ();
+        private List<float> fuelTankCostList = new List<float> ();
+
+        // Reference values for 3.25m3 tank and 1.0m3 tank
+        // LF    | LFO
+        // 420.0 | 189.0, 231.0
+        // 134.4 | 60.48, 73.92
+
+        public string[][] fuelResourceNames = new string[][] { new string[] { "Structural" }, new string[] { "LiquidFuel" }, new string[] { "LiquidFuel", "Oxidizer"}, new string[] { "MonoPropellant" } };
+        public float[][] fuelPerCubicMeter = new float[][] { new float[] { 0.0f }, new float[] { 134.4f }, new float[] { 60.48f, 73.92f }, new float[] { 134.4f } };
+
+        public bool fuelDisplayCurrentTankCost = false;
+        public bool fuelGUI = true;
+        public bool fuelShowInfo = false;
+
+        [KSPField (isPersistant = true)] public Vector4 fuelCurrentAmount = Vector4.zero;
+        [KSPField (isPersistant = true)] public float fuelMutliplier = 1.0f;
+        [KSPField (isPersistant = true)] public int fuelSelectedTankSetup = 0;
+        [KSPField (isPersistant = true)] public bool fuelFlightSceneStarted = false;
+        [KSPField (isPersistant = true)] private bool fuelBrandNewPart = true;
+
+        [KSPField (guiActive = false, guiActiveEditor = false, guiName = "Added cost")] public float addedCost = 0f;
+        [KSPField (guiActive = false, guiActiveEditor = false, guiName = "Dry mass")] public float dryMassInfo = 0f;
+
+        private bool fuelInitialized = false;
+        private float fuelVolumeOld = 0f;
+
+        private string GetTankSetupName ()
+        {
+            string units = "";
+
+            if (fuelSelectedTankSetup == 1) units += "LF (";
+            else if (fuelSelectedTankSetup == 2) units += "LFO (";
+            else if (fuelSelectedTankSetup == 3) units += "RCS (";
+            else units += "STR (";
+
+            if (fuelTankList.Count > 0)
+            {
+                for (int i = 0; i < fuelTankList[fuelSelectedTankSetup].resources.Count; ++i)
+                {
+                    units += ((int) fuelTankList[fuelSelectedTankSetup].resources[i].maxAmount).ToString ();
+                    if (i == fuelTankList[fuelSelectedTankSetup].resources.Count - 1) units += ")";
+                    else units += "/";
+                }
+            }
+
+            return units;
+        }
+
+        private void FuelUpdateAmountsFromVolume (float volume, bool reassignAfter)
+        {
+            if (logFuel) DebugLogWithID ("FuelUpdateAmountsFromVolume", "Started");
+            for (int i = 0; i < fuelTankList.Count; ++i)
+            {
+                for (int r = 0; r < fuelTankList[i].resources.Count; ++r)
+                {
+                    float newAmount = fuelPerCubicMeter[i][r] * volume;
+                    fuelTankList[i].resources[r].maxAmount = newAmount;
+                    fuelTankList[i].resources[r].amount = newAmount;
+                }
+            }
+            fuelVolumeOld = volume;
+            if (reassignAfter) FuelAssignResourcesToPart (true);
+        }
+
+        private void FuelOnStart ()
+        {
+            if (logFuel) DebugLogWithID ("FuelOnStart", "Started");
+            if (isCtrlSrf || isWingAsCtrlSrf)
+            {
+                part.Events["FuelNextTankSetupEvent"].guiActive = false;
+                part.Events["FuelNextTankSetupEvent"].guiActiveEditor = false;
+            }
+            FuelInitializeData ();
+            FuelAssignResourcesToPart (false);
+            fuelBrandNewPart = false;
+            FuelUpdateAmountsFromVolume (aeroStatVolume, true);
+        }
+
+        private void FuelInitializeData ()
+        {
+            if (logFuel) DebugLogWithID ("FuelInitializeData", "Started");
+            if (isCtrlSrf || isWingAsCtrlSrf) return;
+            if (!fuelInitialized)
+            {
+                FuelSetupTankList (false);
+                if (HighLogic.LoadedSceneIsFlight) fuelFlightSceneStarted = true;
+
+                if (fuelGUI) Events["FuelNextTankSetupEvent"].guiActiveEditor = true;
+                else Events["FuelNextTankSetupEvent"].guiActiveEditor = false;
+
+                if (HighLogic.CurrentGame.Mode == Game.Modes.CAREER)
+                {
+                    Fields["addedCost"].guiActiveEditor = fuelDisplayCurrentTankCost;
+                }
+                fuelInitialized = true;
+            }
+        }
+
+        [KSPEvent (guiActive = false, guiActiveEditor = true, guiName = "Next tank setup")]
+        public void FuelNextTankSetupEvent ()
+        {
+            if (logFuel) DebugLogWithID ("FuelNextTankSetupEvent", "Started");
+            if (isCtrlSrf || isWingAsCtrlSrf) return;
+            fuelSelectedTankSetup++;
+            if (fuelSelectedTankSetup >= fuelTankList.Count)
+            {
+                fuelSelectedTankSetup = 0;
+            }
+            if (HighLogic.LoadedSceneIsFlight)
+            {
+                fuelCurrentAmount = Vector4.zero;
+            }
+            FuelAssignResourcesToPart (true);
+        }
+
+        public void FuelSelectTankSetup (int i, bool calledByPlayer)
+        {
+            if (logFuel) DebugLogWithID ("FuelSelectTankSetup", "Started");
+            if (isCtrlSrf || isWingAsCtrlSrf) return;
+            FuelInitializeData ();
+            fuelSelectedTankSetup = i;
+            FuelAssignResourcesToPart (calledByPlayer);
+        }
+
+        private void FuelAssignResourcesToPart (bool calledByPlayer)
+        {
+            if (logFuel) DebugLogWithID ("FuelAssignResourcesToPart", "Started");
+            if (isCtrlSrf || isWingAsCtrlSrf) return;
+            // destroying a resource messes up the gui in editor, but not in flight
+            FuelSetupTankInPart (part, calledByPlayer);
+            if (HighLogic.LoadedSceneIsEditor)
+            {
+                for (int s = 0; s < part.symmetryCounterparts.Count; s++)
+                {
+                    FuelSetupTankInPart (part.symmetryCounterparts[s], calledByPlayer);
+                    WingProcedural wing = part.symmetryCounterparts[s].GetComponent<WingProcedural> ();
+                    if (wing != null)
+                    {
+                        wing.fuelSelectedTankSetup = fuelSelectedTankSetup;
+                    }
+                }
+            }
+            if (fuelSelectedTankSetup != 0) updateRequiredOnWindow = true;
+        }
+
+        private void FuelSetupTankInPart (Part currentPart, bool calledByPlayer)
+        {
+            if (logFuel) DebugLogWithID ("FuelSetupTankInPart", "Started");
+            if (isCtrlSrf || isWingAsCtrlSrf) return;
+            currentPart.Resources.list.Clear ();
+            PartResource[] partResources = currentPart.GetComponents<PartResource> ();
+            for (int i = 0; i < partResources.Length; i++)
+            {
+                DestroyImmediate (partResources[i]);
+            }
+            if (fuelVolumeOld != aeroStatVolume) FuelUpdateAmountsFromVolume (aeroStatVolume, false);
+            for (int tankIndex = 0; tankIndex < fuelTankList.Count; tankIndex++)
+            {
+                if (fuelSelectedTankSetup == tankIndex)
+                {
+                    for (int resourceIndex = 0; resourceIndex < fuelTankList[tankIndex].resources.Count; resourceIndex++)
+                    {
+                        if (fuelTankList[tankIndex].resources[resourceIndex].name != "Structural")
+                        {
+                            ConfigNode newResourceNode = new ConfigNode ("RESOURCE");
+                            newResourceNode.AddValue ("name", fuelTankList[tankIndex].resources[resourceIndex].name);
+                            if (calledByPlayer || fuelBrandNewPart)
+                            {
+                                newResourceNode.AddValue ("amount", fuelTankList[tankIndex].resources[resourceIndex].maxAmount);
+                                FuelSetResource (resourceIndex, fuelTankList[tankIndex].resources[resourceIndex].amount);
+                            }
+                            else
+                            {
+                                newResourceNode.AddValue ("amount", FuelGetResource (resourceIndex));
+                            }
+                            newResourceNode.AddValue ("maxAmount", fuelTankList[tankIndex].resources[resourceIndex].maxAmount);
+                            currentPart.AddResource (newResourceNode);
+                        }
+                    }
+                }
+            }
+            currentPart.Resources.UpdateList ();
+            FuelUpdateWeight (currentPart, fuelSelectedTankSetup);
+            FuelUpdateCost ();
+        }
+
+        private float FuelUpdateCost ()
+        {
+            if (fuelSelectedTankSetup < fuelTankCostList.Count)
+            {
+                addedCost = fuelTankCostList[fuelSelectedTankSetup];
+            }
+            else
+            {
+                addedCost = 0f;
+            }
+            // GameEvents.onEditorShipModified.Fire(EditorLogic.fetch.ship); //crashes game
+            return addedCost;
+        }
+
+        private void FuelUpdateWeight (Part currentPart, int newTankSetup)
+        {
+            if (isCtrlSrf || isWingAsCtrlSrf) return;
+            if (newTankSetup < fuelWeightList.Count)
+            {
+                // currentPart.mass = fuelBasePartMass + fuelWeightList[newTankSetup];
+            }
+        }
+
+        private void FuelOnUpdate ()
+        {
+            if (fuelSelectedTankSetup < fuelTankList.Count) 
+            {
+                if (fuelTankList[fuelSelectedTankSetup] != null)
+                {
+                    for (int i = 0; i < fuelTankList[fuelSelectedTankSetup].resources.Count; i++)
+                    {
+                        if (fuelTankList[fuelSelectedTankSetup].resources[i].name == "Structural")
+                        {
+
+                        }
+                        else
+                        {
+                            FuelSetResource (i, (float) part.Resources[fuelTankList[fuelSelectedTankSetup].resources[i].name].amount);
+                        }
+                    }
+                }
+            }
+        }
+
+        private float FuelGetResource (int number)
+        {
+            switch (number)
+            {
+                case 0:
+                    return fuelCurrentAmount.x;
+                case 1:
+                    return fuelCurrentAmount.y;
+                case 2:
+                    return fuelCurrentAmount.z;
+                case 3:
+                    return fuelCurrentAmount.w;
+                default:
+                    return 0f;
+            }
+        }
+
+        private void FuelSetResource (int number, float amount)
+        {
+            switch (number)
+            {
+                case 0:
+                    fuelCurrentAmount.x = amount;
+                    break;
+                case 1:
+                    fuelCurrentAmount.y = amount;
+                    break;
+                case 2:
+                    fuelCurrentAmount.z = amount;
+                    break;
+                case 3:
+                    fuelCurrentAmount.w = amount;
+                    break;
+            }
+        }
+
+        private void FuelSetupTankList (bool calledByPlayer)
+        {
+            if (logFuel) DebugLogWithID ("FuelSetupTankList", "Started");
+            if (isCtrlSrf || isWingAsCtrlSrf) return;
+            fuelTankList.Clear ();
+
+            // First find the amounts each tank type is filled with
+
+            List<List<float>> resourceList = new List<List<float>> ();
+            for (int tankIndex = 0; tankIndex < fuelPerCubicMeter.Length; tankIndex++)
+            {
+                resourceList.Add (new List<float> ());
+                for (int amountIndex = 0; amountIndex < fuelPerCubicMeter[tankIndex].Length; amountIndex++)
+                {
+                    resourceList[tankIndex].Add (fuelPerCubicMeter[tankIndex][amountIndex]);
+                }
+            }
+
+            // Then find the kinds of resources each tank holds, and fill them with the amounts found previously, or the amount hey held last (values kept in save persistence/craft)
+
+            for (int tankIndex = 0; tankIndex < fuelResourceNames.Length; tankIndex++)
+            {
+                WPInnerTank newTank = new WPInnerTank ();
+                fuelTankList.Add (newTank);
+                for (int nameIndex = 0; nameIndex < fuelResourceNames[tankIndex].Length; nameIndex++)
+                {
+                    WPResource newResource = new WPResource (fuelResourceNames[tankIndex][nameIndex].Trim (' '));
+                    if (resourceList[tankIndex] != null)
+                    {
+                        if (nameIndex < resourceList[tankIndex].Count)
+                        {
+                            newResource.maxAmount = resourceList[tankIndex][nameIndex];
+                            if (calledByPlayer)
+                            {
+                                newResource.amount = resourceList[tankIndex][nameIndex];
+                            }
+                            else
+                            {
+                                newResource.amount = FuelGetResource (nameIndex);
+                            }
+                        }
+                    }
+                    newTank.resources.Add (newResource);
+                }
+            }
+        }
+
+        public float GetModuleCost ()
+        {
+            return FuelUpdateCost ();
+        }
+        public float GetModuleCost (float modifier)
+        {
+            return FuelUpdateCost ();
+        }
 
 
 

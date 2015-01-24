@@ -116,7 +116,7 @@ namespace WingProcedural
 
         // Shared properties / Base
 
-        // [KSPField (guiActiveEditor = true, guiActive = false, guiName = "| Base"),
+        [KSPField (guiActiveEditor = true, guiActive = false, guiName = "| Base")]
         // UI_Toggle (scene = UI_Scene.Editor, disabledText = "", enabledText = "")]
         public bool sharedFieldGroupBase = true;
         public bool sharedFieldGroupBaseCached = true;
@@ -124,43 +124,43 @@ namespace WingProcedural
         private static string[] sharedFieldGroupBaseArray = new string[] { "sharedBaseLength", "sharedBaseWidthRoot", "sharedBaseWidthTip", "sharedBaseThicknessRoot", "sharedBaseThicknessTip", "sharedBaseOffsetTip" };
         private static string[] sharedFieldGroupBaseArrayCtrl = new string[] { "sharedBaseOffsetRoot" };
 
-        // [KSPField (isPersistant = true, guiActiveEditor = true, guiActive = false, guiName = "Length", guiFormat = "S4"),
+        [KSPField (isPersistant = true, guiActiveEditor = true, guiActive = false, guiName = "Length", guiFormat = "S4")]
         // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0.25f, maxValue = 16f, incrementLarge = 1f, incrementSlide = 0.125f)]
         public float sharedBaseLength = 4f;
         public float sharedBaseLengthCached = 4f;
         public static Vector4 sharedBaseLengthDefaults = new Vector4 (4f, 1f, 4f, 1f);
 
-        // [KSPField (isPersistant = true, guiActiveEditor = true, guiActive = false, guiName = "Width (root)", guiFormat = "S4"),
+        [KSPField (isPersistant = true, guiActiveEditor = true, guiActive = false, guiName = "Width (root)", guiFormat = "S4")]
         // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0.25f, maxValue = 16f, incrementLarge = 1f, incrementSlide = 0.125f)]
         public float sharedBaseWidthRoot = 4f;
         public float sharedBaseWidthRootCached = 4f;
         public static Vector4 sharedBaseWidthRootDefaults = new Vector4 (4f, 0.5f, 4f, 0.5f);
 
-        // [KSPField (isPersistant = true, guiActiveEditor = true, guiActive = false, guiName = "Width (tip)", guiFormat = "S4"),
+        [KSPField (isPersistant = true, guiActiveEditor = true, guiActive = false, guiName = "Width (tip)", guiFormat = "S4")]
         // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0.25f, maxValue = 16f, incrementLarge = 1f, incrementSlide = 0.125f)]
         public float sharedBaseWidthTip = 4f;
         public float sharedBaseWidthTipCached = 4f;
         public static Vector4 sharedBaseWidthTipDefaults = new Vector4 (4f, 0.5f, 4f, 0.5f);
 
-        // [KSPField (isPersistant = true, guiActiveEditor = true, guiActive = false, guiName = "Offset (root)", guiFormat = "S4"),
+        [KSPField (isPersistant = true, guiActiveEditor = true, guiActive = false, guiName = "Offset (root)", guiFormat = "S4")]
         // UI_FloatEdit (scene = UI_Scene.Editor, minValue = -2.5f, maxValue = 2.5f, incrementSlide = 0.125f)]
         public float sharedBaseOffsetRoot = 0f;
         public float sharedBaseOffsetRootCached = 0f;
         public static Vector4 sharedBaseOffsetRootDefaults = new Vector4 (0f, 0f, 0f, 0f);
 
-        // [KSPField (isPersistant = true, guiActiveEditor = true, guiActive = false, guiName = "Offset (tip)", guiFormat = "S4"),
+        [KSPField (isPersistant = true, guiActiveEditor = true, guiActive = false, guiName = "Offset (tip)", guiFormat = "S4")]
         // UI_FloatEdit (scene = UI_Scene.Editor, minValue = -2.5f, maxValue = 2.5f, incrementSlide = 0.125f)]
         public float sharedBaseOffsetTip = 0f;
         public float sharedBaseOffsetTipCached = 0f;
         public static Vector4 sharedBaseOffsetTipDefaults = new Vector4 (0f, 0f, 0f, 0f);
 
-        // [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Thickness (root)", guiFormat = "F3"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Thickness (root)", guiFormat = "F3")]
         // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0.08f, maxValue = 1f, incrementSlide = 0.04f)]
         public float sharedBaseThicknessRoot = 0.24f;
         public float sharedBaseThicknessRootCached = 0.24f;
         public static Vector4 sharedBaseThicknessRootDefaults = new Vector4 (0.24f, 0.24f, 0.24f, 0.24f);
 
-        // [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Thickness (tip)", guiFormat = "F3"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Thickness (tip)", guiFormat = "F3")]
         // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0.08f, maxValue = 1f, incrementSlide = 0.04f)]
         public float sharedBaseThicknessTip = 0.24f;
         public float sharedBaseThicknessTipCached = 0.24f;
@@ -171,26 +171,26 @@ namespace WingProcedural
 
         // Shared properties / Edge / Leading
 
-        // [KSPField (guiActiveEditor = true, guiActive = false, guiName = "| Lead. edge"),
+        [KSPField (guiActiveEditor = true, guiActive = false, guiName = "| Lead. edge")]
         // UI_Toggle (scene = UI_Scene.Editor, disabledText = "", enabledText = "")]
         public bool sharedFieldGroupEdgeLeading = false;
         public bool sharedFieldGroupEdgeLeadingCached = false;
         public static bool sharedFieldGroupEdgeLeadingStatic = false;
         private static string[] sharedFieldGroupEdgeLeadingArray = new string[] { "sharedEdgeTypeLeading", "sharedEdgeWidthLeadingRoot", "sharedEdgeWidthLeadingTip" };
 
-        // [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Shape", guiFormat = "F3"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Shape", guiFormat = "F3")]
         // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 1f, maxValue = 4f, incrementSlide = 1f)]
         public float sharedEdgeTypeLeading = 2f;
         public float sharedEdgeTypeLeadingCached = 2f;
         public static Vector4 sharedEdgeTypeLeadingDefaults = new Vector4 (2f, 1f, 2f, 1f);
 
-        // [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Width (root)", guiFormat = "F3"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Width (root)", guiFormat = "F3")]
         // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.04f)]
         public float sharedEdgeWidthLeadingRoot = 0.24f;
         public float sharedEdgeWidthLeadingRootCached = 0.24f;
         public static Vector4 sharedEdgeWidthLeadingRootDefaults = new Vector4 (0.24f, 0.24f, 0.24f, 0.24f);
 
-        // [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Width (tip)", guiFormat = "F3"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Width (tip)", guiFormat = "F3")]
         // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.04f)]
         public float sharedEdgeWidthLeadingTip = 0.24f;
         public float sharedEdgeWidthLeadingTipCached = 0.24f;
@@ -201,26 +201,26 @@ namespace WingProcedural
 
         // Shared properties / Edge / Trailing
 
-        // [KSPField (guiActiveEditor = true, guiActive = false, guiName = "| Trail. edge"),
+        [KSPField (guiActiveEditor = true, guiActive = false, guiName = "| Trail. edge")]
         // UI_Toggle (scene = UI_Scene.Editor, disabledText = "", enabledText = "")]
         public bool sharedFieldGroupEdgeTrailing = false;
         public bool sharedFieldGroupEdgeTrailingCached = false;
         public static bool sharedFieldGroupEdgeTrailingStatic = false;
         private static string[] sharedFieldGroupEdgeTrailingArray = new string[] { "sharedEdgeTypeTrailing", "sharedEdgeWidthTrailingRoot", "sharedEdgeWidthTrailingTip" };
 
-        // [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Shape", guiFormat = "F3"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Shape", guiFormat = "F3")]
         // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 1f, maxValue = 4f, incrementSlide = 1f)]
         public float sharedEdgeTypeTrailing = 3f;
         public float sharedEdgeTypeTrailingCached = 3f;
         public static Vector4 sharedEdgeTypeTrailingDefaults = new Vector4 (3f, 2f, 3f, 2f);
 
-        // [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Width (root)", guiFormat = "F3"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Width (root)", guiFormat = "F3")]
         // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.04f)]
         public float sharedEdgeWidthTrailingRoot = 0.48f;
         public float sharedEdgeWidthTrailingRootCached = 0.48f;
         public static Vector4 sharedEdgeWidthTrailingRootDefaults = new Vector4 (0.48f, 0.48f, 0.48f, 0.48f);
 
-        // [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Width (tip)", guiFormat = "F3"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Width (tip)", guiFormat = "F3")]
         // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.04f)]
         public float sharedEdgeWidthTrailingTip = 0.48f;
         public float sharedEdgeWidthTrailingTipCached = 0.48f;
@@ -231,38 +231,38 @@ namespace WingProcedural
 
         // Shared properties / Surface / Top
 
-        // [KSPField (guiActiveEditor = true, guiActive = false, guiName = "| Material A"),
+        [KSPField (guiActiveEditor = true, guiActive = false, guiName = "| Material A")]
         // UI_Toggle (scene = UI_Scene.Editor, disabledText = "", enabledText = "")]
         public bool sharedFieldGroupColorST = false;
         public bool sharedFieldGroupColorSTCached = false;
         public bool sharedFieldGroupColorSTStatic = false;
         private static string[] sharedFieldGroupColorSTArray = new string[] { "sharedMaterialST", "sharedColorSTOpacity", "sharedColorSTHue", "sharedColorSTSaturation", "sharedColorSTBrightness" };
 
-        // [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Material", guiFormat = "F3"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Material", guiFormat = "F3")]
         // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 4f, incrementSlide = 1f)]
         public float sharedMaterialST = 1f;
         public float sharedMaterialSTCached = 1f;
         public static Vector4 sharedMaterialSTDefaults = new Vector4 (1f, 1f, 1f, 1f);
 
-        // [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Opacity", guiFormat = "F3"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Opacity", guiFormat = "F3")]
         // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.01f)]
         public float sharedColorSTOpacity = 0f;
         public float sharedColorSTOpacityCached = 0f;
         public static Vector4 sharedColorSTOpacityDefaults = new Vector4 (0f, 0f, 0f, 0f);
 
-        // [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Color (H)", guiFormat = "F3"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Color (H)", guiFormat = "F3")]
         // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.01f)]
         public float sharedColorSTHue = 0.10f;
         public float sharedColorSTHueCached = 0.10f;
         public static Vector4 sharedColorSTHueDefaults = new Vector4 (0.1f, 0.1f, 0.1f, 0.1f);
 
-        // [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Color (S)", guiFormat = "F3"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Color (S)", guiFormat = "F3")]
         // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.01f)]
         public float sharedColorSTSaturation = 0.75f;
         public float sharedColorSTSaturationCached = 0.75f;
         public static Vector4 sharedColorSTSaturationDefaults = new Vector4 (0.75f, 0.75f, 0.75f, 0.75f);
 
-        // [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Color (B)", guiFormat = "F3"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Color (B)", guiFormat = "F3")]
         // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.01f)]
         public float sharedColorSTBrightness = 0.6f;
         public float sharedColorSTBrightnessCached = 0.6f;
@@ -273,38 +273,38 @@ namespace WingProcedural
 
         // Shared properties / Surface / bottom
 
-        // [KSPField (guiActiveEditor = true, guiActive = false, guiName = "| Material B"),
+        [KSPField (guiActiveEditor = true, guiActive = false, guiName = "| Material B")]
         // UI_Toggle (scene = UI_Scene.Editor, disabledText = "", enabledText = "")]
         public bool sharedFieldGroupColorSB = false;
         public bool sharedFieldGroupColorSBCached = false;
         public bool sharedFieldGroupColorSBStatic = false;
         private static string[] sharedFieldGroupColorSBArray = new string[] { "sharedMaterialSB", "sharedColorSBOpacity", "sharedColorSBHue", "sharedColorSBSaturation", "sharedColorSBBrightness" };
 
-        // [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Material", guiFormat = "F3"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Material", guiFormat = "F3")]
         // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 4f, incrementSlide = 1f)]
         public float sharedMaterialSB = 4f;
         public float sharedMaterialSBCached = 4f;
         public static Vector4 sharedMaterialSBDefaults = new Vector4 (4f, 4f, 4f, 4f);
 
-        // [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Opacity", guiFormat = "F3"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Opacity", guiFormat = "F3")]
         // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.01f)]
         public float sharedColorSBOpacity = 0f;
         public float sharedColorSBOpacityCached = 0f;
         public static Vector4 sharedColorSBOpacityDefaults = new Vector4 (0f, 0f, 0f, 0f);
 
-        // [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Color (H)", guiFormat = "F3"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Color (H)", guiFormat = "F3")]
         // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.01f)]
         public float sharedColorSBHue = 0.10f;
         public float sharedColorSBHueCached = 0.10f;
         public static Vector4 sharedColorSBHueDefaults = new Vector4 (0.1f, 0.1f, 0.1f, 0.1f);
 
-        // [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Color (S)", guiFormat = "F3"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Color (S)", guiFormat = "F3")]
         // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.01f)]
         public float sharedColorSBSaturation = 0.75f;
         public float sharedColorSBSaturationCached = 0.75f;
         public static Vector4 sharedColorSBSaturationDefaults = new Vector4 (0.75f, 0.75f, 0.75f, 0.75f);
 
-        // [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Color (B)", guiFormat = "F3"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Color (B)", guiFormat = "F3")]
         // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.01f)]
         public float sharedColorSBBrightness = 0.6f;
         public float sharedColorSBBrightnessCached = 0.6f;
@@ -315,38 +315,38 @@ namespace WingProcedural
 
         // Shared properties / Surface / trailing edge
 
-        // [KSPField (guiActiveEditor = true, guiActive = false, guiName = "| Material T"),
+        [KSPField (guiActiveEditor = true, guiActive = false, guiName = "| Material T")]
         // UI_Toggle (scene = UI_Scene.Editor, disabledText = "", enabledText = "")]
         public bool sharedFieldGroupColorET = false;
         public bool sharedFieldGroupColorETCached = false;
         public bool sharedFieldGroupColorETStatic = false;
         private static string[] sharedFieldGroupColorETArray = new string[] { "sharedMaterialET", "sharedColorETOpacity", "sharedColorETHue", "sharedColorETSaturation", "sharedColorETBrightness" };
 
-        // [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Material", guiFormat = "F3"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Material", guiFormat = "F3")]
         // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 4f, incrementSlide = 1f)]
         public float sharedMaterialET = 4f;
         public float sharedMaterialETCached = 4f;
         public static Vector4 sharedMaterialETDefaults = new Vector4 (4f, 4f, 4f, 4f);
 
-        // [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Opacity", guiFormat = "F3"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Opacity", guiFormat = "F3")]
         // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.01f)]
         public float sharedColorETOpacity = 0f;
         public float sharedColorETOpacityCached = 0f;
         public static Vector4 sharedColorETOpacityDefaults = new Vector4 (0f, 0f, 0f, 0f);
 
-        // [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Color (H)", guiFormat = "F3"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Color (H)", guiFormat = "F3")]
         // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.01f)]
         public float sharedColorETHue = 0.10f;
         public float sharedColorETHueCached = 0.10f;
         public static Vector4 sharedColorETHueDefaults = new Vector4 (0.1f, 0.1f, 0.1f, 0.1f);
 
-        // [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Color (S)", guiFormat = "F3"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Color (S)", guiFormat = "F3")]
         // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.01f)]
         public float sharedColorETSaturation = 0.75f;
         public float sharedColorETSaturationCached = 0.75f;
         public static Vector4 sharedColorETSaturationDefaults = new Vector4 (0.75f, 0.75f, 0.75f, 0.75f);
 
-        // [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Color (B)", guiFormat = "F3"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Color (B)", guiFormat = "F3")]
         // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.01f)]
         public float sharedColorETBrightness = 0.6f;
         public float sharedColorETBrightnessCached = 0.6f;
@@ -357,38 +357,38 @@ namespace WingProcedural
 
         // Shared properties / Surface / leading edge
 
-        // [KSPField (guiActiveEditor = true, guiActive = false, guiName = "| Material L"),
+        [KSPField (guiActiveEditor = true, guiActive = false, guiName = "| Material L")]
         // UI_Toggle (scene = UI_Scene.Editor, disabledText = "", enabledText = "")]
         public bool sharedFieldGroupColorEL = false;
         public bool sharedFieldGroupColorELCached = false;
         public bool sharedFieldGroupColorELStatic = false;
         private static string[] sharedFieldGroupColorELArray = new string[] { "sharedMaterialEL", "sharedColorELOpacity", "sharedColorELHue", "sharedColorELSaturation", "sharedColorELBrightness" };
 
-        // [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Material", guiFormat = "F3"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Material", guiFormat = "F3")]
         // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 4f, incrementSlide = 1f)]
         public float sharedMaterialEL = 4f;
         public float sharedMaterialELCached = 4f;
         public static Vector4 sharedMaterialELDefaults = new Vector4 (4f, 4f, 4f, 4f);
 
-        // [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Opacity", guiFormat = "F3"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Opacity", guiFormat = "F3")]
         // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.01f)]
         public float sharedColorELOpacity = 0f;
         public float sharedColorELOpacityCached = 0f;
         public static Vector4 sharedColorELOpacityDefaults = new Vector4 (0f, 0f, 0f, 0f);
 
-        // [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Color (H)", guiFormat = "F3"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Color (H)", guiFormat = "F3")]
         // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.01f)]
         public float sharedColorELHue = 0.10f;
         public float sharedColorELHueCached = 0.10f;
         public static Vector4 sharedColorELHueDefaults = new Vector4 (0.1f, 0.1f, 0.1f, 0.1f);
 
-        // [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Color (S)", guiFormat = "F3"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Color (S)", guiFormat = "F3")]
         // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.01f)]
         public float sharedColorELSaturation = 0.75f;
         public float sharedColorELSaturationCached = 0.75f;
         public static Vector4 sharedColorELSaturationDefaults = new Vector4 (0.75f, 0.75f, 0.75f, 0.75f);
 
-        // [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Color (B)", guiFormat = "F3"),
+        [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = true, guiName = "Color (B)", guiFormat = "F3")]
         // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.01f)]
         public float sharedColorELBrightness = 0.6f;
         public float sharedColorELBrightnessCached = 0.6f;

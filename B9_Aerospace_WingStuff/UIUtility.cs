@@ -9,7 +9,7 @@ namespace WingProcedural
 {
     public static class UIUtility
     {
-        public static float FieldSlider (float value, float increment, Vector2 limits, string name, string format, out bool changed, GUIStyle styleSlider, GUIStyle styleThumb, GUIStyle styleText, Color backgroundColor)
+        public static float FieldSlider (float value, float increment, Vector2 limits, string name, out bool changed, GUIStyle styleSlider, GUIStyle styleThumb, GUIStyle styleText, Color backgroundColor, int valueType)
         {
             float valueOld = value;
             value = GUILayout.HorizontalSlider (value, limits.x, limits.y, styleSlider, styleThumb);
@@ -51,7 +51,7 @@ namespace WingProcedural
             Rect labelRectName = new Rect (lastRect.xMin, lastRect.yMin - 2f, lastRect.width, lastRect.height);
             GUI.Label (labelRectName, "  " + name, styleText);
             Rect labelRectValue = new Rect (labelRectName.xMin + labelRectName.width * 0.75f, labelRectName.yMin, labelRectName.width * 0.25f, labelRectName.height); 
-            GUI.Label (labelRectValue, value.ToString (format), styleText);
+            GUI.Label (labelRectValue, GetValueTranslation (value, valueType), styleText);
             return value;
         }
 
@@ -90,6 +90,28 @@ namespace WingProcedural
             Vector3 mousePos = Input.mousePosition;
             mousePos.y = Screen.height - mousePos.y;
             return mousePos;
+        }
+
+        public static string GetValueTranslation (float value, int type)
+        {
+            if (type == 1)
+            {
+                if (value == 0f) return "Uniform";
+                else if (value == 1f) return "Standard";
+                else if (value == 2f) return "Reinforced";
+                else if (value == 3f) return "LRSI";
+                else if (value == 4f) return "HRSI";
+                else return "Unknown material";
+            }
+            else if (type == 2)
+            {
+                if (value == 1f) return "No edge";
+                else if (value == 2f) return "Rounded";
+                else if (value == 3f) return "Biconvex";
+                else if (value == 4f) return "Triangular";
+                else return "Unknown";
+            }
+            else return value.ToString ("F3");
         }
     }
 }

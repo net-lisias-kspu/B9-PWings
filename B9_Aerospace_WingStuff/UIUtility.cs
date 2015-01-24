@@ -63,6 +63,16 @@ namespace WingProcedural
             return window;
         }
 
+        public static Rect SetToScreenCenter (this Rect r)
+        {
+            if (r.width > 0 && r.height > 0)
+            {
+                r.x = Screen.width / 2f - r.width / 2f;
+                r.y = Screen.height / 2f - r.height / 2f;
+            }
+            return r;
+        }
+
         public static double TextEntryForDouble (string label, int labelWidth, double prevValue)
         {
             string valString = prevValue.ToString ();

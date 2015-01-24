@@ -2992,8 +2992,8 @@ namespace WingProcedural
                 FuelSetupTankList (false);
                 if (HighLogic.LoadedSceneIsFlight) fuelFlightSceneStarted = true;
 
-                if (fuelGUI) Events["FuelNextTankSetupEvent"].guiActiveEditor = true;
-                else Events["FuelNextTankSetupEvent"].guiActiveEditor = false;
+                if (fuelGUI) Events["NextConfiguration"].guiActiveEditor = true;
+                else Events["NextConfiguration"].guiActiveEditor = false;
                 fuelInitialized = true;
             }
         }
@@ -3070,7 +3070,7 @@ namespace WingProcedural
         private float FuelGetAddedCost ()
         {
             float result = 0f;
-            if (fuelSelectedTankSetup < fuelCostPerUnit.Length)
+            if (fuelSelectedTankSetup < fuelCostPerUnit.Length && fuelSelectedTankSetup < fuelTankList.Count)
             {
                 for (int i = 0; i < fuelTankList[fuelSelectedTankSetup].resources.Count; ++i)
                 {

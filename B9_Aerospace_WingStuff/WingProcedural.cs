@@ -30,19 +30,6 @@ namespace WingProcedural
         public bool isStartingNow = false;
         public bool justDetached = false;
 
-        private bool logCAV = false;
-        private bool logUpdate = false;
-        private bool logUpdateGeometry = false;
-        private bool logUpdateMaterials = false;
-        private bool logMeshReferences = false;
-        private bool logCheckMeshFilter = false;
-        private bool logPropertyWindow = true;
-        private bool logFlightSetup = false;
-        private bool logFieldSetup = false;
-        private bool logFuel = false;
-        private bool logLimits = false;
-        private bool logEvents = false;
-
 
 
 
@@ -99,7 +86,7 @@ namespace WingProcedural
 
         private Vector2 GetLimitsFromType (Vector4 set)
         {
-            if (logLimits) DebugLogWithID ("GetLimitsFromType", "Using set: " + set);
+            if (WingProceduralDebugValues.logLimits) DebugLogWithID ("GetLimitsFromType", "Using set: " + set);
             if (!isCtrlSrf) return new Vector2 (set.x, set.y);
             else return new Vector2 (set.z, set.w);
         }
@@ -507,6 +494,23 @@ namespace WingProcedural
             RestoreDefault (ref sharedColorELBrightnessDefaults);
         }
 
+        [KSPEvent (guiActive = false, guiActiveEditor = false, guiName = "Next configuration", active = false)]
+        public void NextConfiguration ()
+        {
+            if (WingProceduralDebugValues.logFuel) DebugLogWithID ("NextConfiguration", "Started");
+            if (isCtrlSrf || isWingAsCtrlSrf || assemblyRFUsed) return;
+            fuelSelectedTankSetup++;
+            if (fuelSelectedTankSetup >= fuelTankList.Count)
+            {
+                fuelSelectedTankSetup = 0;
+            }
+            if (HighLogic.LoadedSceneIsFlight)
+            {
+                fuelCurrentAmount = Vector4.zero;
+            }
+            FuelAssignResourcesToPart (true);
+        }
+
         private void RestoreDefault (ref Vector4 set)
         {
             set = new Vector4 (set.z, set.w, set.z, set.w);
@@ -732,7 +736,7 @@ namespace WingProcedural
         {
             if (fieldValue != fieldCache)
             {
-                if (logUpdate) DebugLogWithID ("Update", "Detected value change");
+                if (WingProceduralDebugValues.logUpdate) DebugLogWithID ("Update", "Detected value change");
                 updateRequiredOnGeometry = true;
                 if (affectsAerodynamics) updateRequiredOnAerodynamics = true;
                 fieldCache = fieldValue;
@@ -745,7 +749,7 @@ namespace WingProcedural
             {
                 if (groupStatus != groupCache)
                 {
-                    if (logUpdate) DebugLogWithID ("Update", "Detected field group state change");
+                    if (WingProceduralDebugValues.logUpdate) DebugLogWithID ("Update", "Detected field group state change");
                     for (int i = 0; i < groupEntries.Length; ++i) SetFieldVisibility (groupEntries[i], groupStatus);
                     if (!isCtrlSrf && groupEntriesWing != null) { for (int i = 0; i < groupEntriesWing.Length; ++i) SetFieldVisibility (groupEntriesWing[i], groupStatus); }
                     if (isCtrlSrf && groupEntriesCtrl != null) { for (int i = 0; i < groupEntriesCtrl.Length; ++i) SetFieldVisibility (groupEntriesCtrl[i], groupStatus); }
@@ -781,10 +785,10 @@ namespace WingProcedural
         public void UpdateOnEditorAttach ()
         {
             isAttached = true;
-            if (logEvents) DebugLogWithID ("UpdateOnEditorAttach", "Setup started");
+            if (WingProceduralDebugValues.logEvents) DebugLogWithID ("UpdateOnEditorAttach", "Setup started");
             Setup ();
             isStarted = true;
-            if (logEvents) DebugLogWithID ("UpdateOnEditorAttach", "Setup ended");
+            if (WingProceduralDebugValues.logEvents) DebugLogWithID ("UpdateOnEditorAttach", "Setup ended");
         }
 
         public void UpdateOnEditorDetach ()
@@ -804,7 +808,7 @@ namespace WingProcedural
 
         public void UpdateGeometry (bool updateAerodynamics)
         {
-            if (logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Started | isCtrlSrf: " + isCtrlSrf);
+            if (WingProceduralDebugValues.logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Started | isCtrlSrf: " + isCtrlSrf);
             if (!isCtrlSrf)
             {
                 float wingThicknessDeviationRoot = sharedBaseThicknessRoot / 0.24f;
@@ -823,7 +827,7 @@ namespace WingProcedural
                     Array.Copy (meshReferenceWingSection.vp, vp, length);
                     Vector2[] uv = new Vector2[length];
                     Array.Copy (meshReferenceWingSection.uv, uv, length);
-                    if (logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Wing section | Passed array setup");
+                    if (WingProceduralDebugValues.logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Wing section | Passed array setup");
 
                     for (int i = 0; i < length; ++i)
                     {
@@ -865,7 +869,7 @@ namespace WingProcedural
                     meshCollider.sharedMesh = null;
                     meshCollider.sharedMesh = meshFilterWingSection.mesh;
                     meshCollider.convex = true;
-                    if (logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Wing section | Finished");
+                    if (WingProceduralDebugValues.logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Wing section | Finished");
                 }
 
                 // Second, wing surfaces
@@ -884,7 +888,7 @@ namespace WingProcedural
                     Color[] cl = new Color[length];
                     Vector2[] uv2 = new Vector2[length];
 
-                    if (logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Wing surface top | Passed array setup");
+                    if (WingProceduralDebugValues.logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Wing surface top | Passed array setup");
                     for (int i = 0; i < length; ++i)
                     {
                         // Root/tip filtering followed by leading/trailing filtering
@@ -933,7 +937,7 @@ namespace WingProcedural
                     meshFilterWingSurface.mesh.uv2 = uv2;
                     meshFilterWingSurface.mesh.colors = cl;
                     meshFilterWingSurface.mesh.RecalculateBounds ();
-                    if (logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Wing surface | Finished");
+                    if (WingProceduralDebugValues.logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Wing surface | Finished");
                 }
 
                 // Next, time for leading and trailing edges
@@ -976,7 +980,7 @@ namespace WingProcedural
                     Color[] cl = new Color[length];
                     Vector2[] uv2 = new Vector2[length];
 
-                    if (logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Wing edge trailing | Passed array setup");
+                    if (WingProceduralDebugValues.logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Wing edge trailing | Passed array setup");
                     for (int i = 0; i < vp.Length; ++i)
                     {
                         if (vp[i].x < -0.1f)
@@ -997,7 +1001,7 @@ namespace WingProcedural
                     meshFiltersWingEdgeTrailing[wingEdgeTypeTrailingInt].mesh.uv2 = uv2;
                     meshFiltersWingEdgeTrailing[wingEdgeTypeTrailingInt].mesh.colors = cl;
                     meshFiltersWingEdgeTrailing[wingEdgeTypeTrailingInt].mesh.RecalculateBounds ();
-                    if (logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Wing edge trailing | Finished");
+                    if (WingProceduralDebugValues.logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Wing edge trailing | Finished");
                 }
                 if (meshFiltersWingEdgeLeading[wingEdgeTypeLeadingInt] != null)
                 {
@@ -1012,7 +1016,7 @@ namespace WingProcedural
                     Color[] cl = new Color[length];
                     Vector2[] uv2 = new Vector2[length];
 
-                    if (logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Wing edge leading | Passed array setup");
+                    if (WingProceduralDebugValues.logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Wing edge leading | Passed array setup");
                     for (int i = 0; i < vp.Length; ++i)
                     {
                         if (vp[i].x < -0.1f)
@@ -1033,7 +1037,7 @@ namespace WingProcedural
                     meshFiltersWingEdgeLeading[wingEdgeTypeLeadingInt].mesh.uv2 = uv2;
                     meshFiltersWingEdgeLeading[wingEdgeTypeLeadingInt].mesh.colors = cl;
                     meshFiltersWingEdgeLeading[wingEdgeTypeLeadingInt].mesh.RecalculateBounds ();
-                    if (logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Wing edge leading | Finished");
+                    if (WingProceduralDebugValues.logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Wing edge leading | Finished");
                 }
             }
             else
@@ -1068,7 +1072,7 @@ namespace WingProcedural
                     Color[] cl = new Color[length];
                     Vector2[] uv2 = new Vector2[length];
 
-                    if (logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Control surface frame | Passed array setup");
+                    if (WingProceduralDebugValues.logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Control surface frame | Passed array setup");
                     for (int i = 0; i < vp.Length; ++i)
                     {
                         // Thickness correction (X), edge width correction (Y) and span-based offset (Z)
@@ -1144,7 +1148,7 @@ namespace WingProcedural
                     meshCollider.sharedMesh = null;
                     meshCollider.sharedMesh = meshFilterCtrlFrame.mesh;
                     meshCollider.convex = true;
-                    if (logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Control surface frame | Finished");
+                    if (WingProceduralDebugValues.logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Control surface frame | Finished");
                 }
 
                 // Next, time for edge types
@@ -1174,7 +1178,7 @@ namespace WingProcedural
                     Color[] cl = new Color[length];
                     Vector2[] uv2 = new Vector2[length];
 
-                    if (logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Control surface edge | Passed array setup");
+                    if (WingProceduralDebugValues.logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Control surface edge | Passed array setup");
                     for (int i = 0; i < vp.Length; ++i)
                     {
                         // Thickness correction (X), edge width correction (Y) and span-based offset (Z)
@@ -1228,7 +1232,7 @@ namespace WingProcedural
                     meshFiltersCtrlEdge[ctrlEdgeTypeInt].mesh.uv2 = uv2;
                     meshFiltersCtrlEdge[ctrlEdgeTypeInt].mesh.colors = cl;
                     meshFiltersCtrlEdge[ctrlEdgeTypeInt].mesh.RecalculateBounds ();
-                    if (logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Control surface edge | Finished");
+                    if (WingProceduralDebugValues.logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Control surface edge | Finished");
                 }
 
                 // Finally, simple top/bottom surface changes
@@ -1243,7 +1247,7 @@ namespace WingProcedural
                     Color[] cl = new Color[length];
                     Vector2[] uv2 = new Vector2[length];
 
-                    if (logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Control surface top | Passed array setup");
+                    if (WingProceduralDebugValues.logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Control surface top | Passed array setup");
                     for (int i = 0; i < vp.Length; ++i)
                     {
                         // Span-based shift
@@ -1303,10 +1307,10 @@ namespace WingProcedural
                     meshFilterCtrlSurface.mesh.uv2 = uv2;
                     meshFilterCtrlSurface.mesh.colors = cl;
                     meshFilterCtrlSurface.mesh.RecalculateBounds ();
-                    if (logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Control surface top | Finished");
+                    if (WingProceduralDebugValues.logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Control surface top | Finished");
                 }
             }
-            if (logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Finished");
+            if (WingProceduralDebugValues.logUpdateGeometry) DebugLogWithID ("UpdateGeometry", "Finished");
             if (HighLogic.LoadedSceneIsEditor) CalculateAerodynamicValues ();
         }
 
@@ -1370,7 +1374,7 @@ namespace WingProcedural
                     }
                 }
             }
-            else if (logUpdateMaterials) DebugLogWithID ("UpdateMaterials", "Material creation failed");
+            else if (WingProceduralDebugValues.logUpdateMaterials) DebugLogWithID ("UpdateMaterials", "Material creation failed");
         }
 
         private void SetMaterialReferences ()
@@ -1388,7 +1392,7 @@ namespace WingProcedural
                 materialLayeredSurface.SetFloat ("_Shininess", materialPropertyShininess);
                 materialLayeredSurface.SetColor ("_SpecColor", materialPropertySpecular);
             }
-            else if (logUpdateMaterials) DebugLogWithID ("SetMaterialReferences", "Surface textures not found");
+            else if (WingProceduralDebugValues.logUpdateMaterials) DebugLogWithID ("SetMaterialReferences", "Surface textures not found");
 
             if (materialLayeredEdgeTextureMain != null && materialLayeredEdgeTextureMask != null)
             {
@@ -1397,7 +1401,7 @@ namespace WingProcedural
                 materialLayeredEdge.SetFloat ("_Shininess", materialPropertyShininess);
                 materialLayeredEdge.SetColor ("_SpecColor", materialPropertySpecular);
             }
-            else if (logUpdateMaterials) DebugLogWithID ("SetMaterialReferences", "Edge textures not found");
+            else if (WingProceduralDebugValues.logUpdateMaterials) DebugLogWithID ("SetMaterialReferences", "Edge textures not found");
         }
 
         private void SetMaterial (MeshFilter target, Material material)
@@ -1418,7 +1422,7 @@ namespace WingProcedural
                 {
                     materialLayeredSurfaceTextureMain = r.sharedMaterial.GetTexture ("_MainTex");
                     materialLayeredSurfaceTextureMask = r.sharedMaterial.GetTexture ("_Emissive");
-                    if (logUpdateMaterials) DebugLogWithID ("SetTextures", "Main: " + materialLayeredSurfaceTextureMain.ToString () + " | Mask: " + materialLayeredSurfaceTextureMask);
+                    if (WingProceduralDebugValues.logUpdateMaterials) DebugLogWithID ("SetTextures", "Main: " + materialLayeredSurfaceTextureMain.ToString () + " | Mask: " + materialLayeredSurfaceTextureMask);
                 }
             }
             if (sourceEdge != null)
@@ -1428,7 +1432,7 @@ namespace WingProcedural
                 {
                     materialLayeredEdgeTextureMain = r.sharedMaterial.GetTexture ("_MainTex");
                     materialLayeredEdgeTextureMask = r.sharedMaterial.GetTexture ("_Emissive");
-                    if (logUpdateMaterials) DebugLogWithID ("SetTextures", "Main: " + materialLayeredEdgeTextureMain.ToString () + " | Mask: " + materialLayeredEdgeTextureMask);
+                    if (WingProceduralDebugValues.logUpdateMaterials) DebugLogWithID ("SetTextures", "Main: " + materialLayeredEdgeTextureMain.ToString () + " | Mask: " + materialLayeredEdgeTextureMask);
                 }
             }
         }
@@ -1446,7 +1450,7 @@ namespace WingProcedural
             SetupMeshReferences ();
             ReportOnMeshReferences ();
             SetupRecurring ();
-            if (!isCtrlSrf && !isWingAsCtrlSrf) FuelOnStart ();
+            FuelOnStart ();
             isStartingNow = false;
         }
 
@@ -1604,7 +1608,7 @@ namespace WingProcedural
             UI_FloatEdit ui = (UI_FloatEdit) field.uiControlEditor;
 
             float value = (float) this.GetType ().GetField (name).GetValue (this);
-            if (logFieldSetup) DebugLogWithID ("SetFieldType", "Started for field " + name + " | UI type: " + type + " | Limits: " + limits.x + "-" + limits.y + " | Increment: " + increment + " | Current value: " + value + " | Current limits: " + ui.minValue + "-" + ui.maxValue);
+            if (WingProceduralDebugValues.logFieldSetup) DebugLogWithID ("SetFieldType", "Started for field " + name + " | UI type: " + type + " | Limits: " + limits.x + "-" + limits.y + " | Increment: " + increment + " | Current value: " + value + " | Current limits: " + ui.minValue + "-" + ui.maxValue);
 
             if (type == 1)
             {
@@ -1657,12 +1661,12 @@ namespace WingProcedural
             }
             if (required)
             {
-                if (logMeshReferences) DebugLogWithID ("SetupMeshReferences", "References missing | isCtrlSrf: " + isCtrlSrf);
+                if (WingProceduralDebugValues.logMeshReferences) DebugLogWithID ("SetupMeshReferences", "References missing | isCtrlSrf: " + isCtrlSrf);
                 SetupMeshReferencesFromScratch ();
             }
             else
             {
-                if (logMeshReferences) DebugLogWithID ("SetupMeshReferences", "Skipped, all references seem to be in order");
+                if (WingProceduralDebugValues.logMeshReferences) DebugLogWithID ("SetupMeshReferences", "Skipped, all references seem to be in order");
             }
         }
 
@@ -1670,7 +1674,7 @@ namespace WingProcedural
         {
             if (isCtrlSrf)
             {
-                if (logMeshReferences) DebugLogWithID
+                if (WingProceduralDebugValues.logMeshReferences) DebugLogWithID
                 (
                     "ReportOnMeshReferences",
                     "Control surface reference length check"
@@ -1680,7 +1684,7 @@ namespace WingProcedural
             }
             else
             {
-                if (logMeshReferences) DebugLogWithID
+                if (WingProceduralDebugValues.logMeshReferences) DebugLogWithID
                 (
                     "ReportOnMeshReferences",
                     "Wing reference length check"
@@ -1692,7 +1696,7 @@ namespace WingProcedural
 
         private void SetupMeshReferencesFromScratch ()
         {
-            if (logMeshReferences) DebugLogWithID ("SetupMeshReferencesFromScratch", "No sources found, creating new references");
+            if (WingProceduralDebugValues.logMeshReferences) DebugLogWithID ("SetupMeshReferencesFromScratch", "No sources found, creating new references");
             if (!isCtrlSrf)
             {
                 WingProcedural.meshReferenceWingSection = FillMeshRefererence (meshFilterWingSection);
@@ -1754,16 +1758,16 @@ namespace WingProcedural
         {
             if (reference == null)
             {
-                if (logCheckMeshFilter) DebugLogWithID ("CheckMeshFilter", "Looking for object: " + name);
+                if (WingProceduralDebugValues.logCheckMeshFilter) DebugLogWithID ("CheckMeshFilter", "Looking for object: " + name);
                 Transform parent = part.transform.GetChild (0).GetChild (0).GetChild (0).Find (name);
                 if (parent != null)
                 {
                     parent.localPosition = Vector3.zero;
-                    if (logCheckMeshFilter) DebugLogWithID ("CheckMeshFilter", "Object " + name + " was found");
+                    if (WingProceduralDebugValues.logCheckMeshFilter) DebugLogWithID ("CheckMeshFilter", "Object " + name + " was found");
                     reference = parent.gameObject.GetComponent<MeshFilter> ();
                     if (disable) parent.gameObject.SetActive (false);
                 }
-                else { if (logCheckMeshFilter) DebugLogWithID ("CheckMeshFilter", "Object " + name + " was not found!"); }
+                else { if (WingProceduralDebugValues.logCheckMeshFilter) DebugLogWithID ("CheckMeshFilter", "Object " + name + " was not found!"); }
             }
             return reference;
         }
@@ -1787,7 +1791,7 @@ namespace WingProcedural
                 reference.uv = new Vector2[length];
                 Array.Copy (source.mesh.uv, reference.uv, length);
             }
-            else if (logMeshReferences) DebugLogWithID ("FillMeshReference", "Mesh filter reference is null, unable to set up reference arrays");
+            else if (WingProceduralDebugValues.logMeshReferences) DebugLogWithID ("FillMeshReference", "Mesh filter reference is null, unable to set up reference arrays");
             return reference;
         }
 
@@ -1800,7 +1804,7 @@ namespace WingProcedural
 
         public override void OnStart (PartModule.StartState state)
         {
-            if (logEvents) DebugLogWithID ("OnStart", "Invoked");
+            if (WingProceduralDebugValues.logEvents) DebugLogWithID ("OnStart", "Invoked");
             base.OnStart (state);
             CheckAssemblies (true);
             if (HighLogic.LoadedSceneIsFlight)
@@ -1816,31 +1820,42 @@ namespace WingProcedural
 
         public void Start ()
         {
-            if (logEvents) DebugLogWithID ("Start", "Invoked");
+            if (WingProceduralDebugValues.logEvents) DebugLogWithID ("Start", "Invoked");
             if (HighLogic.LoadedSceneIsEditor)
             {
                 uiInstanceIDLocal = uiInstanceIDTarget = 0;
-                if (!uiStyleConfigured) InitStyle ();
+                if (!WingProceduralManager.uiStyleConfigured) WingProceduralManager.ConfigureStyles ();
                 RenderingManager.AddToPostDrawQueue (0, OnDraw);
             }
         }
+
+
+
+
+        // Mod detection
+
+        private static bool assemblyFARUsed = false;
+        private static bool assemblyNEARUsed = false;
+        private static bool assemblyFARMass = false;
+        private static bool assemblyRFUsed = false;
 
         public void CheckAssemblies (bool forced)
         {
             if (!assembliesChecked || forced)
             {
-                aeroModelFAR = AssemblyLoader.loadedAssemblies.Any (a => a.assembly.GetName ().Name.Equals ("FerramAerospaceResearch", StringComparison.InvariantCultureIgnoreCase));
-                aeroModelNEAR = AssemblyLoader.loadedAssemblies.Any (a => a.assembly.GetName ().Name.Equals ("NEAR", StringComparison.InvariantCultureIgnoreCase));
-                if (aeroModelFAR || aeroModelNEAR)
+                assemblyFARUsed = AssemblyLoader.loadedAssemblies.Any (a => a.assembly.GetName ().Name.Equals ("FerramAerospaceResearch", StringComparison.InvariantCultureIgnoreCase));
+                assemblyNEARUsed = AssemblyLoader.loadedAssemblies.Any (a => a.assembly.GetName ().Name.Equals ("NEAR", StringComparison.InvariantCultureIgnoreCase));
+                assemblyRFUsed = AssemblyLoader.loadedAssemblies.Any (a => a.assembly.GetName ().Name.Equals ("RealFuels", StringComparison.InvariantCultureIgnoreCase));
+                if (assemblyFARUsed || assemblyNEARUsed)
                 {
                     ConfigNode[] nodes = GameDatabase.Instance.GetConfigNodes ("FARAeroData");
                     for (int i = 0; i < nodes.Length; ++i)
                     {
                         if (nodes[i] == null) continue;
-                        if (nodes[i].HasValue ("massPerWingAreaSupported")) aeroModelFARMass = true;
+                        if (nodes[i].HasValue ("massPerWingAreaSupported")) assemblyFARMass = true;
                     }
                 }
-                if (logCAV) DebugLogWithID ("OnStart", "Search results | FAR: " + aeroModelFAR + " | NEAR: " + aeroModelNEAR + " | FAR mass: " + aeroModelFARMass);
+                if (WingProceduralDebugValues.logCAV) DebugLogWithID ("OnStart", "Search results | FAR: " + assemblyFARUsed + " | NEAR: " + assemblyNEARUsed + " | FAR mass: " + assemblyFARMass);
                 if (isCtrlSrf && isWingAsCtrlSrf) Debug.LogError ("WARNING | PART IS CONFIGURED INCORRECTLY, BOTH BOOL PROPERTIES SHOULD NEVER BE SET TO TRUE");
                 assembliesChecked = true;
             }
@@ -1880,7 +1895,7 @@ namespace WingProcedural
             {
                 if (vesselList[i].vessel.GetInstanceID () == vesselID)
                 {
-                    if (logFlightSetup) DebugLogWithID ("SetupReorderedForFlight", "Vessel " + vesselID + " found in the status list");
+                    if (WingProceduralDebugValues.logFlightSetup) DebugLogWithID ("SetupReorderedForFlight", "Vessel " + vesselID + " found in the status list");
                     vesselListInclusive = true;
                     vesselStatusIndex = i;
                 }
@@ -1891,7 +1906,7 @@ namespace WingProcedural
 
             if (!vesselListInclusive)
             {
-                if (logFlightSetup) DebugLogWithID ("SetupReorderedForFlight", "Vessel " + vesselID + " was not found in the status list, adding it");
+                if (WingProceduralDebugValues.logFlightSetup) DebugLogWithID ("SetupReorderedForFlight", "Vessel " + vesselID + " was not found in the status list, adding it");
                 vesselList.Add (new VesselStatus (vessel, false));
                 vesselStatusIndex = vesselList.Count - 1;
             }
@@ -1901,7 +1916,7 @@ namespace WingProcedural
 
             if (!vesselList[vesselStatusIndex].isUpdated)
             {
-                if (logFlightSetup) DebugLogWithID ("SetupReorderedForFlight", "Vessel " + vesselID + " was not updated yet (this message should only appear once)");
+                if (WingProceduralDebugValues.logFlightSetup) DebugLogWithID ("SetupReorderedForFlight", "Vessel " + vesselID + " was not updated yet (this message should only appear once)");
                 vesselList[vesselStatusIndex].isUpdated = true;
                 List<WingProcedural> moduleList = new List<WingProcedural> ();
 
@@ -1918,7 +1933,7 @@ namespace WingProcedural
                 // After that we make two separate runs through that list
                 // First one setting up all geometry and second one setting up aerodynamic values
 
-                if (logFlightSetup) DebugLogWithID ("SetupReorderedForFlight", "Vessel " + vesselID + " contained " + vesselPartsCount + " parts, of which " + moduleList.Count + " should be set up");
+                if (WingProceduralDebugValues.logFlightSetup) DebugLogWithID ("SetupReorderedForFlight", "Vessel " + vesselID + " contained " + vesselPartsCount + " parts, of which " + moduleList.Count + " should be set up");
                 int moduleListCount = moduleList.Count;
                 for (int i = 0; i < moduleListCount; ++i)
                 {
@@ -1928,7 +1943,7 @@ namespace WingProcedural
                 yield return new WaitForFixedUpdate ();
                 yield return new WaitForFixedUpdate ();
 
-                if (logFlightSetup) DebugLogWithID ("SetupReorderedForFlight", "Vessel " + vesselID + " waited for updates, starting aero value calculation");
+                if (WingProceduralDebugValues.logFlightSetup) DebugLogWithID ("SetupReorderedForFlight", "Vessel " + vesselID + " waited for updates, starting aero value calculation");
                 for (int i = 0; i < moduleListCount; ++i)
                 {
                     moduleList[i].CalculateAerodynamicValues ();
@@ -1942,10 +1957,6 @@ namespace WingProcedural
 
         // Aerodynamics value calculation
         // More or less lifted from pWings, so credit goes to DYJ and Taverius
-
-        private bool aeroModelFAR = false;
-        private bool aeroModelNEAR = false;
-        private bool aeroModelFARMass = false;
 
         [KSPField] public float aeroConstLiftFudgeNumber = 0.0775f;
         [KSPField] public float aeroConstMassFudgeNumber = 0.015f;
@@ -2008,7 +2019,7 @@ namespace WingProcedural
         {
             if (isAttached || HighLogic.LoadedSceneIsFlight)
             {
-                if (logCAV) DebugLogWithID ("CalculateAerodynamicValues", "Started");
+                if (WingProceduralDebugValues.logCAV) DebugLogWithID ("CalculateAerodynamicValues", "Started");
                 CheckAssemblies (false);
 
                 float sharedWidthTipSum = sharedBaseWidthTip;
@@ -2047,7 +2058,7 @@ namespace WingProcedural
                     (sharedWidthTipSum * (sharedBaseThicknessRoot - sharedBaseThicknessTip) / 2f * sharedBaseLength) +
                     ((sharedWidthRootSum - sharedWidthTipSum) / 2f * (sharedBaseThicknessRoot - sharedBaseThicknessTip) / 2f * sharedBaseLength);
 
-                    FuelUpdateAmountsFromVolume (aeroStatVolume, true);
+                    if (!isWingAsCtrlSrf) FuelUpdateAmountsFromVolume (aeroStatVolume, true);
                 }
                 else
                 {
@@ -2056,7 +2067,7 @@ namespace WingProcedural
                     aeroStatMeanAerodynamicChord = (double) (sharedWidthTipSum + sharedWidthRootSum) / 2.0;
                     aeroStatMidChordSweep = MathD.Atan ((double) Mathf.Abs (sharedWidthRootSum - sharedWidthTipSum) / (double) sharedBaseLength) * MathD.Rad2Deg;
                 }
-                if (logCAV) DebugLogWithID ("CalculateAerodynamicValues", "Passed B2/TR/MAC/MCS");
+                if (WingProceduralDebugValues.logCAV) DebugLogWithID ("CalculateAerodynamicValues", "Passed B2/TR/MAC/MCS");
 
                 // Derived values
 
@@ -2071,7 +2082,7 @@ namespace WingProcedural
                 aeroStatCd = aeroConstDragBaseValue / aeroStatAspectRatioSweepScale * aeroConstDragMultiplier;
                 aeroStatCl = aeroConstLiftFudgeNumber * aeroStatSurfaceArea * aeroStatAspectRatioSweepScale;
                 aeroStatConnectionForce = MathD.Round (MathD.Clamp (MathD.Sqrt (aeroStatCl + aeroStatClChildren) * (double) aeroConstConnectionFactor, (double) aeroConstConnectionMinimum, double.MaxValue));
-                if (logCAV) DebugLogWithID ("CalculateAerodynamicValues", "Passed SR/AR/ARSS/mass/Cl/Cd/connection");
+                if (WingProceduralDebugValues.logCAV) DebugLogWithID ("CalculateAerodynamicValues", "Passed SR/AR/ARSS/mass/Cl/Cd/connection");
 
                 // Shared parameters
 
@@ -2090,40 +2101,40 @@ namespace WingProcedural
                 }
                 part.breakingForce = Mathf.Round ((float) aeroStatConnectionForce);
                 part.breakingTorque = Mathf.Round ((float) aeroStatConnectionForce);
-                if (logCAV) DebugLogWithID ("CalculateAerodynamicValues", "Passed cost/force/torque");
+                if (WingProceduralDebugValues.logCAV) DebugLogWithID ("CalculateAerodynamicValues", "Passed cost/force/torque");
 
                 // Stock-only values
 
-                if ((!aeroModelFAR && !aeroModelNEAR) || !aeroModelFARMass)
+                if ((!assemblyFARUsed && !assemblyNEARUsed) || !assemblyFARMass)
                 {
-                    if (logCAV) DebugLogWithID ("CalculateAerodynamicValues", "FAR/NEAR is inactive or FAR mass is not enabled, calculating stock part mass");
+                    if (WingProceduralDebugValues.logCAV) DebugLogWithID ("CalculateAerodynamicValues", "FAR/NEAR is inactive or FAR mass is not enabled, calculating stock part mass");
                     part.mass = Mathf.Round ((float) aeroStatMass * 100f) / 100f;
                 }
-                if (!aeroModelFAR && !aeroModelNEAR)
+                if (!assemblyFARUsed && !assemblyNEARUsed)
                 {
                     if (!isCtrlSrf && !isWingAsCtrlSrf)
                     {
-                        if (logCAV) DebugLogWithID ("CalculateAerodynamicValues", "FAR/NEAR is inactive, calculating values for winglet part type");
+                        if (WingProceduralDebugValues.logCAV) DebugLogWithID ("CalculateAerodynamicValues", "FAR/NEAR is inactive, calculating values for winglet part type");
                         ((Winglet) this.part).deflectionLiftCoeff = Mathf.Round ((float) aeroStatCl * 100f) / 100f;
                         ((Winglet) this.part).dragCoeff = Mathf.Round ((float) aeroStatCd * 100f) / 100f;
                     }
                     else
                     {
-                        if (logCAV) DebugLogWithID ("CalculateAerodynamicValues", "FAR/NEAR is inactive, calculating stock control surface module values");
+                        if (WingProceduralDebugValues.logCAV) DebugLogWithID ("CalculateAerodynamicValues", "FAR/NEAR is inactive, calculating stock control surface module values");
                         var mCtrlSrf = part.Modules.OfType<ModuleControlSurface> ().FirstOrDefault ();
                         mCtrlSrf.deflectionLiftCoeff = Mathf.Round ((float) aeroStatCl * 100f) / 100f;
                         mCtrlSrf.dragCoeff = Mathf.Round ((float) aeroStatCd * 100f) / 100f;
                         mCtrlSrf.ctrlSurfaceArea = aeroConstControlSurfaceFraction;
                     }
                 }
-                if (logCAV) DebugLogWithID ("CalculateAerodynamicValues", "Passed stock drag/deflection/area");
+                if (WingProceduralDebugValues.logCAV) DebugLogWithID ("CalculateAerodynamicValues", "Passed stock drag/deflection/area");
 
                 // FAR values
                 // With reflection stuff from r4m0n
 
-                if (aeroModelFAR || aeroModelNEAR)
+                if (assemblyFARUsed || assemblyNEARUsed)
                 {
-                    if (logCAV) DebugLogWithID ("CalculateAerodynamicValues", "Got into FAR/NEAR condition");
+                    if (WingProceduralDebugValues.logCAV) DebugLogWithID ("CalculateAerodynamicValues", "Got into FAR/NEAR condition");
                     if (part.Modules.Contains ("FARControllableSurface"))
                     {
                         PartModule moduleFAR = part.Modules["FARControllableSurface"];
@@ -2135,7 +2146,7 @@ namespace WingProcedural
                         typeFAR.GetField ("MidChordSweep").SetValue (moduleFAR, aeroStatMidChordSweep);
                         typeFAR.GetField ("TaperRatio").SetValue (moduleFAR, aeroStatTaperRatio);
                         typeFAR.GetField ("ctrlSurfFrac").SetValue (moduleFAR, aeroConstControlSurfaceFraction);
-                        if (aeroModelNEAR) typeFAR.GetMethod ("MathAndFunctionInitialization").Invoke (moduleFAR, null);
+                        if (assemblyNEARUsed) typeFAR.GetMethod ("MathAndFunctionInitialization").Invoke (moduleFAR, null);
                         else typeFAR.GetMethod ("StartInitialization").Invoke (moduleFAR, null);
                     }
                     else if (part.Modules.Contains ("FARWingAerodynamicModel"))
@@ -2148,20 +2159,20 @@ namespace WingProcedural
                         typeFAR.GetField ("S").SetValue (moduleFAR, aeroStatSurfaceArea);
                         typeFAR.GetField ("MidChordSweep").SetValue (moduleFAR, aeroStatMidChordSweep);
                         typeFAR.GetField ("TaperRatio").SetValue (moduleFAR, aeroStatTaperRatio);
-                        if (aeroModelNEAR) typeFAR.GetMethod ("MathAndFunctionInitialization").Invoke (moduleFAR, null);
+                        if (assemblyNEARUsed) typeFAR.GetMethod ("MathAndFunctionInitialization").Invoke (moduleFAR, null);
                         else typeFAR.GetMethod ("StartInitialization").Invoke (moduleFAR, null);
                     }
                 }
-                if (logCAV) DebugLogWithID ("CalculateAerodynamicValues", "Passed FAR/NEAR parameter setting");
+                if (WingProceduralDebugValues.logCAV) DebugLogWithID ("CalculateAerodynamicValues", "Passed FAR/NEAR parameter setting");
 
                 // Update GUI values and finish
 
-                if (!aeroModelFAR && !aeroModelNEAR)
+                if (!assemblyFARUsed && !assemblyNEARUsed)
                 {
                     aeroUICd = Mathf.Round ((float) aeroStatCd * 100f) / 100f;
                     aeroUICl = Mathf.Round ((float) aeroStatCl * 100f) / 100f;
                 }
-                if ((!aeroModelFAR && !aeroModelNEAR) || !aeroModelFARMass) aeroUIMass = part.mass;
+                if ((!assemblyFARUsed && !assemblyNEARUsed) || !assemblyFARMass) aeroUIMass = part.mass;
 
                 aeroUIMeanAerodynamicChord = (float) aeroStatMeanAerodynamicChord;
                 aeroUISemispan = (float) aeroStatSemispan;
@@ -2170,13 +2181,13 @@ namespace WingProcedural
                 aeroUISurfaceArea = (float) aeroStatSurfaceArea;
                 aeroUIAspectRatio = (float) aeroStatAspectRatio;
                 if (HighLogic.LoadedSceneIsEditor) GameEvents.onEditorShipModified.Fire (EditorLogic.fetch.ship);
-                if (logCAV) DebugLogWithID ("CalculateAerodynamicValues", "Finished");
+                if (WingProceduralDebugValues.logCAV) DebugLogWithID ("CalculateAerodynamicValues", "Finished");
             }
         }
 
         private void UpdateCollidersForFAR ()
         {
-            if (aeroModelFAR && aeroModelNEAR)
+            if (assemblyFARUsed && assemblyNEARUsed)
             {
                 if (part.Modules.Contains ("FARWingAerodynamicModel"))
                 {
@@ -2189,7 +2200,7 @@ namespace WingProcedural
 
         public void OnCenterOfLiftQuery (CenterOfLiftQuery qry)
         {
-            if (isAttached && !aeroModelFAR)
+            if (isAttached && !assemblyFARUsed)
             {
                 qry.lift = (float) aeroStatCl;
             }
@@ -2232,14 +2243,14 @@ namespace WingProcedural
                 else Events["InfoToggleEvent"].guiName = "Show wing data";
 
                 // If FAR/NEAR aren't present, toggle Cl/Cd
-                if (!aeroModelFAR && !aeroModelNEAR)
+                if (!assemblyFARUsed && !assemblyNEARUsed)
                 {
                     Fields["aeroUICd"].guiActiveEditor = showWingData;
                     Fields["aeroUICl"].guiActiveEditor = showWingData;
                 }
 
                 // If FAR|NEAR are not present, or its a version without wing mass calculations, toggle wing mass
-                if ((!aeroModelFAR && !aeroModelNEAR) || !aeroModelFARMass)
+                if ((!assemblyFARUsed && !assemblyNEARUsed) || !assemblyFARMass)
                     Fields["aeroUIMass"].guiActive = showWingData;
 
                 // Toggle the rest of the info values
@@ -2325,18 +2336,17 @@ namespace WingProcedural
                     if (uiAdjustWindow)
                     {
                         uiAdjustWindow = false;
-                        uiRect = GUILayout.Window (273, uiRect, OnWindow, GetWindowTitle (), uiStyleWindow, GUILayout.Height (0));
+                        uiRect = GUILayout.Window (273, uiRect, OnWindow, GetWindowTitle (), WingProceduralManager.uiStyleWindow, GUILayout.Height (0));
                     }
-                    else uiRect = GUILayout.Window (273, uiRect, OnWindow, GetWindowTitle (), uiStyleWindow);
+                    else uiRect = GUILayout.Window (273, uiRect, OnWindow, GetWindowTitle (), WingProceduralManager.uiStyleWindow);
                     if (uiRect.x == 0f && uiRect.y == 0f) uiRect = uiRect.SetToScreenCenter ();
 
                     // Thanks to ferram4
                     // Following section lock the editor, preventing window clickthrough
 
-                    mousePos = GetMousePos ();
                     EditorLogic EdLogInstance = EditorLogic.fetch;
                     bool cursorInGUI = false;
-                    cursorInGUI = uiRect.Contains (mousePos);
+                    cursorInGUI = uiRect.Contains (UIUtility.GetMousePos ());
                     if (cursorInGUI)
                     {
                         EdLogInstance.Lock (false, false, false, "WingProceduralWindow");
@@ -2347,13 +2357,6 @@ namespace WingProcedural
             }
         }
 
-        public static GUIStyle uiStyleWindow = new GUIStyle ();
-        public static GUIStyle uiStyleLabelMedium = new GUIStyle ();
-        public static GUIStyle uiStyleLabelHint = new GUIStyle ();
-        public static GUIStyle uiStyleButton = new GUIStyle ();
-        public static GUIStyle uiStyleSlider = new GUIStyle ();
-        public static GUIStyle uiStyleSliderThumb = new GUIStyle ();
-
         public static Vector4 uiColorSliderBase = new Vector4 (0.25f, 0.5f, 0.4f, 1f);
         public static Vector4 uiColorSliderEdgeL = new Vector4 (0.20f, 0.5f, 0.4f, 1f);
         public static Vector4 uiColorSliderEdgeT = new Vector4 (0.15f, 0.5f, 0.4f, 1f);
@@ -2362,15 +2365,6 @@ namespace WingProcedural
         public static Vector4 uiColorSliderColorsET = new Vector4 (0.00f, 0.5f, 0.4f, 1f);
         public static Vector4 uiColorSliderColorsEL = new Vector4 (0.95f, 0.5f, 0.4f, 1f);
 
-        private static Vector3 mousePos = Vector3.zero;
-
-        public static Vector3 GetMousePos ()
-        {
-            Vector3 mousePos = Input.mousePosition;
-            mousePos.y = Screen.height - mousePos.y;
-            return mousePos;
-        }
-
         private void OnWindow (int window)
         {
             if (uiEditMode)
@@ -2378,13 +2372,13 @@ namespace WingProcedural
                 bool returnEarly = false;
                 GUILayout.BeginHorizontal ();
                 GUILayout.BeginVertical ();
-                if (uiLastFieldName.Length > 0) GUILayout.Label ("Last: " + uiLastFieldName, uiStyleLabelMedium);
-                else GUILayout.Label ("Property editor", uiStyleLabelMedium);
-                if (uiLastFieldTooltip.Length > 0) GUILayout.Label (uiLastFieldTooltip + "\n_________________________", uiStyleLabelHint, GUILayout.MaxHeight (44f), GUILayout.MinHeight (44f)); // 58f for four lines
+                if (uiLastFieldName.Length > 0) GUILayout.Label ("Last: " + uiLastFieldName, WingProceduralManager.uiStyleLabelMedium);
+                else GUILayout.Label ("Property editor", WingProceduralManager.uiStyleLabelMedium);
+                if (uiLastFieldTooltip.Length > 0) GUILayout.Label (uiLastFieldTooltip + "\n_________________________", WingProceduralManager.uiStyleLabelHint, GUILayout.MaxHeight (44f), GUILayout.MinHeight (44f)); // 58f for four lines
                 // Rect r = GUILayoutUtility.GetLastRect ();
                 // Debug.Log ("UI | Height: " + r.height + " | Y (min): " + r.yMin + " | Y (max): " + r.yMax + " | Y: " + r.y + " | Size: " + r.size);
                 GUILayout.EndVertical ();
-                if (GUILayout.Button ("Close", uiStyleButton, GUILayout.MaxWidth (50f)))
+                if (GUILayout.Button ("Close", WingProceduralManager.uiStyleButton, GUILayout.MaxWidth (50f)))
                 {
                     EditorLogic.fetch.Unlock ("WingProceduralWindow");
                     uiWindowActive = false;
@@ -2467,33 +2461,33 @@ namespace WingProcedural
                     }
                 }
 
-                GUILayout.Label ("_________________________\n\nPress J to exit edit mode\nButtons below allow you to change default values and inherit values from parenting parts", uiStyleLabelHint);
+                GUILayout.Label ("_________________________\n\nPress J to exit edit mode\nButtons below allow you to change default values and inherit values from parenting parts", WingProceduralManager.uiStyleLabelHint);
 
-                if (!isCtrlSrf && !isWingAsCtrlSrf)
+                if (!isCtrlSrf && !isWingAsCtrlSrf && !assemblyRFUsed)
                 {
-                    if (GUILayout.Button (GetTankSetupName () + " | Next tank setup", uiStyleButton)) FuelNextTankSetupEvent ();
+                    if (GUILayout.Button (GetTankSetupName () + " | Next tank setup", WingProceduralManager.uiStyleButton)) NextConfiguration ();
                 }
 
                 GUILayout.BeginHorizontal ();
-                if (GUILayout.Button ("Save as default", uiStyleButton)) ReplaceDefaults ();
-                if (GUILayout.Button ("Restore default", uiStyleButton)) RestoreDefaults ();
+                if (GUILayout.Button ("Save as default", WingProceduralManager.uiStyleButton)) ReplaceDefaults ();
+                if (GUILayout.Button ("Restore default", WingProceduralManager.uiStyleButton)) RestoreDefaults ();
                 GUILayout.EndHorizontal ();
                 if (inheritancePossibleOnShape || inheritancePossibleOnMaterials)
                 {
                     GUILayout.BeginHorizontal ();
-                    if (inheritancePossibleOnShape) { if (GUILayout.Button ("Match shape", uiStyleButton)) InheritParentValues (0); }
-                    if (inheritancePossibleOnMaterials) {if (GUILayout.Button ("Match materials", uiStyleButton)) InheritParentValues (1); }
+                    if (inheritancePossibleOnShape) { if (GUILayout.Button ("Match shape", WingProceduralManager.uiStyleButton)) InheritParentValues (0); }
+                    if (inheritancePossibleOnMaterials) { if (GUILayout.Button ("Match materials", WingProceduralManager.uiStyleButton)) InheritParentValues (1); }
                     GUILayout.EndHorizontal ();
                 }
             }
             else
             {
-                if (uiEditModeTimeout) GUILayout.Label ("Exiting edit mode...\n", uiStyleLabelMedium);
+                if (uiEditModeTimeout) GUILayout.Label ("Exiting edit mode...\n", WingProceduralManager.uiStyleLabelMedium);
                 else
                 {
                     GUILayout.BeginHorizontal ();
-                    GUILayout.Label ("Press J while pointing at a\nprocedural part to edit it", uiStyleLabelHint);
-                    if (GUILayout.Button ("Close", uiStyleButton, GUILayout.MaxWidth (50f)))
+                    GUILayout.Label ("Press J while pointing at a\nprocedural part to edit it", WingProceduralManager.uiStyleLabelHint);
+                    if (GUILayout.Button ("Close", WingProceduralManager.uiStyleButton, GUILayout.MaxWidth (50f)))
                     {
                         uiWindowActive = false;
                         uiAdjustWindow = true;
@@ -2508,7 +2502,7 @@ namespace WingProcedural
         private void DrawField (ref float field, float increment, Vector2 limits, string name, Vector4 hsbColor, int fieldID)
         {
             bool changed = false;
-            float value = UIUtility.FieldSlider (field, increment, limits, name, "F3", out changed, uiStyleSlider, uiStyleSliderThumb, uiStyleLabelHint, ColorHSBToRGB (hsbColor));
+            float value = UIUtility.FieldSlider (field, increment, limits, name, "F3", out changed, WingProceduralManager.uiStyleSlider, WingProceduralManager.uiStyleSliderThumb, WingProceduralManager.uiStyleLabelHint, ColorHSBToRGB (hsbColor));
             if (changed)
             {
                 field = value;
@@ -2520,14 +2514,14 @@ namespace WingProcedural
         private void DrawFieldGroupHeader (ref bool fieldGroupBoolStatic, ref bool fieldGroupBool, string header)
         {
             GUILayout.BeginHorizontal ();
-            if (GUILayout.Button (header, uiStyleLabelHint))
+            if (GUILayout.Button (header, WingProceduralManager.uiStyleLabelHint))
             {
                 fieldGroupBoolStatic = !fieldGroupBoolStatic;
                 fieldGroupBool = fieldGroupBoolStatic;
                 uiAdjustWindow = true;
             }
-            if (fieldGroupBoolStatic) GUILayout.Label ("|", uiStyleLabelHint, GUILayout.MaxWidth (15f));
-            else GUILayout.Label ("+", uiStyleLabelHint, GUILayout.MaxWidth (15f));
+            if (fieldGroupBoolStatic) GUILayout.Label ("|", WingProceduralManager.uiStyleLabelHint, GUILayout.MaxWidth (15f));
+            else GUILayout.Label ("+", WingProceduralManager.uiStyleLabelHint, GUILayout.MaxWidth (15f));
             GUILayout.EndHorizontal ();
         }
 
@@ -2636,41 +2630,6 @@ namespace WingProcedural
             else return "Unknown field\n";
         }
 
-        private void InitStyle ()
-        {
-            uiStyleWindow = new GUIStyle (HighLogic.Skin.window);
-            uiStyleWindow.fixedWidth = 250f;
-            uiStyleWindow.wordWrap = true;
-            uiStyleWindow.normal.textColor = Color.white;
-            uiStyleWindow.fontStyle = FontStyle.Normal;
-            uiStyleWindow.fontSize = 13;
-            uiStyleWindow.alignment = TextAnchor.UpperLeft;
-
-            uiStyleLabelMedium = new GUIStyle (HighLogic.Skin.label);
-            uiStyleLabelMedium.stretchWidth = true;
-            uiStyleLabelMedium.fontSize = 13;
-            uiStyleLabelMedium.normal.textColor = Color.white;
-
-            uiStyleLabelHint = new GUIStyle (HighLogic.Skin.label);
-            uiStyleLabelHint.stretchWidth = true;
-            uiStyleLabelHint.fontSize = 11;
-            uiStyleLabelHint.normal.textColor = Color.white;
-
-            uiStyleButton = new GUIStyle (HighLogic.Skin.button);
-            uiStyleButton.font = uiStyleLabelMedium.font;
-            uiStyleButton.fontSize = 11;
-            uiStyleButton.fontStyle = FontStyle.Normal;
-            uiStyleButton.normal.textColor = Color.white;
-
-            uiStyleSlider = HighLogic.Skin.horizontalSlider;
-
-            uiStyleSliderThumb = new GUIStyle (HighLogic.Skin.horizontalSliderThumb);
-            uiStyleSliderThumb.fixedWidth = 0f;
-
-            uiStyleConfigured = true;
-            uiAdjustWindow = true;
-        }
-
         private void OnMouseOver ()
         {
             if (HighLogic.LoadedSceneIsEditor)
@@ -2704,7 +2663,7 @@ namespace WingProcedural
             if (stockButton == null) OnStockButtonSetup ();
             if (uiEditModeTimeout && uiInstanceIDTarget == 0)
             {
-                if (logPropertyWindow) DebugLogWithID ("UpdateUI", "Window timeout was left active on scene reload, resetting the window state");
+                if (WingProceduralDebugValues.logPropertyWindow) DebugLogWithID ("UpdateUI", "Window timeout was left active on scene reload, resetting the window state");
                 StopWindowTimeout ();
             }
             if (uiInstanceIDLocal != uiInstanceIDTarget) return;
@@ -2724,10 +2683,9 @@ namespace WingProcedural
                     if (Input.GetKeyDown (uiKeyCodeEdit)) ExitEditMode ();
                     else
                     {
-                        mousePos = GetMousePos ();
                         EditorLogic EdLogInstance = EditorLogic.fetch;
                         bool cursorInGUI = false;
-                        cursorInGUI = uiRect.Contains (mousePos);
+                        cursorInGUI = uiRect.Contains (UIUtility.GetMousePos ());
                         if (!cursorInGUI)
                         {
                             if (Input.GetKeyDown (KeyCode.Mouse0)) ExitEditMode ();
@@ -2772,7 +2730,7 @@ namespace WingProcedural
                 else if (!forward && uiPropertySelectionSurface == 0) uiPropertySelectionSurface = 12;
                 else uiPropertySelectionSurface = Mathf.Clamp (uiPropertySelectionSurface + propertyShift, 0, 12);
             }
-            if (logPropertyWindow) DebugLogWithID ("SwitchProperty", "Finished with following values | Wing: " + uiPropertySelectionWing + " | Surface: " + uiPropertySelectionSurface);
+            if (WingProceduralDebugValues.logPropertyWindow) DebugLogWithID ("SwitchProperty", "Finished with following values | Wing: " + uiPropertySelectionWing + " | Surface: " + uiPropertySelectionSurface);
         }
 
         private string GetValueTranslationForMaterials (float value)
@@ -2976,96 +2934,100 @@ namespace WingProcedural
 
         private string GetTankSetupName ()
         {
-            string units = "";
-
-            if (fuelSelectedTankSetup == 1) units += "LF (";
-            else if (fuelSelectedTankSetup == 2) units += "LFO (";
-            else if (fuelSelectedTankSetup == 3) units += "RCS (";
-            else units += "STR (";
-
-            if (fuelTankList.Count > 0)
+            if (assemblyRFUsed) return "";
+            else
             {
-                for (int i = 0; i < fuelTankList[fuelSelectedTankSetup].resources.Count; ++i)
+                string units = "";
+                if (fuelSelectedTankSetup == 1) units += "LF (";
+                else if (fuelSelectedTankSetup == 2) units += "LFO (";
+                else if (fuelSelectedTankSetup == 3) units += "RCS (";
+                else units += "STR (";
+                if (fuelTankList.Count > 0)
                 {
-                    units += ((int) fuelTankList[fuelSelectedTankSetup].resources[i].maxAmount).ToString ();
-                    if (i == fuelTankList[fuelSelectedTankSetup].resources.Count - 1) units += ")";
-                    else units += "/";
+                    for (int i = 0; i < fuelTankList[fuelSelectedTankSetup].resources.Count; ++i)
+                    {
+                        units += ((int) fuelTankList[fuelSelectedTankSetup].resources[i].maxAmount).ToString ();
+                        if (i == fuelTankList[fuelSelectedTankSetup].resources.Count - 1) units += ")";
+                        else units += "/";
+                    }
                 }
+                return units;
             }
-
-            return units;
         }
 
         private void FuelUpdateAmountsFromVolume (float volume, bool reassignAfter)
         {
-            if (logFuel) DebugLogWithID ("FuelUpdateAmountsFromVolume", "Started");
-            for (int i = 0; i < fuelTankList.Count; ++i)
+            if (isCtrlSrf || isWingAsCtrlSrf) return;
+            if (assemblyRFUsed)
             {
-                for (int r = 0; r < fuelTankList[i].resources.Count; ++r)
+                if (WingProceduralDebugValues.logFuel) DebugLogWithID ("FuelUpdateAmountsFromVolume", "Started for RF");
+                if (part.Modules.Contains ("ModuleFuelTanks"))
                 {
-                    float newAmount = fuelPerCubicMeter[i][r] * volume;
-                    fuelTankList[i].resources[r].maxAmount = newAmount;
-                    fuelTankList[i].resources[r].amount = newAmount;
+                    PartModule module = part.Modules["ModuleFuelTanks"];
+                    Type type = module.GetType ();
+
+                    double volumeRF = (double) volume * 1000; // liters instead of cubic meters
+                    type.GetField ("volume").SetValue (module, volumeRF); 
+                    type.GetMethod ("ChangeVolume").Invoke (module, new object[] { volumeRF } );
                 }
+                else if (WingProceduralDebugValues.logFuel) DebugLogWithID ("FuelUpdateAmountsFromVolume", "Module not found");
             }
-            fuelVolumeOld = volume;
-            if (reassignAfter) FuelAssignResourcesToPart (true);
+            else
+            {
+                if (WingProceduralDebugValues.logFuel) DebugLogWithID ("FuelUpdateAmountsFromVolume", "Started for stock fuel");
+                for (int i = 0; i < fuelTankList.Count; ++i)
+                {
+                    for (int r = 0; r < fuelTankList[i].resources.Count; ++r)
+                    {
+                        float newAmount = fuelPerCubicMeter[i][r] * volume * 0.7f; // since not all volume is used
+                        fuelTankList[i].resources[r].maxAmount = newAmount;
+                        fuelTankList[i].resources[r].amount = newAmount;
+                    }
+                }
+                fuelVolumeOld = volume;
+                if (reassignAfter) FuelAssignResourcesToPart (true);
+            }
         }
 
         private void FuelOnStart ()
         {
-            if (logFuel) DebugLogWithID ("FuelOnStart", "Started");
-            if (isCtrlSrf || isWingAsCtrlSrf)
+            if (WingProceduralDebugValues.logFuel) DebugLogWithID ("FuelOnStart", "Started");
+            if (isCtrlSrf || isWingAsCtrlSrf || assemblyRFUsed) return;
+            else
             {
-                part.Events["FuelNextTankSetupEvent"].guiActive = false;
-                part.Events["FuelNextTankSetupEvent"].guiActiveEditor = false;
+                if (Events.Contains ("NextConfiguration"))
+                {
+                    if (WingProceduralDebugValues.logFuel) DebugLogWithID ("FuelOnStart", "Event found and enabled");
+                    Events["NextConfiguration"].active = true;
+                    Events["NextConfiguration"].guiActiveEditor = true;
+                }
+                else if (WingProceduralDebugValues.logFuel) DebugLogWithID ("FuelOnStart", "Event not found");
+                FuelInitializeData ();
+                FuelAssignResourcesToPart (false);
+                fuelBrandNewPart = false;
+                FuelUpdateAmountsFromVolume (aeroStatVolume, true);
             }
-            FuelInitializeData ();
-            FuelAssignResourcesToPart (false);
-            fuelBrandNewPart = false;
-            FuelUpdateAmountsFromVolume (aeroStatVolume, true);
         }
 
         private void FuelInitializeData ()
         {
-            if (logFuel) DebugLogWithID ("FuelInitializeData", "Started");
+            if (WingProceduralDebugValues.logFuel) DebugLogWithID ("FuelInitializeData", "Started");
             if (isCtrlSrf || isWingAsCtrlSrf) return;
             if (!fuelInitialized)
             {
                 FuelSetupTankList (false);
                 if (HighLogic.LoadedSceneIsFlight) fuelFlightSceneStarted = true;
 
-                if (fuelGUI) Events["FuelNextTankSetupEvent"].guiActiveEditor = true;
-                else Events["FuelNextTankSetupEvent"].guiActiveEditor = false;
-
-                if (HighLogic.CurrentGame.Mode == Game.Modes.CAREER)
-                {
-                    Fields["addedCost"].guiActiveEditor = fuelDisplayCurrentTankCost;
-                }
+                // if (fuelGUI) Events["FuelNextTankSetupEvent"].guiActiveEditor = true;
+                // else Events["FuelNextTankSetupEvent"].guiActiveEditor = false;
+                // if (HighLogic.CurrentGame.Mode == Game.Modes.CAREER) Fields["addedCost"].guiActiveEditor = fuelDisplayCurrentTankCost;
                 fuelInitialized = true;
             }
         }
 
-        [KSPEvent (guiActive = false, guiActiveEditor = true, guiName = "Next tank setup")]
-        public void FuelNextTankSetupEvent ()
-        {
-            if (logFuel) DebugLogWithID ("FuelNextTankSetupEvent", "Started");
-            if (isCtrlSrf || isWingAsCtrlSrf) return;
-            fuelSelectedTankSetup++;
-            if (fuelSelectedTankSetup >= fuelTankList.Count)
-            {
-                fuelSelectedTankSetup = 0;
-            }
-            if (HighLogic.LoadedSceneIsFlight)
-            {
-                fuelCurrentAmount = Vector4.zero;
-            }
-            FuelAssignResourcesToPart (true);
-        }
-
         public void FuelSelectTankSetup (int i, bool calledByPlayer)
         {
-            if (logFuel) DebugLogWithID ("FuelSelectTankSetup", "Started");
+            if (WingProceduralDebugValues.logFuel) DebugLogWithID ("FuelSelectTankSetup", "Started");
             if (isCtrlSrf || isWingAsCtrlSrf) return;
             FuelInitializeData ();
             fuelSelectedTankSetup = i;
@@ -3074,9 +3036,8 @@ namespace WingProcedural
 
         private void FuelAssignResourcesToPart (bool calledByPlayer)
         {
-            if (logFuel) DebugLogWithID ("FuelAssignResourcesToPart", "Started");
-            if (isCtrlSrf || isWingAsCtrlSrf) return;
-            // destroying a resource messes up the gui in editor, but not in flight
+            if (WingProceduralDebugValues.logFuel) DebugLogWithID ("FuelAssignResourcesToPart", "Started");
+            if (isCtrlSrf || isWingAsCtrlSrf || assemblyRFUsed) return;
             FuelSetupTankInPart (part, calledByPlayer);
             if (HighLogic.LoadedSceneIsEditor)
             {
@@ -3095,8 +3056,8 @@ namespace WingProcedural
 
         private void FuelSetupTankInPart (Part currentPart, bool calledByPlayer)
         {
-            if (logFuel) DebugLogWithID ("FuelSetupTankInPart", "Started");
-            if (isCtrlSrf || isWingAsCtrlSrf) return;
+            if (WingProceduralDebugValues.logFuel) DebugLogWithID ("FuelSetupTankInPart", "Started");
+            if (isCtrlSrf || isWingAsCtrlSrf || assemblyRFUsed) return;
             currentPart.Resources.list.Clear ();
             PartResource[] partResources = currentPart.GetComponents<PartResource> ();
             for (int i = 0; i < partResources.Length; i++)
@@ -3150,7 +3111,7 @@ namespace WingProcedural
 
         private void FuelUpdateWeight (Part currentPart, int newTankSetup)
         {
-            if (isCtrlSrf || isWingAsCtrlSrf) return;
+            if (isCtrlSrf || isWingAsCtrlSrf || assemblyRFUsed) return;
             if (newTankSetup < fuelWeightList.Count)
             {
                 // currentPart.mass = fuelBasePartMass + fuelWeightList[newTankSetup];
@@ -3216,8 +3177,8 @@ namespace WingProcedural
 
         private void FuelSetupTankList (bool calledByPlayer)
         {
-            if (logFuel) DebugLogWithID ("FuelSetupTankList", "Started");
-            if (isCtrlSrf || isWingAsCtrlSrf) return;
+            if (WingProceduralDebugValues.logFuel) DebugLogWithID ("FuelSetupTankList", "Started");
+            if (isCtrlSrf || isWingAsCtrlSrf || assemblyRFUsed) return;
             fuelTankList.Clear ();
 
             // First find the amounts each tank type is filled with
@@ -3295,7 +3256,7 @@ namespace WingProcedural
         {
             bool stockButtonCanBeRemoved = true;
             WingProcedural[] components = GameObject.FindObjectsOfType<WingProcedural> ();
-            if (logEvents) DebugLogWithID ("OnDestroy", "Invoked, with " + components.Length + " remaining components in the scene");
+            if (WingProceduralDebugValues.logEvents) DebugLogWithID ("OnDestroy", "Invoked, with " + components.Length + " remaining components in the scene");
             for (int i = 0; i < components.Length; ++i)
             {
                 if (components[i] != null) stockButtonCanBeRemoved = false;

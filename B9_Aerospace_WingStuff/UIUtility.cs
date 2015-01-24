@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 namespace WingProcedural
@@ -52,6 +53,43 @@ namespace WingProcedural
             Rect labelRectValue = new Rect (labelRectName.xMin + labelRectName.width * 0.75f, labelRectName.yMin, labelRectName.width * 0.25f, labelRectName.height); 
             GUI.Label (labelRectValue, value.ToString (format), styleText);
             return value;
+        }
+
+        public static Rect ClampToScreen (Rect window)
+        {
+            window.x = Mathf.Clamp (window.x, -window.width + 20, Screen.width - 20);
+            window.y = Mathf.Clamp (window.y, -window.height + 20, Screen.height - 20);
+
+            return window;
+        }
+
+        public static double TextEntryForDouble (string label, int labelWidth, double prevValue)
+        {
+            string valString = prevValue.ToString ();
+            UIUtility.TextEntryField (label, labelWidth, ref valString);
+
+            if (!Regex.IsMatch (valString, @"^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$"))
+                return prevValue;
+
+            return double.Parse (valString);
+        }
+
+        public static void TextEntryField (string label, int labelWidth, ref string inputOutput)
+        {
+            GUILayout.BeginHorizontal ();
+            GUILayout.Label (label, GUILayout.Width (labelWidth));
+            inputOutput = GUILayout.TextField (inputOutput);
+            GUILayout.EndHorizontal ();
+        }
+
+
+        private static Vector3 mousePos = Vector3.zero;
+
+        public static Vector3 GetMousePos ()
+        {
+            Vector3 mousePos = Input.mousePosition;
+            mousePos.y = Screen.height - mousePos.y;
+            return mousePos;
         }
     }
 }

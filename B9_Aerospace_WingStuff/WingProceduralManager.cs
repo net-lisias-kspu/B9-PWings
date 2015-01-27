@@ -40,9 +40,6 @@ namespace WingProcedural
 
         private MenuTab activeTab = MenuTab.DebugAndData;
 
-        private int aeroStressIndex = 0;
-        private int atmBodyIndex = 1;
-
         public void Awake ()
         {
             LoadConfigs ();
@@ -265,7 +262,7 @@ namespace WingProcedural
         public static bool logFlightSetup = false;
         public static bool logFieldSetup = false;
 
-        public static bool logFuel = true;
+        public static bool logFuel = false;
         public static bool logLimits = false;
         public static bool logEvents = false;
     }

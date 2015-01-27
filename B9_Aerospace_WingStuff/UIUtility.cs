@@ -121,6 +121,13 @@ namespace WingProcedural
                 else if (value == 4f) return "Triangular";
                 else return "Unknown";
             }
+            else if (type == 3)
+            {
+                if (value == 1f) return "Rounded";
+                else if (value == 2f) return "Biconvex";
+                else if (value == 3f) return "Triangular";
+                else return "Unknown";
+            }
             else return value.ToString ("F3");
         }
     }

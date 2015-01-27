@@ -563,12 +563,22 @@ namespace WingProcedural
                     {
                         if (mode == 0 && !parentModule.isCtrlSrf && !isCtrlSrf)
                         {
-                            sharedBaseWidthRoot = parentModule.sharedBaseWidthTip;
-                            sharedBaseWidthTip = Mathf.Min (sharedBaseWidthRoot, sharedBaseWidthTip);
+                            float widthDelta = parentModule.sharedBaseWidthTip - sharedBaseWidthRoot;
+                            sharedBaseWidthTip = ((parentModule.sharedBaseWidthTip - parentModule.sharedBaseWidthRoot) / (parentModule.sharedBaseLength)) * (sharedBaseLength + parentModule.sharedBaseLength) + parentModule.sharedBaseWidthRoot - widthDelta; // All thanks to ferram4
+                            
+                            // Only perform offset adjustment if width wasn't clipped, otherwise there is no point
+                            if (sharedBaseWidthTip < sharedBaseWidthLimits.x) sharedBaseWidthTip = sharedBaseWidthLimits.x;
+                            else sharedBaseOffsetTip = parentModule.sharedBaseOffsetTip * (sharedBaseLength / parentModule.sharedBaseLength); 
 
                             sharedBaseThicknessRoot = parentModule.sharedBaseThicknessTip;
                             sharedBaseThicknessTip = Mathf.Min (sharedBaseThicknessRoot, sharedBaseThicknessTip);
-
+                        }
+                        if (mode == 1 && !parentModule.isCtrlSrf && !isCtrlSrf)
+                        {
+                            sharedBaseWidthRoot = parentModule.sharedBaseWidthTip;
+                        }
+                        if (mode == 2 && !parentModule.isCtrlSrf && !isCtrlSrf)
+                        {
                             sharedEdgeTypeLeading = parentModule.sharedEdgeTypeLeading;
                             sharedEdgeWidthLeadingRoot = parentModule.sharedEdgeWidthLeadingTip;
                             sharedEdgeWidthLeadingTip = Mathf.Min (sharedEdgeWidthLeadingRoot, sharedEdgeWidthLeadingTip);
@@ -577,7 +587,7 @@ namespace WingProcedural
                             sharedEdgeWidthTrailingRoot = parentModule.sharedEdgeWidthTrailingTip;
                             sharedEdgeWidthTrailingTip = Mathf.Min (sharedEdgeWidthTrailingRoot, sharedEdgeWidthTrailingTip);
                         }
-                        else if (mode == 1)
+                        else if (mode == 3)
                         {
                             sharedMaterialST = parentModule.sharedMaterialST;
                             sharedColorSTOpacity = parentModule.sharedColorSTOpacity;
@@ -2355,9 +2365,11 @@ namespace WingProcedural
                     if (uiAdjustWindow)
                     {
                         uiAdjustWindow = false;
+                        if (WingProceduralDebugValues.logPropertyWindow) DebugLogWithID ("OnDraw", "Window forced to adjust");
                         uiRect = GUILayout.Window (273, uiRect, OnWindow, GetWindowTitle (), WingProceduralManager.uiStyleWindow, GUILayout.Height (0));
                     }
-                    else uiRect = GUILayout.Window (273, uiRect, OnWindow, GetWindowTitle (), WingProceduralManager.uiStyleWindow);
+                    else 
+                        uiRect = GUILayout.Window (273, uiRect, OnWindow, GetWindowTitle (), WingProceduralManager.uiStyleWindow);
                     if (uiRect.x == 0f && uiRect.y == 0f) uiRect = uiRect.SetToScreenCenter ();
 
                     // Thanks to ferram4
@@ -2389,6 +2401,7 @@ namespace WingProcedural
             if (uiEditMode)
             {
                 bool returnEarly = false;
+
                 GUILayout.BeginHorizontal ();
                 GUILayout.BeginVertical ();
                 if (uiLastFieldName.Length > 0) GUILayout.Label ("Last: " + uiLastFieldName, WingProceduralManager.uiStyleLabelMedium);
@@ -2431,7 +2444,7 @@ namespace WingProcedural
                 DrawFieldGroupHeader (ref sharedFieldGroupEdgeTrailingStatic, "Edge (trailing)");
                 if (sharedFieldGroupEdgeTrailingStatic)
                 {
-                    DrawField (ref sharedEdgeTypeTrailing, sharedIncrementInt, GetLimitsFromType (sharedEdgeTypeLimits), "Shape", uiColorSliderEdgeT, 10, 2);
+                    DrawField (ref sharedEdgeTypeTrailing, sharedIncrementInt, GetLimitsFromType (sharedEdgeTypeLimits), "Shape", uiColorSliderEdgeT, 10, isCtrlSrf ? 3 : 2);
                     DrawField (ref sharedEdgeWidthTrailingRoot, sharedIncrementSmall, GetLimitsFromType (sharedEdgeWidthLimits), "Width (root)", uiColorSliderEdgeT, 11, 0);
                     DrawField (ref sharedEdgeWidthTrailingTip, sharedIncrementSmall, GetLimitsFromType (sharedEdgeWidthLimits), "Width (tip)", uiColorSliderEdgeT, 12, 0);
                 }
@@ -2479,7 +2492,7 @@ namespace WingProcedural
                     }
                 }
 
-                GUILayout.Label ("_________________________\n\nPress J to exit edit mode\nButtons below allow you to change default values and inherit values from parenting parts", WingProceduralManager.uiStyleLabelHint);
+                GUILayout.Label ("_________________________\n\nPress J to exit edit mode\nOptions below allow you to change default values", WingProceduralManager.uiStyleLabelHint);
                 if (!isCtrlSrf && !isWingAsCtrlSrf && !assemblyRFUsed)
                 {
                     if (GUILayout.Button (GetTankSetupName () + " | Next tank setup", WingProceduralManager.uiStyleButton)) NextConfiguration ();
@@ -2491,9 +2504,15 @@ namespace WingProcedural
                 GUILayout.EndHorizontal ();
                 if (inheritancePossibleOnShape || inheritancePossibleOnMaterials)
                 {
+                    GUILayout.Label ("_________________________\n\nOptions options allow you to match the part properties to it's parent", WingProceduralManager.uiStyleLabelHint);
                     GUILayout.BeginHorizontal ();
-                    if (inheritancePossibleOnShape) { if (GUILayout.Button ("Match shape", WingProceduralManager.uiStyleButton)) InheritParentValues (0); }
-                    if (inheritancePossibleOnMaterials) { if (GUILayout.Button ("Match materials", WingProceduralManager.uiStyleButton)) InheritParentValues (1); }
+                    if (inheritancePossibleOnShape) 
+                    { 
+                        if (GUILayout.Button ("Shape", WingProceduralManager.uiStyleButton)) InheritParentValues (0);
+                        if (GUILayout.Button ("Width", WingProceduralManager.uiStyleButton)) InheritParentValues (1);
+                        if (GUILayout.Button ("Edges", WingProceduralManager.uiStyleButton)) InheritParentValues (2); 
+                    }
+                    if (inheritancePossibleOnMaterials) { if (GUILayout.Button ("Color", WingProceduralManager.uiStyleButton)) InheritParentValues (3); }
                     GUILayout.EndHorizontal ();
                 }
             }

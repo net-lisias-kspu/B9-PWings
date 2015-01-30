@@ -76,70 +76,88 @@ namespace WingProcedural
 
         private void DummyVoid () { }
 
+
+        public static Font uiFont = null;
+
         public static void ConfigureStyles ()
         {
-            uiStyleWindow = new GUIStyle (HighLogic.Skin.window);
-            uiStyleWindow.fixedWidth = 250f;
-            uiStyleWindow.wordWrap = true;
-            uiStyleWindow.normal.textColor = Color.white;
-            uiStyleWindow.fontStyle = FontStyle.Normal;
-            uiStyleWindow.fontSize = 13;
-            uiStyleWindow.alignment = TextAnchor.UpperLeft;
+            if (uiFont == null)
+            {
+                uiFont = Resources.GetBuiltinResource (typeof (Font), "Arial.ttf") as Font;
+            }
+            if (uiFont != null)
+            {
+                uiStyleWindow = new GUIStyle (HighLogic.Skin.window);
+                uiStyleWindow.fixedWidth = 250f;
+                uiStyleWindow.wordWrap = true;
+                uiStyleWindow.normal.textColor = Color.white;
+                uiStyleWindow.font = uiFont;
+                uiStyleWindow.fontStyle = FontStyle.Normal;
+                uiStyleWindow.fontSize = 13;
+                uiStyleWindow.alignment = TextAnchor.UpperLeft;
 
-            uiStyleLabelMedium = new GUIStyle (HighLogic.Skin.label);
-            uiStyleLabelMedium.stretchWidth = true;
-            uiStyleLabelMedium.fontSize = 13;
-            uiStyleLabelMedium.normal.textColor = Color.white;
+                uiStyleLabelMedium = new GUIStyle (HighLogic.Skin.label);
+                uiStyleLabelMedium.stretchWidth = true;
+                uiStyleLabelMedium.font = uiFont;
+                uiStyleLabelMedium.fontStyle = FontStyle.Normal;
+                uiStyleLabelMedium.fontSize = 13;
+                uiStyleLabelMedium.normal.textColor = Color.white;
 
-            uiStyleLabelHint = new GUIStyle (HighLogic.Skin.label);
-            uiStyleLabelHint.stretchWidth = true;
-            uiStyleLabelHint.fontSize = 11;
-            uiStyleLabelHint.normal.textColor = Color.white;
+                uiStyleLabelHint = new GUIStyle (HighLogic.Skin.label);
+                uiStyleLabelHint.stretchWidth = true;
+                uiStyleLabelHint.font = uiFont;
+                uiStyleLabelHint.fontStyle = FontStyle.Normal;
+                uiStyleLabelHint.fontSize = 11;
+                uiStyleLabelHint.normal.textColor = Color.white;
 
-            uiStyleButton = new GUIStyle (HighLogic.Skin.button);
-            uiStyleButton.font = uiStyleLabelMedium.font;
-            uiStyleButton.fontSize = 11;
-            uiStyleButton.fontStyle = FontStyle.Normal;
-            uiStyleButton.normal.textColor = Color.white;
+                uiStyleButton = new GUIStyle (HighLogic.Skin.button);
+                uiStyleButton.font = uiFont;
+                uiStyleButton.fontStyle = FontStyle.Normal;
+                uiStyleButton.fontSize = 11;
+                uiStyleButton.normal.textColor = Color.white;
 
-            uiStyleSlider = HighLogic.Skin.horizontalSlider;
+                uiStyleSlider = HighLogic.Skin.horizontalSlider;
 
-            uiStyleSliderThumb = new GUIStyle (HighLogic.Skin.horizontalSliderThumb);
-            uiStyleSliderThumb.fixedWidth = 0f;
+                uiStyleSliderThumb = new GUIStyle (HighLogic.Skin.horizontalSliderThumb);
+                uiStyleSliderThumb.fixedWidth = 0f;
 
-            uiStyleToggle = new GUIStyle (HighLogic.Skin.toggle);
-            uiStyleToggle.font = uiStyleLabelMedium.font;
-            uiStyleToggle.fontSize = 11;
-            uiStyleToggle.fontStyle = FontStyle.Normal;
-            uiStyleToggle.normal.textColor = Color.white;
-            uiStyleToggle.padding = new RectOffset (4, 4, 4, 4);
-            uiStyleToggle.margin = new RectOffset (4, 4, 4, 4);
+                uiStyleToggle = new GUIStyle (HighLogic.Skin.toggle);
+                uiStyleToggle.font = uiFont;
+                uiStyleToggle.fontStyle = FontStyle.Normal;
+                uiStyleToggle.fontSize = 11;
+                uiStyleToggle.normal.textColor = Color.white;
+                uiStyleToggle.padding = new RectOffset (4, 4, 4, 4);
+                uiStyleToggle.margin = new RectOffset (4, 4, 4, 4);
 
-            uiStyleConfigured = true;
+                uiStyleConfigured = true;
+            }
         }
 
         public void OnGUI ()
         {
             GUI.skin = HighLogic.Skin;
             if (!uiStyleConfigured) ConfigureStyles ();
-            if (windowOpen)
+            if (uiStyleConfigured)
             {
-                windowPos = GUILayout.Window ("WingProceduralManagerWindow".GetHashCode (), windowPos, debugWindow, "B9 Procedural Part Options", GUILayout.ExpandWidth (true), GUILayout.ExpandHeight (true));
-                if (!inputLocked && windowPos.Contains (UIUtility.GetMousePos ()))
+                if (windowOpen)
                 {
-                    InputLockManager.SetControlLock (ControlTypes.KSC_ALL, "WingProceduralManagerLock");
-                    inputLocked = true;
+                    windowPos = GUILayout.Window ("WingProceduralManagerWindow".GetHashCode (), windowPos, debugWindow, "B9 Procedural Part Options", GUILayout.ExpandWidth (true), GUILayout.ExpandHeight (true));
+                    if (!inputLocked && windowPos.Contains (UIUtility.GetMousePos ()))
+                    {
+                        InputLockManager.SetControlLock (ControlTypes.KSC_ALL, "WingProceduralManagerLock");
+                        inputLocked = true;
+                    }
+                    else if (inputLocked && !windowPos.Contains (UIUtility.GetMousePos ()))
+                    {
+                        InputLockManager.RemoveControlLock ("WingProceduralManagerLock");
+                        inputLocked = false;
+                    }
                 }
-                else if (inputLocked && !windowPos.Contains (UIUtility.GetMousePos ()))
+                else if (inputLocked)
                 {
                     InputLockManager.RemoveControlLock ("WingProceduralManagerLock");
                     inputLocked = false;
                 }
-            }
-            else if (inputLocked)
-            {
-                InputLockManager.RemoveControlLock ("WingProceduralManagerLock");
-                inputLocked = false;
             }
         }
 

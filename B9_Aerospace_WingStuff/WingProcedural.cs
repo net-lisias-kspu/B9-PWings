@@ -15,7 +15,7 @@ namespace WingProcedural
     // Wing/edge limit difference assignment isn't working
     // Alternative UI
     
-    public class WingProcedural : PartModule, IPartCostModifier
+    public class WingProcedural : PartModule, IPartCostModifier, IPartSizeModifier
     {
         // Some handy bools
 
@@ -227,14 +227,13 @@ namespace WingProcedural
 
 
 
-
         // Shared properties / Surface / Top
 
         [KSPField (guiActiveEditor = false, guiActive = false, guiName = "| Material A")]
         // UI_Toggle (scene = UI_Scene.Editor, disabledText = "", enabledText = "")]
         // public bool sharedFieldGroupColorST = false;
         // public bool sharedFieldGroupColorSTCached = false;
-        public bool sharedFieldGroupColorSTStatic = false;
+        public static bool sharedFieldGroupColorSTStatic = false;
         private static string[] sharedFieldGroupColorSTArray = new string[] { "sharedMaterialST", "sharedColorSTOpacity", "sharedColorSTHue", "sharedColorSTSaturation", "sharedColorSTBrightness" };
 
         [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = false, guiName = "Material", guiFormat = "F3")]
@@ -276,7 +275,7 @@ namespace WingProcedural
         // UI_Toggle (scene = UI_Scene.Editor, disabledText = "", enabledText = "")]
         // public bool sharedFieldGroupColorSB = false;
         //public bool sharedFieldGroupColorSBCached = false;
-        public bool sharedFieldGroupColorSBStatic = false;
+        public static bool sharedFieldGroupColorSBStatic = false;
         private static string[] sharedFieldGroupColorSBArray = new string[] { "sharedMaterialSB", "sharedColorSBOpacity", "sharedColorSBHue", "sharedColorSBSaturation", "sharedColorSBBrightness" };
 
         [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = false, guiName = "Material", guiFormat = "F3")]
@@ -318,7 +317,7 @@ namespace WingProcedural
         // UI_Toggle (scene = UI_Scene.Editor, disabledText = "", enabledText = "")]
         // public bool sharedFieldGroupColorET = false;
         // public bool sharedFieldGroupColorETCached = false;
-        public bool sharedFieldGroupColorETStatic = false;
+        public static bool sharedFieldGroupColorETStatic = false;
         private static string[] sharedFieldGroupColorETArray = new string[] { "sharedMaterialET", "sharedColorETOpacity", "sharedColorETHue", "sharedColorETSaturation", "sharedColorETBrightness" };
 
         [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = false, guiName = "Material", guiFormat = "F3")]
@@ -360,7 +359,7 @@ namespace WingProcedural
         // UI_Toggle (scene = UI_Scene.Editor, disabledText = "", enabledText = "")]
         // public bool sharedFieldGroupColorEL = false;
         // public bool sharedFieldGroupColorELCached = false;
-        public bool sharedFieldGroupColorELStatic = false;
+        public static bool sharedFieldGroupColorELStatic = false;
         private static string[] sharedFieldGroupColorELArray = new string[] { "sharedMaterialEL", "sharedColorELOpacity", "sharedColorELHue", "sharedColorELSaturation", "sharedColorELBrightness" };
 
         [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = false, guiName = "Material", guiFormat = "F3")]
@@ -2339,7 +2338,6 @@ namespace WingProcedural
 
         public KeyCode uiKeyCodeEdit = KeyCode.J;
         public static Rect uiRect = new Rect ();
-        public static bool uiStyleConfigured = false;
         public static bool uiWindowActive = true;
         public static float uiMouseDeltaCache = 0f;
 
@@ -2360,30 +2358,34 @@ namespace WingProcedural
             if (uiInstanceIDLocal == 0) uiInstanceIDLocal = part.GetInstanceID ();
             if (uiInstanceIDTarget == uiInstanceIDLocal || uiInstanceIDTarget == 0)
             {
-                if (uiWindowActive)
+                if (!WingProceduralManager.uiStyleConfigured) WingProceduralManager.ConfigureStyles ();
+                if (WingProceduralManager.uiStyleConfigured)
                 {
-                    if (uiAdjustWindow)
+                    if (uiWindowActive)
                     {
-                        uiAdjustWindow = false;
-                        if (WingProceduralDebugValues.logPropertyWindow) DebugLogWithID ("OnDraw", "Window forced to adjust");
-                        uiRect = GUILayout.Window (273, uiRect, OnWindow, GetWindowTitle (), WingProceduralManager.uiStyleWindow, GUILayout.Height (0));
-                    }
-                    else 
-                        uiRect = GUILayout.Window (273, uiRect, OnWindow, GetWindowTitle (), WingProceduralManager.uiStyleWindow);
-                    if (uiRect.x == 0f && uiRect.y == 0f) uiRect = uiRect.SetToScreenCenter ();
+                        if (uiAdjustWindow)
+                        {
+                            uiAdjustWindow = false;
+                            if (WingProceduralDebugValues.logPropertyWindow) DebugLogWithID ("OnDraw", "Window forced to adjust");
+                            uiRect = GUILayout.Window (273, uiRect, OnWindow, GetWindowTitle (), WingProceduralManager.uiStyleWindow, GUILayout.Height (0));
+                        }
+                        else
+                            uiRect = GUILayout.Window (273, uiRect, OnWindow, GetWindowTitle (), WingProceduralManager.uiStyleWindow);
+                        if (uiRect.x == 0f && uiRect.y == 0f) uiRect = uiRect.SetToScreenCenter ();
 
-                    // Thanks to ferram4
-                    // Following section lock the editor, preventing window clickthrough
+                        // Thanks to ferram4
+                        // Following section lock the editor, preventing window clickthrough
 
-                    EditorLogic EdLogInstance = EditorLogic.fetch;
-                    bool cursorInGUI = false;
-                    cursorInGUI = uiRect.Contains (UIUtility.GetMousePos ());
-                    if (cursorInGUI)
-                    {
-                        EdLogInstance.Lock (false, false, false, "WingProceduralWindow");
-                        EditorTooltip.Instance.HideToolTip ();
+                        EditorLogic editorLogicInstance = EditorLogic.fetch;
+                        bool cursorInGUI = false;
+                        cursorInGUI = uiRect.Contains (UIUtility.GetMousePos ());
+                        if (cursorInGUI)
+                        {
+                            editorLogicInstance.Lock (false, false, false, "WingProceduralWindow");
+                            EditorTooltip.Instance.HideToolTip ();
+                        }
+                        else if (!cursorInGUI) editorLogicInstance.Unlock ("WingProceduralWindow");
                     }
-                    else if (!cursorInGUI) EdLogInstance.Unlock ("WingProceduralWindow");
                 }
             }
         }
@@ -2400,14 +2402,13 @@ namespace WingProcedural
         {
             if (uiEditMode)
             {
-                bool returnEarly = false;
 
+                bool returnEarly = false;
                 GUILayout.BeginHorizontal ();
                 GUILayout.BeginVertical ();
                 if (uiLastFieldName.Length > 0) GUILayout.Label ("Last: " + uiLastFieldName, WingProceduralManager.uiStyleLabelMedium);
                 else GUILayout.Label ("Property editor", WingProceduralManager.uiStyleLabelMedium);
                 if (uiLastFieldTooltip.Length > 0) GUILayout.Label (uiLastFieldTooltip + "\n_________________________", WingProceduralManager.uiStyleLabelHint, GUILayout.MaxHeight (44f), GUILayout.MinHeight (44f)); // 58f for four lines
-
                 GUILayout.EndVertical ();
                 if (GUILayout.Button ("Close", WingProceduralManager.uiStyleButton, GUILayout.MaxWidth (50f)))
                 {
@@ -2515,6 +2516,7 @@ namespace WingProcedural
                     if (inheritancePossibleOnMaterials) { if (GUILayout.Button ("Color", WingProceduralManager.uiStyleButton)) InheritParentValues (3); }
                     GUILayout.EndHorizontal ();
                 }
+                // if (GUILayout.Button ("Dump state", WingProceduralManager.uiStyleButton)) DumpState ();
             }
             else
             {
@@ -3203,6 +3205,11 @@ namespace WingProcedural
             }
         }
 
+
+
+
+        // Interfaces
+
         public float GetModuleCost ()
         {
             if (assemblyRFUsed) return aeroUICost;
@@ -3214,6 +3221,41 @@ namespace WingProcedural
             if (assemblyRFUsed) return aeroUICost;
             else return FuelGetAddedCost () + aeroUICost;
         }
+
+        private Renderer meshRendererForBounds = null;
+
+        public Vector3 GetModuleSize (Vector3 defaultSize)
+        {
+            Vector3 size = Vector3.zero;
+            if (!isCtrlSrf)
+            {
+                if (meshFilterWingSection != null)
+                {
+                    if (meshRendererForBounds == null) meshRendererForBounds = meshFilterWingSection.gameObject.GetComponent<Renderer> ();
+                    if (meshRendererForBounds != null)
+                    {
+                        Vector3 extents = meshRendererForBounds.bounds.extents;
+                        size = new Vector3 (extents.y, extents.x, extents.z);
+                    }
+                }
+                if (size == Vector3.zero) size = new Vector3 (Mathf.Max (sharedBaseThicknessRoot, sharedBaseThicknessTip), sharedBaseLength, Mathf.Max (sharedBaseWidthRoot, sharedBaseWidthTip));
+            }
+            else
+            {
+                if (meshFilterCtrlFrame != null)
+                {
+                    if (meshRendererForBounds == null) meshRendererForBounds = meshFilterCtrlFrame.gameObject.GetComponent<Renderer> ();
+                    if (meshRendererForBounds != null)
+                    {
+                        Vector3 extents = meshRendererForBounds.bounds.extents;
+                        size = new Vector3 (extents.x, extents.z, extents.y);
+                    }
+                }
+                if (size == Vector3.zero) size = new Vector3 (Mathf.Max (sharedBaseThicknessRoot, sharedBaseThicknessTip), Mathf.Max (sharedBaseWidthRoot, sharedBaseWidthTip), sharedBaseLength);
+            }
+            return size;
+        }
+
 
 
 
@@ -3250,6 +3292,38 @@ namespace WingProcedural
                 uiInstanceIDTarget = 0;
                 ApplicationLauncher.Instance.RemoveModApplication (stockButton);
             }
+        }
+
+
+
+
+        // Dump state
+
+        public void DumpState ()
+        {
+            // string[] fieldNames = Array.ConvertAll(fields, field => field.Name);
+            string report = "State report on part " + this.GetInstanceID () + ":\n\n";
+            Type type = this.GetType ();
+            FieldInfo[] fields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+            List<string> fieldNames = fields.Select(field => field.Name).ToList();
+            List<object> fieldValues = fields.Select(field => field.GetValue(this)).ToList();
+            if (fieldNames.Count == fieldValues.Count && fieldNames.Count == fields.Length)
+            {
+                for (int i = 0; i < fields.Length; ++i)
+                {
+                    if (!string.IsNullOrEmpty (fieldNames[i]))
+                    {
+                        if (fieldValues[i] != null) report += fieldNames[i] + ": " + fieldValues[i].ToString () + "\n";
+                        else report += fieldNames[i] + ": null\n";
+                    }
+                    else report += "Field " + i.ToString () + " name not available\n";
+                }
+            }
+            else
+            {
+                report += "Field info size mismatch, list can't be printed";
+            }
+            Debug.Log (report);
         }
     }
 }

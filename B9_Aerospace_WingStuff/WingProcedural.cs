@@ -15,7 +15,7 @@ namespace WingProcedural
     // Wing/edge limit difference assignment isn't working
     // Alternative UI
     
-    public class WingProcedural : PartModule, IPartCostModifier, IPartSizeModifier
+    public class WingProcedural : PartModule, IPartCostModifier
     {
         // Some handy bools
 
@@ -46,6 +46,13 @@ namespace WingProcedural
         {
             Debug.Log ("WP | ID: " + part.gameObject.GetInstanceID () + " | T: " + debugTimer.ToString ("F1") + " | " + method + " | " + message);
         }
+
+        private string DebugVectorToString (Vector3 v)
+        {
+            return v.x.ToString ("F2") + ", " + v.y.ToString ("F2") + ", " + v.z.ToString ("F2");
+        }
+
+
 
 
         // Mesh properties
@@ -1163,7 +1170,6 @@ namespace WingProcedural
                         // Thickness correction (X), edge width correction (Y) and span-based offset (Z)
                         if (vp[i].z < 0f) vp[i] = new Vector3 (vp[i].x * ctrlThicknessDeviationTip, vp[i].y, vp[i].z + 0.5f - sharedBaseLength / 2f); // if (vp[i].z < 0f) vp[i] = new Vector3 (vp[i].x * ctrlThicknessDeviationTip, ((vp[i].y + 0.5f) * ctrlEdgeWidthDeviationTip), vp[i].z + 0.5f - sharedBaseLength / 2f);
                         else vp[i] = new Vector3 (vp[i].x * ctrlThicknessDeviationRoot, vp[i].y, vp[i].z - 0.5f + sharedBaseLength / 2f); // else vp[i] = new Vector3 (vp[i].x * ctrlThicknessDeviationRoot, ((vp[i].y + 0.5f) * ctrlEdgeWidthDeviationRoot), vp[i].z - 0.5f + sharedBaseLength / 2f);
-                        
 
                         // Left/right sides
                         if (nm[i] == new Vector3 (0f, 0f, 1f) || nm[i] == new Vector3 (0f, 0f, -1f))
@@ -2916,7 +2922,6 @@ namespace WingProcedural
         public bool fuelShowInfo = false;
 
         [KSPField (isPersistant = true)] public Vector4 fuelCurrentAmount = Vector4.zero;
-        [KSPField (isPersistant = true)] public float fuelMutliplier = 1.0f;
         [KSPField (isPersistant = true)] public int fuelSelectedTankSetup = 0;
         [KSPField (isPersistant = true)] public bool fuelFlightSceneStarted = false;
         [KSPField (isPersistant = true)] private bool fuelBrandNewPart = true;
@@ -2976,7 +2981,7 @@ namespace WingProcedural
                     {
                         float newAmount = fuelPerCubicMeter[i][r] * volume * 0.7f; // since not all volume is used
                         fuelTankList[i].resources[r].maxAmount = newAmount;
-                        fuelTankList[i].resources[r].amount = newAmount;
+                        fuelTankList[i].resources[r].amount = Mathf.Min (fuelTankList[i].resources[r].amount, newAmount);
                     }
                 }
                 fuelVolumeOld = volume;
@@ -3222,7 +3227,13 @@ namespace WingProcedural
             else return FuelGetAddedCost () + aeroUICost;
         }
 
+        /*
+
         private Renderer meshRendererForBounds = null;
+
+        // This interface is completely undocumented and results fetched through it are used in bizarre ways
+        // My current assumption is that KSP expects a scale multiplier through current size / default size, but who knows
+        // Axis order is not documented either, no idea whether it's right
 
         public Vector3 GetModuleSize (Vector3 defaultSize)
         {
@@ -3234,11 +3245,26 @@ namespace WingProcedural
                     if (meshRendererForBounds == null) meshRendererForBounds = meshFilterWingSection.gameObject.GetComponent<Renderer> ();
                     if (meshRendererForBounds != null)
                     {
-                        Vector3 extents = meshRendererForBounds.bounds.extents;
-                        size = new Vector3 (extents.y, extents.x, extents.z);
+                        Vector3 extents = meshRendererForBounds.bounds.extents; // x - length, y - thickness, z - width, divide all by 2
+                        size = new Vector3 
+                        (
+                            defaultSize.x * extents.x * 2f / sharedBaseLengthDefaults.x,
+                            defaultSize.y * extents.y * 2f / sharedBaseThicknessRootDefaults.x,
+                            defaultSize.z * extents.z * 2f / sharedBaseWidthRootDefaults.x
+                        );
+                        DebugLogWithID ("GetModuleSize", "Wing extents and resulting output:" + DebugVectorToString (extents) + " / " + DebugVectorToString (size));
                     }
                 }
-                if (size == Vector3.zero) size = new Vector3 (Mathf.Max (sharedBaseThicknessRoot, sharedBaseThicknessTip), sharedBaseLength, Mathf.Max (sharedBaseWidthRoot, sharedBaseWidthTip));
+                if (size == Vector3.zero)
+                {
+                    size = new Vector3
+                    (
+                        Mathf.Max (sharedBaseThicknessRoot, sharedBaseThicknessTip) / sharedBaseThicknessRootDefaults.x,
+                        sharedBaseLength / sharedBaseLengthDefaults.x,
+                        Mathf.Max (sharedBaseWidthRoot, sharedBaseWidthTip) / sharedBaseWidthRootDefaults.x
+                    );
+                    DebugLogWithID ("GetModuleSize", "Wing bounds not found, falling back to rough guess: " + size.ToString ());
+                }
             }
             else
             {
@@ -3247,14 +3273,30 @@ namespace WingProcedural
                     if (meshRendererForBounds == null) meshRendererForBounds = meshFilterCtrlFrame.gameObject.GetComponent<Renderer> ();
                     if (meshRendererForBounds != null)
                     {
-                        Vector3 extents = meshRendererForBounds.bounds.extents;
-                        size = new Vector3 (extents.x, extents.z, extents.y);
+                        Vector3 extents = meshRendererForBounds.bounds.extents; // x - length, y - thickness, z - width
+                        size = new Vector3 
+                        (
+                            defaultSize.x * extents.y * 2f / sharedBaseThicknessRootDefaults.y,
+                            defaultSize.y * extents.x * 2f / sharedBaseLengthDefaults.y,
+                            defaultSize.z * Mathf.Max (sharedBaseWidthRoot, sharedBaseWidthTip) / sharedBaseWidthRootDefaults.y // frame is not fully displaced with width, Z bounds might be useless // extents.z / sharedBaseWidthRootDefaults.y
+                        );
+                        DebugLogWithID ("GetModuleSize", "Surface extents and resulting output:" + DebugVectorToString (extents) + " / " + DebugVectorToString (size));
                     }
                 }
-                if (size == Vector3.zero) size = new Vector3 (Mathf.Max (sharedBaseThicknessRoot, sharedBaseThicknessTip), Mathf.Max (sharedBaseWidthRoot, sharedBaseWidthTip), sharedBaseLength);
+                if (size == Vector3.zero)
+                {
+                    size = new Vector3 
+                    (
+                        Mathf.Max (sharedBaseThicknessRoot, sharedBaseThicknessTip) / sharedBaseThicknessRootDefaults.y,
+                        sharedBaseLength / sharedBaseLengthDefaults.y,
+                        Mathf.Max (sharedBaseWidthRoot, sharedBaseWidthTip) / sharedBaseWidthRootDefaults.y
+                    );
+                    DebugLogWithID ("GetModuleSize", "Surface bounds not found, falling back to rough guess: " + size.ToString ());
+                }
             }
             return size;
         }
+        */
 
 
 

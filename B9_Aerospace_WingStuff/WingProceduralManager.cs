@@ -78,6 +78,9 @@ namespace WingProcedural
 
 
         public static Font uiFont = null;
+        private static float alphaNormal = 0.5f;
+        private static float alphaHover = 0.35f;
+        private static float alphaActive = 0.75f;
 
         public static void ConfigureStyles ()
         {
@@ -114,12 +117,22 @@ namespace WingProcedural
                 uiStyleButton.font = uiFont;
                 uiStyleButton.fontStyle = FontStyle.Normal;
                 uiStyleButton.fontSize = 11;
-                uiStyleButton.normal.textColor = Color.white;
+                AssignTexturesToStyle (uiStyleButton);
+                uiStyleButton.fixedHeight = 16;
 
-                uiStyleSlider = HighLogic.Skin.horizontalSlider;
+                uiStyleSlider = new GUIStyle (HighLogic.Skin.horizontalSlider);
+                AssignTexturesToStyle (uiStyleSlider);
+                uiStyleButton.fixedHeight = 16;
 
                 uiStyleSliderThumb = new GUIStyle (HighLogic.Skin.horizontalSliderThumb);
+                uiStyleSliderThumb.normal.background = Color.black.WithAlpha (0).GetTexture2D ();
+                uiStyleSliderThumb.hover.background = Color.black.WithAlpha (0).GetTexture2D ();
+                uiStyleSliderThumb.active.background = Color.black.WithAlpha (0).GetTexture2D ();
+                uiStyleSliderThumb.onNormal.background = Color.black.WithAlpha (0).GetTexture2D ();
+                uiStyleSliderThumb.onHover.background = Color.black.WithAlpha (0).GetTexture2D ();
+                uiStyleSliderThumb.onActive.background = Color.black.WithAlpha (0).GetTexture2D ();
                 uiStyleSliderThumb.fixedWidth = 0f;
+                uiStyleSliderThumb.fixedHeight = 16;
 
                 uiStyleToggle = new GUIStyle (HighLogic.Skin.toggle);
                 uiStyleToggle.font = uiFont;
@@ -131,6 +144,21 @@ namespace WingProcedural
 
                 uiStyleConfigured = true;
             }
+        }
+
+        private static void AssignTexturesToStyle (GUIStyle s)
+        {
+            s.normal.textColor = s.onNormal.textColor = Color.white;
+            s.hover.textColor = s.onHover.textColor = Color.white;
+            s.active.textColor = s.onActive.textColor = Color.white;
+
+            s.normal.background = Color.black.WithAlpha (alphaNormal).GetTexture2D ();
+            s.hover.background = Color.black.WithAlpha (alphaHover).GetTexture2D ();
+            s.active.background = Color.black.WithAlpha (alphaActive).GetTexture2D ();
+            s.onNormal.background = Color.black.WithAlpha (alphaNormal).GetTexture2D ();
+            s.onHover.background = Color.black.WithAlpha (alphaHover).GetTexture2D ();
+            s.onActive.background = Color.black.WithAlpha (alphaActive).GetTexture2D ();
+            uiStyleButton.border = new RectOffset (0, 0, 0, 0);
         }
 
         public void OnGUI ()

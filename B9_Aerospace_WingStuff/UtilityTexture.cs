@@ -73,5 +73,10 @@ namespace WingProcedural
             Color32 c32 = c;
             return (c32.a << 24) | (c32.r << 16) | (c32.g << 8) | c32.b;
         }
+
+        public static Color WithAlpha (this Color c, float a)
+        {
+            return new Color (c.r, c.g, c.b, a);
+        }
     }
 }

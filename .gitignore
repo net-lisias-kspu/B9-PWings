@@ -1,0 +1,22 @@
+# Builds #
+###################
+B9_Aerospace_WingStuff/bin/
+B9_Aerospace_WingStuff/Dependencies/
+B9_Aerospace_WingStuff/obj/
+B9_Aerospace_WingStuff/Properties/
+
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Other #
+######################
+Source/
+Release/
+Other/

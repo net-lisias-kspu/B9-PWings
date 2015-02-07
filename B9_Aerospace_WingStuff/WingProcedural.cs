@@ -2415,7 +2415,7 @@ namespace WingProcedural
         private void DrawField (ref float field, float increment, Vector2 limits, string name, Vector4 hsbColor, int fieldID, int fieldType)
         {
             bool changed = false;
-            float value = UIUtility.FieldSlider (field, increment, limits, name, out changed, WingProceduralManager.uiStyleSlider, WingProceduralManager.uiStyleSliderThumb, WingProceduralManager.uiStyleLabelHint, ColorHSBToRGB (hsbColor), fieldType);
+            float value = UIUtility.FieldSlider (field, increment, limits, name, out changed, ColorHSBToRGB (hsbColor), fieldType);
             if (changed)
             {
                 field = value;
@@ -2845,8 +2845,8 @@ namespace WingProcedural
                     Type type = module.GetType ();
 
                     double volumeRF = (double) volume;
-                    if (assemblyRFUsed) volume *= 1000;     // RF requests units in liters instead of cubic meters
-                    else if (assemblyMFTUsed) volume *= 173;  // MFT requests volume in units
+                    if (assemblyRFUsed) volumeRF *= 1000;     // RF requests units in liters instead of cubic meters
+                    else if (assemblyMFTUsed) volumeRF *= 173.9;  // MFT requests volume in units
                     type.GetField ("volume").SetValue (module, volumeRF); 
                     type.GetMethod ("ChangeVolume").Invoke (module, new object[] { volumeRF } );
                 }
@@ -2966,7 +2966,7 @@ namespace WingProcedural
         private float FuelGetAddedCost ()
         {
             float result = 0f;
-            if (fuelSelectedTankSetup < fuelCostPerUnit.Length && fuelSelectedTankSetup < fuelConfigurationsList.Count)
+            if (fuelSelectedTankSetup < fuelCostPerUnit.Length && fuelSelectedTankSetup < fuelConfigurationsList.Count && fuelSelectedTankSetup >= 0)
             {
                 for (int i = 0; i < fuelConfigurationsList[fuelSelectedTankSetup].resources.Count; ++i)
                 {

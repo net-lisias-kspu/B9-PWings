@@ -9,10 +9,15 @@ namespace WingProcedural
 {
     public static class UIUtility
     {
-        public static float FieldSlider (float value, float increment, Vector2 limits, string name, out bool changed, GUIStyle styleSlider, GUIStyle styleThumb, GUIStyle styleText, Color backgroundColor, int valueType)
+        public static float FieldSlider (float value, float increment, Vector2 limits, string name, out bool changed, Color backgroundColor, int valueType)
         {
+            if (!WingProceduralManager.uiStyleConfigured) WingProceduralManager.ConfigureStyles ();
+
+            GUILayout.BeginHorizontal ();
+            if (GUILayout.Button ("<", GUILayout.MinWidth (16f), GUILayout.MaxWidth (16f))) Debug.Log ("Left");
+
             float valueOld = value;
-            value = GUILayout.HorizontalSlider (value, limits.x, limits.y, styleSlider, styleThumb);
+            value = GUILayout.HorizontalSlider (value, limits.x, limits.y, WingProceduralManager.uiStyleSlider, WingProceduralManager.uiStyleSliderThumb);
             changed = false;
 
             if (valueOld != value)
@@ -49,9 +54,13 @@ namespace WingProcedural
             GUI.DrawTexture (sliderValue, backgroundColor.GetTexture2D ());
 
             Rect labelRectName = new Rect (lastRect.xMin, lastRect.yMin - 2f, lastRect.width, lastRect.height);
-            GUI.Label (labelRectName, "  " + name, styleText);
+            GUI.Label (labelRectName, "  " + name, WingProceduralManager.uiStyleLabelHint);
             Rect labelRectValue = new Rect (labelRectName.xMin + labelRectName.width * 0.75f, labelRectName.yMin, labelRectName.width * 0.25f, labelRectName.height); 
-            GUI.Label (labelRectValue, GetValueTranslation (value, valueType), styleText);
+            GUI.Label (labelRectValue, GetValueTranslation (value, valueType), WingProceduralManager.uiStyleLabelHint);
+
+            if (GUILayout.Button (">", GUILayout.MinWidth (16f), GUILayout.MaxWidth (16f))) Debug.Log ("Right");
+            GUILayout.EndHorizontal ();
+
             return value;
         }
 

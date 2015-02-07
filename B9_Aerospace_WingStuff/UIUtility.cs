@@ -9,16 +9,27 @@ namespace WingProcedural
 {
     public static class UIUtility
     {
-        public static float FieldSlider (float value, float increment, Vector2 limits, string name, out bool changed, Color backgroundColor, int valueType)
+        public static float FieldSlider (float value, float increment, float incrementLarge, Vector2 limits, string name, out bool changed, Color backgroundColor, int valueType)
         {
             if (!WingProceduralManager.uiStyleConfigured) WingProceduralManager.ConfigureStyles ();
-
             GUILayout.BeginHorizontal ();
-            if (GUILayout.Button ("<", GUILayout.MinWidth (16f), GUILayout.MaxWidth (16f))) Debug.Log ("Left");
 
             float valueOld = value;
-            value = GUILayout.HorizontalSlider (value, limits.x, limits.y, WingProceduralManager.uiStyleSlider, WingProceduralManager.uiStyleSliderThumb);
+            float valueFromButtons = 0f;
             changed = false;
+
+            GUILayout.Label ("", WingProceduralManager.uiStyleLabelHint);
+            Rect rectLast = GUILayoutUtility.GetLastRect (); 
+            Rect rectSlider = new Rect (rectLast.xMin + 8f, rectLast.yMin, rectLast.width - 16f, rectLast.height);
+            Rect rectSliderValue = new Rect (rectSlider.xMin, rectSlider.yMin, rectSlider.width * ((value - limits.x) / (limits.y - limits.x)), rectSlider.height - 3f);
+            Rect rectButtonL = new Rect (rectLast.xMin, rectLast.yMin, 6f, rectLast.height);
+            Rect rectButtonR = new Rect (rectLast.xMin + rectLast.width - 6f, rectLast.yMin, 6f, rectLast.height);
+            Rect rectLabelValue = new Rect (rectSlider.xMin + rectSlider.width * 0.75f, rectSlider.yMin, rectSlider.width * 0.25f, rectSlider.height); 
+
+            if (GUI.Button (rectButtonL, new GUIContent (""), WingProceduralManager.uiStyleButton)) valueFromButtons -= incrementLarge;
+            value = GUI.HorizontalSlider (rectSlider, value, limits.x, limits.y, WingProceduralManager.uiStyleSlider, WingProceduralManager.uiStyleSliderThumb);
+            if (GUI.Button (rectButtonR, new GUIContent (""), WingProceduralManager.uiStyleButton)) valueFromButtons += incrementLarge;
+            value += valueFromButtons;
 
             if (valueOld != value)
             {
@@ -26,8 +37,6 @@ namespace WingProcedural
                 if (valueOld != value)
                 {
                     float excess = value % increment;
-                    // Debug.Log ("S | Values old/new/excess: " + valueOld + " / " + value + " / " + excess);
-
                     if (value > valueOld)
                     {
                         if (excess > increment / 2f) value = Mathf.Min (value - excess + increment, limits.y);
@@ -45,22 +54,11 @@ namespace WingProcedural
                 }
             }
 
-            Rect lastRect = GUILayoutUtility.GetLastRect ();
-            Rect sliderBgrnd = new Rect (lastRect.xMin, lastRect.yMin - 1f, (lastRect.xMax - lastRect.xMin), lastRect.yMax - lastRect.yMin + 2f);
-            Rect sliderValue = new Rect (lastRect.xMin, lastRect.yMin - 1f, (lastRect.xMax - lastRect.xMin) * ((value - limits.x) / (limits.y - limits.x)), lastRect.yMax - lastRect.yMin + 2f);
-            // if (changed) Debug.Log ("S | Width: " + (lastRect.xMax - lastRect.xMin).ToString () + " | Multiplier: " + ((value - limits.x) / (limits.y - limits.x)).ToString ("F4") + " | Final: " + ((lastRect.xMax - lastRect.xMin) * ((value - limits.x) / (limits.y - limits.x))).ToString ());
+            GUI.DrawTexture (rectSliderValue, backgroundColor.GetTexture2D ());
+            GUI.Label (rectSlider, "  " + name, WingProceduralManager.uiStyleLabelHint);
+            GUI.Label (rectLabelValue, GetValueTranslation (value, valueType), WingProceduralManager.uiStyleLabelHint);
 
-            GUI.DrawTexture (lastRect, new Color (0.15f, 0.15f, 0.15f).GetTexture2D ());
-            GUI.DrawTexture (sliderValue, backgroundColor.GetTexture2D ());
-
-            Rect labelRectName = new Rect (lastRect.xMin, lastRect.yMin - 2f, lastRect.width, lastRect.height);
-            GUI.Label (labelRectName, "  " + name, WingProceduralManager.uiStyleLabelHint);
-            Rect labelRectValue = new Rect (labelRectName.xMin + labelRectName.width * 0.75f, labelRectName.yMin, labelRectName.width * 0.25f, labelRectName.height); 
-            GUI.Label (labelRectValue, GetValueTranslation (value, valueType), WingProceduralManager.uiStyleLabelHint);
-
-            if (GUILayout.Button (">", GUILayout.MinWidth (16f), GUILayout.MaxWidth (16f))) Debug.Log ("Right");
             GUILayout.EndHorizontal ();
-
             return value;
         }
 

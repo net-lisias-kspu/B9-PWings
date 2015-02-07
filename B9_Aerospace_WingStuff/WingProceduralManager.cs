@@ -91,7 +91,7 @@ namespace WingProcedural
             if (uiFont != null)
             {
                 uiStyleWindow = new GUIStyle (HighLogic.Skin.window);
-                uiStyleWindow.fixedWidth = 250f;
+                uiStyleWindow.fixedWidth = 300f;
                 uiStyleWindow.wordWrap = true;
                 uiStyleWindow.normal.textColor = Color.white;
                 uiStyleWindow.font = uiFont;
@@ -114,17 +114,28 @@ namespace WingProcedural
                 uiStyleLabelHint.normal.textColor = Color.white;
 
                 uiStyleButton = new GUIStyle (HighLogic.Skin.button);
+                AssignTexturesToStyle (uiStyleButton);
+                uiStyleButton.padding = new RectOffset (0, 0, 0, 0);
+                uiStyleButton.overflow = new RectOffset (0, 0, 0, 0);
                 uiStyleButton.font = uiFont;
                 uiStyleButton.fontStyle = FontStyle.Normal;
                 uiStyleButton.fontSize = 11;
-                AssignTexturesToStyle (uiStyleButton);
                 uiStyleButton.fixedHeight = 16;
 
                 uiStyleSlider = new GUIStyle (HighLogic.Skin.horizontalSlider);
                 AssignTexturesToStyle (uiStyleSlider);
-                uiStyleButton.fixedHeight = 16;
+                uiStyleSlider.border = new RectOffset (0, 0, 0, 0);
+                uiStyleSlider.margin = new RectOffset (4, 4, 4, 4);
+                uiStyleSlider.padding = new RectOffset (0, 0, 0, 0);
+                uiStyleSlider.overflow = new RectOffset (0, 0, 0, 0);
+                uiStyleSlider.fixedHeight = 16;
 
                 uiStyleSliderThumb = new GUIStyle (HighLogic.Skin.horizontalSliderThumb);
+                AssignTexturesToStyle (uiStyleSlider);
+                uiStyleSliderThumb.border = new RectOffset (0, 0, 0, 0);
+                uiStyleSliderThumb.margin = new RectOffset (4, 4, 4, 4);
+                uiStyleSliderThumb.padding = new RectOffset (0, 0, 0, 0);
+                uiStyleSliderThumb.overflow = new RectOffset (0, 0, 0, 0);
                 uiStyleSliderThumb.normal.background = Color.black.WithAlpha (0).GetTexture2D ();
                 uiStyleSliderThumb.hover.background = Color.black.WithAlpha (0).GetTexture2D ();
                 uiStyleSliderThumb.active.background = Color.black.WithAlpha (0).GetTexture2D ();

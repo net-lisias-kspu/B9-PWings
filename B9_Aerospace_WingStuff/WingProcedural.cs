@@ -108,6 +108,7 @@ namespace WingProcedural
         private static Vector2 sharedColorLimits = new Vector2 (0f, 1f);
 
         private static float sharedIncrementColor = 0.01f;
+        private static float sharedIncrementColorLarge = 0.10f;
         private static float sharedIncrementMain = 0.125f;
         private static float sharedIncrementSmall = 0.04f;
         private static float sharedIncrementInt = 1f;
@@ -2297,13 +2298,13 @@ namespace WingProcedural
                 DrawFieldGroupHeader (ref sharedFieldGroupBaseStatic, "Base");
                 if (sharedFieldGroupBaseStatic)
                 {
-                    DrawField (ref sharedBaseLength, sharedIncrementMain, GetLimitsFromType (sharedBaseLengthLimits), "Length", uiColorSliderBase, 0, 0);
-                    DrawField (ref sharedBaseWidthRoot, sharedIncrementMain, GetLimitsFromType (sharedBaseWidthLimits), "Width (root)", uiColorSliderBase, 1, 0);
-                    DrawField (ref sharedBaseWidthTip, sharedIncrementMain, GetLimitsFromType (sharedBaseWidthLimits), "Width (tip)", uiColorSliderBase, 2, 0);
-                    if (isCtrlSrf) DrawField (ref sharedBaseOffsetRoot, GetIncrementFromType (sharedIncrementMain, sharedIncrementSmall), GetLimitsFromType (sharedBaseOffsetLimits), "Offset (root)", uiColorSliderBase, 3, 0);
-                    DrawField (ref sharedBaseOffsetTip, GetIncrementFromType (sharedIncrementMain, sharedIncrementSmall), GetLimitsFromType (sharedBaseOffsetLimits), "Offset (tip)", uiColorSliderBase, 4, 0);
-                    DrawField (ref sharedBaseThicknessRoot, sharedIncrementSmall, sharedBaseThicknessLimits, "Thickness (root)", uiColorSliderBase, 5, 0);
-                    DrawField (ref sharedBaseThicknessTip, sharedIncrementSmall, sharedBaseThicknessLimits, "Thickness (tip)", uiColorSliderBase, 6, 0);
+                    DrawField (ref sharedBaseLength, sharedIncrementMain, 1f, GetLimitsFromType (sharedBaseLengthLimits), "Length", uiColorSliderBase, 0, 0);
+                    DrawField (ref sharedBaseWidthRoot, sharedIncrementMain, 1f, GetLimitsFromType (sharedBaseWidthLimits), "Width (root)", uiColorSliderBase, 1, 0);
+                    DrawField (ref sharedBaseWidthTip, sharedIncrementMain, 1f, GetLimitsFromType (sharedBaseWidthLimits), "Width (tip)", uiColorSliderBase, 2, 0);
+                    if (isCtrlSrf) DrawField (ref sharedBaseOffsetRoot, GetIncrementFromType (sharedIncrementMain, sharedIncrementSmall), 1f, GetLimitsFromType (sharedBaseOffsetLimits), "Offset (root)", uiColorSliderBase, 3, 0);
+                    DrawField (ref sharedBaseOffsetTip, GetIncrementFromType (sharedIncrementMain, sharedIncrementSmall), 1f, GetLimitsFromType (sharedBaseOffsetLimits), "Offset (tip)", uiColorSliderBase, 4, 0);
+                    DrawField (ref sharedBaseThicknessRoot, sharedIncrementSmall, sharedIncrementSmall, sharedBaseThicknessLimits, "Thickness (root)", uiColorSliderBase, 5, 0);
+                    DrawField (ref sharedBaseThicknessTip, sharedIncrementSmall, sharedIncrementSmall, sharedBaseThicknessLimits, "Thickness (tip)", uiColorSliderBase, 6, 0);
                 }
 
                 if (!isCtrlSrf)
@@ -2311,48 +2312,48 @@ namespace WingProcedural
                     DrawFieldGroupHeader (ref sharedFieldGroupEdgeLeadingStatic, "Edge (leading)");
                     if (sharedFieldGroupEdgeLeadingStatic)
                     {
-                        DrawField (ref sharedEdgeTypeLeading, sharedIncrementInt, GetLimitsFromType (sharedEdgeTypeLimits), "Shape", uiColorSliderEdgeL, 7, 2);
-                        DrawField (ref sharedEdgeWidthLeadingRoot, sharedIncrementSmall, GetLimitsFromType (sharedEdgeWidthLimits), "Width (root)", uiColorSliderEdgeL, 8, 0);
-                        DrawField (ref sharedEdgeWidthLeadingTip, sharedIncrementSmall, GetLimitsFromType (sharedEdgeWidthLimits), "Width (tip)", uiColorSliderEdgeL, 9, 0);
+                        DrawField (ref sharedEdgeTypeLeading, sharedIncrementInt, sharedIncrementInt, GetLimitsFromType (sharedEdgeTypeLimits), "Shape", uiColorSliderEdgeL, 7, 2);
+                        DrawField (ref sharedEdgeWidthLeadingRoot, sharedIncrementSmall, sharedIncrementSmall, GetLimitsFromType (sharedEdgeWidthLimits), "Width (root)", uiColorSliderEdgeL, 8, 0);
+                        DrawField (ref sharedEdgeWidthLeadingTip, sharedIncrementSmall, sharedIncrementSmall, GetLimitsFromType (sharedEdgeWidthLimits), "Width (tip)", uiColorSliderEdgeL, 9, 0);
                     }
                 }
 
                 DrawFieldGroupHeader (ref sharedFieldGroupEdgeTrailingStatic, "Edge (trailing)");
                 if (sharedFieldGroupEdgeTrailingStatic)
                 {
-                    DrawField (ref sharedEdgeTypeTrailing, sharedIncrementInt, GetLimitsFromType (sharedEdgeTypeLimits), "Shape", uiColorSliderEdgeT, 10, isCtrlSrf ? 3 : 2);
-                    DrawField (ref sharedEdgeWidthTrailingRoot, sharedIncrementSmall, GetLimitsFromType (sharedEdgeWidthLimits), "Width (root)", uiColorSliderEdgeT, 11, 0);
-                    DrawField (ref sharedEdgeWidthTrailingTip, sharedIncrementSmall, GetLimitsFromType (sharedEdgeWidthLimits), "Width (tip)", uiColorSliderEdgeT, 12, 0);
+                    DrawField (ref sharedEdgeTypeTrailing, sharedIncrementInt, sharedIncrementInt, GetLimitsFromType (sharedEdgeTypeLimits), "Shape", uiColorSliderEdgeT, 10, isCtrlSrf ? 3 : 2);
+                    DrawField (ref sharedEdgeWidthTrailingRoot, sharedIncrementSmall, sharedIncrementSmall, GetLimitsFromType (sharedEdgeWidthLimits), "Width (root)", uiColorSliderEdgeT, 11, 0);
+                    DrawField (ref sharedEdgeWidthTrailingTip, sharedIncrementSmall, sharedIncrementSmall, GetLimitsFromType (sharedEdgeWidthLimits), "Width (tip)", uiColorSliderEdgeT, 12, 0);
                 }
 
                 DrawFieldGroupHeader (ref sharedFieldGroupColorSTStatic, "Surface (top)");
                 if (sharedFieldGroupColorSTStatic)
                 {
-                    DrawField (ref sharedMaterialST, sharedIncrementInt, sharedMaterialLimits, "Material", uiColorSliderColorsST, 13, 1);
-                    DrawField (ref sharedColorSTOpacity, sharedIncrementColor, sharedColorLimits, "Opacity", uiColorSliderColorsST, 14, 0);
-                    DrawField (ref sharedColorSTHue, sharedIncrementColor, sharedColorLimits, "Hue", uiColorSliderColorsST, 15, 0);
-                    DrawField (ref sharedColorSTSaturation, sharedIncrementColor, sharedColorLimits, "Saturation", uiColorSliderColorsST, 16, 0);
-                    DrawField (ref sharedColorSTBrightness, sharedIncrementColor, sharedColorLimits, "Brightness", uiColorSliderColorsST, 17, 0);
+                    DrawField (ref sharedMaterialST, sharedIncrementInt, sharedIncrementInt, sharedMaterialLimits, "Material", uiColorSliderColorsST, 13, 1);
+                    DrawField (ref sharedColorSTOpacity, sharedIncrementColor, sharedIncrementColorLarge, sharedColorLimits, "Opacity", uiColorSliderColorsST, 14, 0);
+                    DrawField (ref sharedColorSTHue, sharedIncrementColor, sharedIncrementColorLarge, sharedColorLimits, "Hue", uiColorSliderColorsST, 15, 0);
+                    DrawField (ref sharedColorSTSaturation, sharedIncrementColor, sharedIncrementColorLarge, sharedColorLimits, "Saturation", uiColorSliderColorsST, 16, 0);
+                    DrawField (ref sharedColorSTBrightness, sharedIncrementColor, sharedIncrementColorLarge, sharedColorLimits, "Brightness", uiColorSliderColorsST, 17, 0);
                 }
 
                 DrawFieldGroupHeader (ref sharedFieldGroupColorSBStatic, "Surface (bottom)");
                 if (sharedFieldGroupColorSBStatic)
                 {
-                    DrawField (ref sharedMaterialSB, sharedIncrementInt, sharedMaterialLimits, "Material", uiColorSliderColorsSB, 13, 1);
-                    DrawField (ref sharedColorSBOpacity, sharedIncrementColor, sharedColorLimits, "Opacity", uiColorSliderColorsSB, 14, 0);
-                    DrawField (ref sharedColorSBHue, sharedIncrementColor, sharedColorLimits, "Hue", uiColorSliderColorsSB, 15, 0);
-                    DrawField (ref sharedColorSBSaturation, sharedIncrementColor, sharedColorLimits, "Saturation", uiColorSliderColorsSB, 16, 0);
-                    DrawField (ref sharedColorSBBrightness, sharedIncrementColor, sharedColorLimits, "Brightness", uiColorSliderColorsSB, 17, 0);
+                    DrawField (ref sharedMaterialSB, sharedIncrementInt, sharedIncrementInt, sharedMaterialLimits, "Material", uiColorSliderColorsSB, 13, 1);
+                    DrawField (ref sharedColorSBOpacity, sharedIncrementColor, sharedIncrementColorLarge, sharedColorLimits, "Opacity", uiColorSliderColorsSB, 14, 0);
+                    DrawField (ref sharedColorSBHue, sharedIncrementColor, sharedIncrementColorLarge, sharedColorLimits, "Hue", uiColorSliderColorsSB, 15, 0);
+                    DrawField (ref sharedColorSBSaturation, sharedIncrementColor, sharedIncrementColorLarge, sharedColorLimits, "Saturation", uiColorSliderColorsSB, 16, 0);
+                    DrawField (ref sharedColorSBBrightness, sharedIncrementColor, sharedIncrementColorLarge, sharedColorLimits, "Brightness", uiColorSliderColorsSB, 17, 0);
                 }
 
                 DrawFieldGroupHeader (ref sharedFieldGroupColorETStatic, "Surface (trailing edge)");
                 if (sharedFieldGroupColorETStatic)
                 {
-                    DrawField (ref sharedMaterialET, sharedIncrementInt, sharedMaterialLimits, "Material", uiColorSliderColorsET, 13, 1);
-                    DrawField (ref sharedColorETOpacity, sharedIncrementColor, sharedColorLimits, "Opacity", uiColorSliderColorsET, 14, 0);
-                    DrawField (ref sharedColorETHue, sharedIncrementColor, sharedColorLimits, "Hue", uiColorSliderColorsET, 15, 0);
-                    DrawField (ref sharedColorETSaturation, sharedIncrementColor, sharedColorLimits, "Saturation", uiColorSliderColorsET, 16, 0);
-                    DrawField (ref sharedColorETBrightness, sharedIncrementColor, sharedColorLimits, "Brightness", uiColorSliderColorsET, 17, 0);
+                    DrawField (ref sharedMaterialET, sharedIncrementInt, sharedIncrementInt, sharedMaterialLimits, "Material", uiColorSliderColorsET, 13, 1);
+                    DrawField (ref sharedColorETOpacity, sharedIncrementColor, sharedIncrementColorLarge, sharedColorLimits, "Opacity", uiColorSliderColorsET, 14, 0);
+                    DrawField (ref sharedColorETHue, sharedIncrementColor, sharedIncrementColorLarge, sharedColorLimits, "Hue", uiColorSliderColorsET, 15, 0);
+                    DrawField (ref sharedColorETSaturation, sharedIncrementColor, sharedIncrementColorLarge, sharedColorLimits, "Saturation", uiColorSliderColorsET, 16, 0);
+                    DrawField (ref sharedColorETBrightness, sharedIncrementColor, sharedIncrementColorLarge, sharedColorLimits, "Brightness", uiColorSliderColorsET, 17, 0);
                 }
 
                 if (!isCtrlSrf)
@@ -2360,11 +2361,11 @@ namespace WingProcedural
                     DrawFieldGroupHeader (ref sharedFieldGroupColorELStatic, "Surface (leading edge)");
                     if (sharedFieldGroupColorELStatic)
                     {
-                        DrawField (ref sharedMaterialEL, sharedIncrementInt, sharedMaterialLimits, "Material", uiColorSliderColorsEL, 13, 1);
-                        DrawField (ref sharedColorELOpacity, sharedIncrementColor, sharedColorLimits, "Opacity", uiColorSliderColorsEL, 14, 0);
-                        DrawField (ref sharedColorELHue, sharedIncrementColor, sharedColorLimits, "Hue", uiColorSliderColorsEL, 15, 0);
-                        DrawField (ref sharedColorELSaturation, sharedIncrementColor, sharedColorLimits, "Saturation", uiColorSliderColorsEL, 16, 0);
-                        DrawField (ref sharedColorELBrightness, sharedIncrementColor, sharedColorLimits, "Brightness", uiColorSliderColorsEL, 17, 0);
+                        DrawField (ref sharedMaterialEL, sharedIncrementInt, sharedIncrementInt, sharedMaterialLimits, "Material", uiColorSliderColorsEL, 13, 1);
+                        DrawField (ref sharedColorELOpacity, sharedIncrementColor, sharedIncrementColorLarge, sharedColorLimits, "Opacity", uiColorSliderColorsEL, 14, 0);
+                        DrawField (ref sharedColorELHue, sharedIncrementColor, sharedIncrementColorLarge, sharedColorLimits, "Hue", uiColorSliderColorsEL, 15, 0);
+                        DrawField (ref sharedColorELSaturation, sharedIncrementColor, sharedIncrementColorLarge, sharedColorLimits, "Saturation", uiColorSliderColorsEL, 16, 0);
+                        DrawField (ref sharedColorELBrightness, sharedIncrementColor, sharedIncrementColorLarge, sharedColorLimits, "Brightness", uiColorSliderColorsEL, 17, 0);
                     }
                 }
 
@@ -2412,10 +2413,10 @@ namespace WingProcedural
             GUI.DragWindow ();
         }
 
-        private void DrawField (ref float field, float increment, Vector2 limits, string name, Vector4 hsbColor, int fieldID, int fieldType)
+        private void DrawField (ref float field, float increment, float incrementLarge, Vector2 limits, string name, Vector4 hsbColor, int fieldID, int fieldType)
         {
             bool changed = false;
-            float value = UIUtility.FieldSlider (field, increment, limits, name, out changed, ColorHSBToRGB (hsbColor), fieldType);
+            float value = UIUtility.FieldSlider (field, increment, incrementLarge, limits, name, out changed, ColorHSBToRGB (hsbColor), fieldType);
             if (changed)
             {
                 field = value;
@@ -2792,7 +2793,7 @@ namespace WingProcedural
 
         [KSPField (isPersistant = true)] public Vector4 fuelCurrentAmount = Vector4.zero;
         [KSPField (isPersistant = true)] public int fuelSelectedTankSetup = -1;
-        [KSPField (isPersistant = true)] private bool fuelBrandNewPart = true;
+        // [KSPField (isPersistant = true)] private bool fuelBrandNewPart = true;
 
         [KSPField (guiActive = false, guiActiveEditor = false, guiName = "Added cost")] public float fuelAddedCost = 0f;
         [KSPField (guiActive = false, guiActiveEditor = false, guiName = "Dry mass")] public float fuelDryMassInfo = 0f;
@@ -2881,7 +2882,7 @@ namespace WingProcedural
                 FuelSetConfigurationToParts (false);
                 fuelSelectedTankSetup = 0;
             }
-            fuelBrandNewPart = false;
+            // fuelBrandNewPart = false;
             FuelUpdateAmountsFromVolume (aeroStatVolume, false);
         }
 

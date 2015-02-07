@@ -10,11 +10,6 @@ using System.Reflection;
 
 namespace WingProcedural
 {
-    // TODO
-    // Default edge ID for surface is incorrect due to shifted limits
-    // Wing/edge limit difference assignment isn't working
-    // Alternative UI
-    
     public class WingProcedural : PartModule, IPartCostModifier
     {
         // Some handy bools
@@ -123,51 +118,41 @@ namespace WingProcedural
         // Shared properties / Base
 
         [KSPField (guiActiveEditor = false, guiActive = false, guiName = "| Base")]
-        // UI_Toggle (scene = UI_Scene.Editor, disabledText = "", enabledText = "")]
-        // public bool sharedFieldGroupBase = true;
-        // public bool sharedFieldGroupBaseCached = true;
         public static bool sharedFieldGroupBaseStatic = true;
         private static string[] sharedFieldGroupBaseArray = new string[] { "sharedBaseLength", "sharedBaseWidthRoot", "sharedBaseWidthTip", "sharedBaseThicknessRoot", "sharedBaseThicknessTip", "sharedBaseOffsetTip" };
         private static string[] sharedFieldGroupBaseArrayCtrl = new string[] { "sharedBaseOffsetRoot" };
 
         [KSPField (isPersistant = true, guiActiveEditor = false, guiActive = false, guiName = "Length", guiFormat = "S4")]
-        // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0.25f, maxValue = 16f, incrementLarge = 1f, incrementSlide = 0.125f)]
         public float sharedBaseLength = 4f;
         public float sharedBaseLengthCached = 4f;
         public static Vector4 sharedBaseLengthDefaults = new Vector4 (4f, 1f, 4f, 1f);
 
         [KSPField (isPersistant = true, guiActiveEditor = false, guiActive = false, guiName = "Width (root)", guiFormat = "S4")]
-        // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0.25f, maxValue = 16f, incrementLarge = 1f, incrementSlide = 0.125f)]
         public float sharedBaseWidthRoot = 4f;
         public float sharedBaseWidthRootCached = 4f;
         public static Vector4 sharedBaseWidthRootDefaults = new Vector4 (4f, 0.5f, 4f, 0.5f);
 
         [KSPField (isPersistant = true, guiActiveEditor = false, guiActive = false, guiName = "Width (tip)", guiFormat = "S4")]
-        // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0.25f, maxValue = 16f, incrementLarge = 1f, incrementSlide = 0.125f)]
         public float sharedBaseWidthTip = 4f;
         public float sharedBaseWidthTipCached = 4f;
         public static Vector4 sharedBaseWidthTipDefaults = new Vector4 (4f, 0.5f, 4f, 0.5f);
 
         [KSPField (isPersistant = true, guiActiveEditor = false, guiActive = false, guiName = "Offset (root)", guiFormat = "S4")]
-        // UI_FloatEdit (scene = UI_Scene.Editor, minValue = -2.5f, maxValue = 2.5f, incrementSlide = 0.125f)]
         public float sharedBaseOffsetRoot = 0f;
         public float sharedBaseOffsetRootCached = 0f;
         public static Vector4 sharedBaseOffsetRootDefaults = new Vector4 (0f, 0f, 0f, 0f);
 
         [KSPField (isPersistant = true, guiActiveEditor = false, guiActive = false, guiName = "Offset (tip)", guiFormat = "S4")]
-        // UI_FloatEdit (scene = UI_Scene.Editor, minValue = -2.5f, maxValue = 2.5f, incrementSlide = 0.125f)]
         public float sharedBaseOffsetTip = 0f;
         public float sharedBaseOffsetTipCached = 0f;
         public static Vector4 sharedBaseOffsetTipDefaults = new Vector4 (0f, 0f, 0f, 0f);
 
         [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = false, guiName = "Thickness (root)", guiFormat = "F3")]
-        // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0.08f, maxValue = 1f, incrementSlide = 0.04f)]
         public float sharedBaseThicknessRoot = 0.24f;
         public float sharedBaseThicknessRootCached = 0.24f;
         public static Vector4 sharedBaseThicknessRootDefaults = new Vector4 (0.24f, 0.24f, 0.24f, 0.24f);
 
         [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = false, guiName = "Thickness (tip)", guiFormat = "F3")]
-        // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0.08f, maxValue = 1f, incrementSlide = 0.04f)]
         public float sharedBaseThicknessTip = 0.24f;
         public float sharedBaseThicknessTipCached = 0.24f;
         public static Vector4 sharedBaseThicknessTipDefaults = new Vector4 (0.24f, 0.24f, 0.24f, 0.24f);
@@ -178,26 +163,20 @@ namespace WingProcedural
         // Shared properties / Edge / Leading
 
         [KSPField (guiActiveEditor = false, guiActive = false, guiName = "| Lead. edge")] 
-        // UI_Toggle (scene = UI_Scene.Editor, disabledText = "", enabledText = "")]
-        // public bool sharedFieldGroupEdgeLeading = false;
-        // public bool sharedFieldGroupEdgeLeadingCached = false;
         public static bool sharedFieldGroupEdgeLeadingStatic = false;
         private static string[] sharedFieldGroupEdgeLeadingArray = new string[] { "sharedEdgeTypeLeading", "sharedEdgeWidthLeadingRoot", "sharedEdgeWidthLeadingTip" };
 
         [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = false, guiName = "Shape", guiFormat = "F3")]
-        // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 1f, maxValue = 4f, incrementSlide = 1f)]
         public float sharedEdgeTypeLeading = 2f;
         public float sharedEdgeTypeLeadingCached = 2f;
         public static Vector4 sharedEdgeTypeLeadingDefaults = new Vector4 (2f, 1f, 2f, 1f);
 
         [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = false, guiName = "Width (root)", guiFormat = "F3")]
-        // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.04f)]
         public float sharedEdgeWidthLeadingRoot = 0.24f;
         public float sharedEdgeWidthLeadingRootCached = 0.24f;
         public static Vector4 sharedEdgeWidthLeadingRootDefaults = new Vector4 (0.24f, 0.24f, 0.24f, 0.24f);
 
         [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = false, guiName = "Width (tip)", guiFormat = "F3")]
-        // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.04f)]
         public float sharedEdgeWidthLeadingTip = 0.24f;
         public float sharedEdgeWidthLeadingTipCached = 0.24f;
         public static Vector4 sharedEdgeWidthLeadingTipDefaults = new Vector4 (0.24f, 0.24f, 0.24f, 0.24f);
@@ -208,26 +187,20 @@ namespace WingProcedural
         // Shared properties / Edge / Trailing
 
         [KSPField (guiActiveEditor = false, guiActive = false, guiName = "| Trail. edge")]
-        // UI_Toggle (scene = UI_Scene.Editor, disabledText = "", enabledText = "")]
-        // public bool sharedFieldGroupEdgeTrailing = false;
-        // public bool sharedFieldGroupEdgeTrailingCached = false;
         public static bool sharedFieldGroupEdgeTrailingStatic = false;
         private static string[] sharedFieldGroupEdgeTrailingArray = new string[] { "sharedEdgeTypeTrailing", "sharedEdgeWidthTrailingRoot", "sharedEdgeWidthTrailingTip" };
 
         [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = false, guiName = "Shape", guiFormat = "F3")]
-        // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 1f, maxValue = 4f, incrementSlide = 1f)]
         public float sharedEdgeTypeTrailing = 3f;
         public float sharedEdgeTypeTrailingCached = 3f;
         public static Vector4 sharedEdgeTypeTrailingDefaults = new Vector4 (3f, 2f, 3f, 2f);
 
         [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = false, guiName = "Width (root)", guiFormat = "F3")]
-        // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.04f)]
         public float sharedEdgeWidthTrailingRoot = 0.48f;
         public float sharedEdgeWidthTrailingRootCached = 0.48f;
         public static Vector4 sharedEdgeWidthTrailingRootDefaults = new Vector4 (0.48f, 0.48f, 0.48f, 0.48f);
 
         [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = false, guiName = "Width (tip)", guiFormat = "F3")]
-        // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.04f)]
         public float sharedEdgeWidthTrailingTip = 0.48f;
         public float sharedEdgeWidthTrailingTipCached = 0.48f;
         public static Vector4 sharedEdgeWidthTrailingTipDefaults = new Vector4 (0.48f, 0.48f, 0.48f, 0.48f);
@@ -237,38 +210,30 @@ namespace WingProcedural
         // Shared properties / Surface / Top
 
         [KSPField (guiActiveEditor = false, guiActive = false, guiName = "| Material A")]
-        // UI_Toggle (scene = UI_Scene.Editor, disabledText = "", enabledText = "")]
-        // public bool sharedFieldGroupColorST = false;
-        // public bool sharedFieldGroupColorSTCached = false;
         public static bool sharedFieldGroupColorSTStatic = false;
         private static string[] sharedFieldGroupColorSTArray = new string[] { "sharedMaterialST", "sharedColorSTOpacity", "sharedColorSTHue", "sharedColorSTSaturation", "sharedColorSTBrightness" };
 
         [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = false, guiName = "Material", guiFormat = "F3")]
-        // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 4f, incrementSlide = 1f)]
         public float sharedMaterialST = 1f;
         public float sharedMaterialSTCached = 1f;
         public static Vector4 sharedMaterialSTDefaults = new Vector4 (1f, 1f, 1f, 1f);
 
         [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = false, guiName = "Opacity", guiFormat = "F3")]
-        // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.01f)]
         public float sharedColorSTOpacity = 0f;
         public float sharedColorSTOpacityCached = 0f;
         public static Vector4 sharedColorSTOpacityDefaults = new Vector4 (0f, 0f, 0f, 0f);
 
         [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = false, guiName = "Color (H)", guiFormat = "F3")]
-        // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.01f)]
         public float sharedColorSTHue = 0.10f;
         public float sharedColorSTHueCached = 0.10f;
         public static Vector4 sharedColorSTHueDefaults = new Vector4 (0.1f, 0.1f, 0.1f, 0.1f);
 
         [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = false, guiName = "Color (S)", guiFormat = "F3")]
-        // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.01f)]
         public float sharedColorSTSaturation = 0.75f;
         public float sharedColorSTSaturationCached = 0.75f;
         public static Vector4 sharedColorSTSaturationDefaults = new Vector4 (0.75f, 0.75f, 0.75f, 0.75f);
 
         [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = false, guiName = "Color (B)", guiFormat = "F3")]
-        // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.01f)]
         public float sharedColorSTBrightness = 0.6f;
         public float sharedColorSTBrightnessCached = 0.6f;
         public static Vector4 sharedColorSTBrightnessDefaults = new Vector4 (0.6f, 0.6f, 0.6f, 0.6f);
@@ -279,38 +244,30 @@ namespace WingProcedural
         // Shared properties / Surface / bottom
 
         [KSPField (guiActiveEditor = false, guiActive = false, guiName = "| Material B")]
-        // UI_Toggle (scene = UI_Scene.Editor, disabledText = "", enabledText = "")]
-        // public bool sharedFieldGroupColorSB = false;
-        //public bool sharedFieldGroupColorSBCached = false;
         public static bool sharedFieldGroupColorSBStatic = false;
         private static string[] sharedFieldGroupColorSBArray = new string[] { "sharedMaterialSB", "sharedColorSBOpacity", "sharedColorSBHue", "sharedColorSBSaturation", "sharedColorSBBrightness" };
 
         [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = false, guiName = "Material", guiFormat = "F3")]
-        // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 4f, incrementSlide = 1f)]
         public float sharedMaterialSB = 4f;
         public float sharedMaterialSBCached = 4f;
         public static Vector4 sharedMaterialSBDefaults = new Vector4 (4f, 4f, 4f, 4f);
 
         [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = false, guiName = "Opacity", guiFormat = "F3")]
-        // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.01f)]
         public float sharedColorSBOpacity = 0f;
         public float sharedColorSBOpacityCached = 0f;
         public static Vector4 sharedColorSBOpacityDefaults = new Vector4 (0f, 0f, 0f, 0f);
 
         [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = false, guiName = "Color (H)", guiFormat = "F3")]
-        // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.01f)]
         public float sharedColorSBHue = 0.10f;
         public float sharedColorSBHueCached = 0.10f;
         public static Vector4 sharedColorSBHueDefaults = new Vector4 (0.1f, 0.1f, 0.1f, 0.1f);
 
         [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = false, guiName = "Color (S)", guiFormat = "F3")]
-        // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.01f)]
         public float sharedColorSBSaturation = 0.75f;
         public float sharedColorSBSaturationCached = 0.75f;
         public static Vector4 sharedColorSBSaturationDefaults = new Vector4 (0.75f, 0.75f, 0.75f, 0.75f);
 
         [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = false, guiName = "Color (B)", guiFormat = "F3")]
-        // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.01f)]
         public float sharedColorSBBrightness = 0.6f;
         public float sharedColorSBBrightnessCached = 0.6f;
         public static Vector4 sharedColorSBBrightnessDefaults = new Vector4 (0.6f, 0.6f, 0.6f, 0.6f);
@@ -321,38 +278,30 @@ namespace WingProcedural
         // Shared properties / Surface / trailing edge
 
         [KSPField (guiActiveEditor = false, guiActive = false, guiName = "| Material T")]
-        // UI_Toggle (scene = UI_Scene.Editor, disabledText = "", enabledText = "")]
-        // public bool sharedFieldGroupColorET = false;
-        // public bool sharedFieldGroupColorETCached = false;
         public static bool sharedFieldGroupColorETStatic = false;
         private static string[] sharedFieldGroupColorETArray = new string[] { "sharedMaterialET", "sharedColorETOpacity", "sharedColorETHue", "sharedColorETSaturation", "sharedColorETBrightness" };
 
         [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = false, guiName = "Material", guiFormat = "F3")]
-        // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 4f, incrementSlide = 1f)]
         public float sharedMaterialET = 4f;
         public float sharedMaterialETCached = 4f;
         public static Vector4 sharedMaterialETDefaults = new Vector4 (4f, 4f, 4f, 4f);
 
         [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = false, guiName = "Opacity", guiFormat = "F3")]
-        // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.01f)]
         public float sharedColorETOpacity = 0f;
         public float sharedColorETOpacityCached = 0f;
         public static Vector4 sharedColorETOpacityDefaults = new Vector4 (0f, 0f, 0f, 0f);
 
         [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = false, guiName = "Color (H)", guiFormat = "F3")]
-        // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.01f)]
         public float sharedColorETHue = 0.10f;
         public float sharedColorETHueCached = 0.10f;
         public static Vector4 sharedColorETHueDefaults = new Vector4 (0.1f, 0.1f, 0.1f, 0.1f);
 
         [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = false, guiName = "Color (S)", guiFormat = "F3")]
-        // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.01f)]
         public float sharedColorETSaturation = 0.75f;
         public float sharedColorETSaturationCached = 0.75f;
         public static Vector4 sharedColorETSaturationDefaults = new Vector4 (0.75f, 0.75f, 0.75f, 0.75f);
 
         [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = false, guiName = "Color (B)", guiFormat = "F3")]
-        // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.01f)]
         public float sharedColorETBrightness = 0.6f;
         public float sharedColorETBrightnessCached = 0.6f;
         public static Vector4 sharedColorETBrightnessDefaults = new Vector4 (0.6f, 0.6f, 0.6f, 0.6f);
@@ -363,38 +312,30 @@ namespace WingProcedural
         // Shared properties / Surface / leading edge
 
         [KSPField (guiActiveEditor = false, guiActive = false, guiName = "| Material L")]
-        // UI_Toggle (scene = UI_Scene.Editor, disabledText = "", enabledText = "")]
-        // public bool sharedFieldGroupColorEL = false;
-        // public bool sharedFieldGroupColorELCached = false;
         public static bool sharedFieldGroupColorELStatic = false;
         private static string[] sharedFieldGroupColorELArray = new string[] { "sharedMaterialEL", "sharedColorELOpacity", "sharedColorELHue", "sharedColorELSaturation", "sharedColorELBrightness" };
 
         [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = false, guiName = "Material", guiFormat = "F3")]
-        // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 4f, incrementSlide = 1f)]
         public float sharedMaterialEL = 4f;
         public float sharedMaterialELCached = 4f;
         public static Vector4 sharedMaterialELDefaults = new Vector4 (4f, 4f, 4f, 4f);
 
         [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = false, guiName = "Opacity", guiFormat = "F3")]
-        // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.01f)]
         public float sharedColorELOpacity = 0f;
         public float sharedColorELOpacityCached = 0f;
         public static Vector4 sharedColorELOpacityDefaults = new Vector4 (0f, 0f, 0f, 0f);
 
         [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = false, guiName = "Color (H)", guiFormat = "F3")]
-        // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.01f)]
         public float sharedColorELHue = 0.10f;
         public float sharedColorELHueCached = 0.10f;
         public static Vector4 sharedColorELHueDefaults = new Vector4 (0.1f, 0.1f, 0.1f, 0.1f);
 
         [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = false, guiName = "Color (S)", guiFormat = "F3")]
-        // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.01f)]
         public float sharedColorELSaturation = 0.75f;
         public float sharedColorELSaturationCached = 0.75f;
         public static Vector4 sharedColorELSaturationDefaults = new Vector4 (0.75f, 0.75f, 0.75f, 0.75f);
 
         [KSPField (isPersistant = true, guiActive = false, guiActiveEditor = false, guiName = "Color (B)", guiFormat = "F3")]
-        // UI_FloatEdit (scene = UI_Scene.Editor, minValue = 0f, maxValue = 1f, incrementSlide = 0.01f)]
         public float sharedColorELBrightness = 0.6f;
         public float sharedColorELBrightnessCached = 0.6f;
         public static Vector4 sharedColorELBrightnessDefaults = new Vector4 (0.6f, 0.6f, 0.6f, 0.6f);
@@ -518,17 +459,12 @@ namespace WingProcedural
         public void NextConfiguration ()
         {
             if (WingProceduralDebugValues.logFuel) DebugLogWithID ("NextConfiguration", "Started");
-            if (isCtrlSrf || isWingAsCtrlSrf || assemblyRFUsed) return;
+            if (isCtrlSrf || isWingAsCtrlSrf || assemblyRFUsed || assemblyMFTUsed) return;
             fuelSelectedTankSetup++;
-            if (fuelSelectedTankSetup >= fuelTankList.Count)
-            {
-                fuelSelectedTankSetup = 0;
-            }
-            if (HighLogic.LoadedSceneIsFlight)
-            {
-                fuelCurrentAmount = Vector4.zero;
-            }
-            FuelAssignResourcesToPart (true);
+
+            if (fuelSelectedTankSetup >= fuelConfigurationsList.Count) fuelSelectedTankSetup = 0;
+            if (HighLogic.LoadedSceneIsFlight) fuelCurrentAmount = Vector4.zero;
+            FuelSetConfigurationToParts (true);
         }
 
 
@@ -635,6 +571,7 @@ namespace WingProcedural
         public static bool assemblyFARMass = false;
         public static bool assemblyDREUsed = false;
         public static bool assemblyRFUsed = false;
+        public static bool assemblyMFTUsed = false;
 
         public void CheckAssemblies (bool forced)
         {
@@ -643,6 +580,7 @@ namespace WingProcedural
                 assemblyFARUsed = AssemblyLoader.loadedAssemblies.Any (a => a.assembly.GetName ().Name.Equals ("FerramAerospaceResearch", StringComparison.InvariantCultureIgnoreCase));
                 assemblyNEARUsed = AssemblyLoader.loadedAssemblies.Any (a => a.assembly.GetName ().Name.Equals ("NEAR", StringComparison.InvariantCultureIgnoreCase));
                 assemblyRFUsed = AssemblyLoader.loadedAssemblies.Any (a => a.assembly.GetName ().Name.Equals ("RealFuels", StringComparison.InvariantCultureIgnoreCase));
+                assemblyMFTUsed = AssemblyLoader.loadedAssemblies.Any (a => a.assembly.GetName ().Name.Equals ("modularFuelTanks", StringComparison.InvariantCultureIgnoreCase));
                 assemblyDREUsed = AssemblyLoader.loadedAssemblies.Any (a => a.assembly.GetName ().Name.Equals ("DeadlyReentry", StringComparison.InvariantCultureIgnoreCase));
                 if (assemblyFARUsed || assemblyNEARUsed)
                 {
@@ -653,8 +591,9 @@ namespace WingProcedural
                         if (nodes[i].HasValue ("massPerWingAreaSupported")) assemblyFARMass = true;
                     }
                 }
-                if (WingProceduralDebugValues.logEvents) DebugLogWithID ("CheckAssemblies", "Search results | FAR: " + assemblyFARUsed + " | NEAR: " + assemblyNEARUsed + " | FAR mass: " + assemblyFARMass + " | DRE: " + assemblyDREUsed + " | RF: " + assemblyRFUsed);
+                if (WingProceduralDebugValues.logEvents) DebugLogWithID ("CheckAssemblies", "Search results | FAR: " + assemblyFARUsed + " | NEAR: " + assemblyNEARUsed + " | FAR mass: " + assemblyFARMass + " | DRE: " + assemblyDREUsed + " | RF: " + assemblyRFUsed + " | MFT: " + assemblyMFTUsed);
                 if (isCtrlSrf && isWingAsCtrlSrf && WingProceduralDebugValues.logEvents) DebugLogWithID ("CheckAssemblies", "WARNING | PART IS CONFIGURED INCORRECTLY, BOTH BOOL PROPERTIES SHOULD NEVER BE SET TO TRUE");
+                if (isCtrlSrf && isWingAsCtrlSrf && WingProceduralDebugValues.logEvents) DebugLogWithID ("CheckAssemblies", "WARNING | Both RF and MFT mods detected, this should not be the case");
                 assembliesChecked = true;
             }
         }
@@ -720,7 +659,6 @@ namespace WingProcedural
                     // Compare the properties to cached values
                     // If there is a mismatch, then update is required
 
-                    // CheckFieldGroup (sharedFieldGroupBase, ref sharedFieldGroupBaseCached, ref sharedFieldGroupBaseStatic, sharedFieldGroupBaseArray, false, groupEntriesCtrl: sharedFieldGroupBaseArrayCtrl);
                     CheckFieldValue (sharedBaseLength, ref sharedBaseLengthCached, true);
                     CheckFieldValue (sharedBaseWidthRoot, ref sharedBaseWidthRootCached, true);
                     CheckFieldValue (sharedBaseWidthTip, ref sharedBaseWidthTipCached, true);
@@ -729,38 +667,32 @@ namespace WingProcedural
                     CheckFieldValue (sharedBaseOffsetRoot, ref sharedBaseOffsetRootCached, true);
                     CheckFieldValue (sharedBaseOffsetTip, ref sharedBaseOffsetTipCached, true);
 
-                    // CheckFieldGroup (sharedFieldGroupEdgeTrailing, ref sharedFieldGroupEdgeTrailingCached, ref sharedFieldGroupEdgeTrailingStatic, sharedFieldGroupEdgeTrailingArray, false);
                     CheckFieldValue (sharedEdgeTypeTrailing, ref sharedEdgeTypeTrailingCached, false);
                     CheckFieldValue (sharedEdgeWidthTrailingRoot, ref sharedEdgeWidthTrailingRootCached, true);
                     CheckFieldValue (sharedEdgeWidthTrailingTip, ref sharedEdgeWidthTrailingTipCached, true);
 
-                    // CheckFieldGroup (sharedFieldGroupEdgeLeading, ref sharedFieldGroupEdgeLeadingCached, ref sharedFieldGroupEdgeLeadingStatic, sharedFieldGroupEdgeLeadingArray, false);
                     CheckFieldValue (sharedEdgeTypeLeading, ref sharedEdgeTypeLeadingCached, false);
                     CheckFieldValue (sharedEdgeWidthLeadingRoot, ref sharedEdgeWidthLeadingRootCached, true);
                     CheckFieldValue (sharedEdgeWidthLeadingTip, ref sharedEdgeWidthLeadingTipCached, true);
 
-                    // CheckFieldGroup (sharedFieldGroupColorST, ref sharedFieldGroupColorSTCached, ref sharedFieldGroupColorSTStatic, sharedFieldGroupColorSTArray, false);
                     CheckFieldValue (sharedMaterialST, ref sharedMaterialSTCached, false);
                     CheckFieldValue (sharedColorSTOpacity, ref sharedColorSTOpacityCached, false);
                     CheckFieldValue (sharedColorSTHue, ref sharedColorSTHueCached, false);
                     CheckFieldValue (sharedColorSTSaturation, ref sharedColorSTSaturationCached, false);
                     CheckFieldValue (sharedColorSTBrightness, ref sharedColorSTBrightnessCached, false);
 
-                    // CheckFieldGroup (sharedFieldGroupColorSB, ref sharedFieldGroupColorSBCached, ref sharedFieldGroupColorSBStatic, sharedFieldGroupColorSBArray, false);
                     CheckFieldValue (sharedMaterialSB, ref sharedMaterialSBCached, false);
                     CheckFieldValue (sharedColorSBOpacity, ref sharedColorSBOpacityCached, false);
                     CheckFieldValue (sharedColorSBHue, ref sharedColorSBHueCached, false);
                     CheckFieldValue (sharedColorSBSaturation, ref sharedColorSBSaturationCached, false);
                     CheckFieldValue (sharedColorSBBrightness, ref sharedColorSBBrightnessCached, false);
 
-                    // CheckFieldGroup (sharedFieldGroupColorET, ref sharedFieldGroupColorETCached, ref sharedFieldGroupColorETStatic, sharedFieldGroupColorETArray, false);
                     CheckFieldValue (sharedMaterialET, ref sharedMaterialETCached, false);
                     CheckFieldValue (sharedColorETOpacity, ref sharedColorETOpacityCached, false);
                     CheckFieldValue (sharedColorETHue, ref sharedColorETHueCached, false);
                     CheckFieldValue (sharedColorETSaturation, ref sharedColorETSaturationCached, false);
                     CheckFieldValue (sharedColorETBrightness, ref sharedColorETBrightnessCached, false);
 
-                    // CheckFieldGroup (sharedFieldGroupColorEL, ref sharedFieldGroupColorELCached, ref sharedFieldGroupColorELStatic, sharedFieldGroupColorELArray, false);
                     CheckFieldValue (sharedMaterialEL, ref sharedMaterialELCached, false);
                     CheckFieldValue (sharedColorELOpacity, ref sharedColorELOpacityCached, false);
                     CheckFieldValue (sharedColorELHue, ref sharedColorELHueCached, false);
@@ -807,7 +739,6 @@ namespace WingProcedural
                     Setup ();
                     isStarted = true;
                 }
-                if (!isCtrlSrf && !isWingAsCtrlSrf) FuelOnUpdate ();
             }
             else
             {
@@ -818,6 +749,7 @@ namespace WingProcedural
                     isStarted = true;
                 }
             }
+            if (!isCtrlSrf && !isWingAsCtrlSrf) FuelOnUpdate ();
         }
 
         private void CheckFieldValue (float fieldValue, ref float fieldCache, bool affectsAerodynamics)
@@ -830,41 +762,6 @@ namespace WingProcedural
                 fieldCache = fieldValue;
             }
         }
-
-        /*
-        private void CheckFieldGroup (bool groupStatus, ref bool groupCache, ref bool groupStatic, string[] groupEntries, bool skipCheck, string[] groupEntriesWing = null, string[] groupEntriesCtrl = null) 
-        {
-            groupCache = groupStatus;
-            groupStatic = groupStatus;
-            if (!skipCheck)
-            {
-                if (groupStatus != groupCache)
-                {
-                    if (WingProceduralDebugValues.logUpdate) DebugLogWithID ("Update", "Detected field group state change");
-                    for (int i = 0; i < groupEntries.Length; ++i) SetFieldVisibility (groupEntries[i], groupStatus);
-                    if (!isCtrlSrf && groupEntriesWing != null) { for (int i = 0; i < groupEntriesWing.Length; ++i) SetFieldVisibility (groupEntriesWing[i], groupStatus); }
-                    if (isCtrlSrf && groupEntriesCtrl != null) { for (int i = 0; i < groupEntriesCtrl.Length; ++i) SetFieldVisibility (groupEntriesCtrl[i], groupStatus); }
-                    updateRequiredOnWindow = true;
-                    groupCache = groupStatus;
-                    groupStatic = groupStatus;
-                }
-            }
-            else
-            {
-                groupCache = groupStatic;
-                groupStatus = groupStatic;
-                for (int i = 0; i < groupEntries.Length; ++i) SetFieldVisibility (groupEntries[i], groupStatus);
-                updateRequiredOnWindow = true;
-            }
-        }
-
-        private void SetFieldVisibility (string name, bool visible)
-        {
-            BaseField field = Fields[name];
-            field.uiControlEditor.controlEnabled = visible;
-            field.guiActiveEditor = visible;
-        }
-        */
 
 
 
@@ -1695,38 +1592,10 @@ namespace WingProcedural
 
         private void SetFieldType (string name, int type, Vector2 limits, float increment, bool visible, float defaultValue)
         {
-            // BaseField field = Fields[name];
-            // UI_FloatEdit ui = (UI_FloatEdit) field.uiControlEditor;
-
-            float value = (float) this.GetType ().GetField (name).GetValue (this);
-            if (WingProceduralDebugValues.logFieldSetup) DebugLogWithID ("SetFieldType", "Started for field " + name + " | UI type: " + type + " | Limits: " + limits.x + "-" + limits.y + " | Increment: " + increment + " | Current value: " + value);
-
-            /*
-            if (type == 1)
-            {
-                field.guiFormat = "S4";
-                ui.minValue = limits.x;
-                ui.maxValue = limits.y;
-                ui.incrementSlide = increment;
-                ui.incrementLarge = 1f;
-                ui.scene = UI_Scene.Editor;
-            }
-            if (type == 2)
-            {
-                field.guiFormat = "F3";
-                ui.minValue = limits.x;
-                ui.maxValue = limits.y;
-                ui.incrementSlide = increment;
-                ui.incrementLarge = 0f;
-                ui.scene = UI_Scene.Editor;
-            }
-            */
-
-            if (!isSetToDefaultValues) this.GetType ().GetField (name).SetValue (this, defaultValue);
-            else this.GetType ().GetField (name).SetValue (this, Mathf.Clamp (value, limits.x, limits.y));
-
-            // field.uiControlEditor.controlEnabled = visible;
-            // field.guiActiveEditor = visible;
+            FieldInfo field = this.GetType ().GetField (name);
+            float value = (float) field.GetValue (this);
+            if (!isSetToDefaultValues) field.SetValue (this, defaultValue);
+            else field.SetValue (this, Mathf.Clamp (value, limits.x, limits.y));
         }
 
         public void SetupMeshReferences ()
@@ -2500,9 +2369,9 @@ namespace WingProcedural
                 }
 
                 GUILayout.Label ("_________________________\n\nPress J to exit edit mode\nOptions below allow you to change default values", WingProceduralManager.uiStyleLabelHint);
-                if (!isCtrlSrf && !isWingAsCtrlSrf && !assemblyRFUsed)
+                if (!isCtrlSrf && !isWingAsCtrlSrf && !assemblyRFUsed && !assemblyMFTUsed)
                 {
-                    if (GUILayout.Button (GetTankSetupName () + " | Next tank setup", WingProceduralManager.uiStyleButton)) NextConfiguration ();
+                    if (GUILayout.Button (FuelGUIGetConfigDesc () + " | Next tank setup", WingProceduralManager.uiStyleButton)) NextConfiguration ();
                 }
 
                 GUILayout.BeginHorizontal ();
@@ -2906,7 +2775,7 @@ namespace WingProcedural
             public List<WPResource> resources = new List<WPResource> ();
         }
 
-        private List<WPInnerTank> fuelTankList = new List<WPInnerTank> ();
+        private List<WPInnerTank> fuelConfigurationsList = new List<WPInnerTank> ();
 
         // Reference values for 3.25m3 tank and 1.0m3 tank
         // LF    | LFO
@@ -2922,8 +2791,7 @@ namespace WingProcedural
         public bool fuelShowInfo = false;
 
         [KSPField (isPersistant = true)] public Vector4 fuelCurrentAmount = Vector4.zero;
-        [KSPField (isPersistant = true)] public int fuelSelectedTankSetup = 0;
-        [KSPField (isPersistant = true)] public bool fuelFlightSceneStarted = false;
+        [KSPField (isPersistant = true)] public int fuelSelectedTankSetup = -1;
         [KSPField (isPersistant = true)] private bool fuelBrandNewPart = true;
 
         [KSPField (guiActive = false, guiActiveEditor = false, guiName = "Added cost")] public float fuelAddedCost = 0f;
@@ -2932,9 +2800,9 @@ namespace WingProcedural
         private bool fuelInitialized = false;
         private float fuelVolumeOld = 0f;
 
-        private string GetTankSetupName ()
+        private string FuelGUIGetConfigDesc ()
         {
-            if (assemblyRFUsed) return "";
+            if (assemblyRFUsed || assemblyMFTUsed) return "";
             else
             {
                 string units = "";
@@ -2942,31 +2810,43 @@ namespace WingProcedural
                 else if (fuelSelectedTankSetup == 2) units += "LFO (";
                 else if (fuelSelectedTankSetup == 3) units += "RCS (";
                 else units += "STR (";
-                if (fuelTankList.Count > 0)
+                if (fuelConfigurationsList.Count > 0)
                 {
-                    for (int i = 0; i < fuelTankList[fuelSelectedTankSetup].resources.Count; ++i)
+                    for (int i = 0; i < fuelConfigurationsList[fuelSelectedTankSetup].resources.Count; ++i)
                     {
-                        units += ((int) fuelTankList[fuelSelectedTankSetup].resources[i].maxAmount).ToString ();
-                        if (i == fuelTankList[fuelSelectedTankSetup].resources.Count - 1) units += ")";
+                        units += ((int) fuelConfigurationsList[fuelSelectedTankSetup].resources[i].maxAmount).ToString ();
+                        if (i == fuelConfigurationsList[fuelSelectedTankSetup].resources.Count - 1) units += ")";
                         else units += "/";
                     }
                 }
                 return units;
             }
         }
+        private void FuelGUICheckEvent ()
+        {
+            if (Events.Contains ("NextConfiguration"))
+            {
+                if (WingProceduralDebugValues.logFuel) DebugLogWithID ("FuelOnStart", "Event found and enabled");
+                Events["NextConfiguration"].active = true;
+                Events["NextConfiguration"].guiActiveEditor = true;
+            }
+            else if (WingProceduralDebugValues.logFuel) DebugLogWithID ("FuelOnStart", "Event not found");
+        }
 
         private void FuelUpdateAmountsFromVolume (float volume, bool reassignAfter)
         {
             if (isCtrlSrf || isWingAsCtrlSrf) return;
-            if (assemblyRFUsed)
+            if (assemblyRFUsed || assemblyMFTUsed)
             {
-                if (WingProceduralDebugValues.logFuel) DebugLogWithID ("FuelUpdateAmountsFromVolume", "Started for RF");
+                if (WingProceduralDebugValues.logFuel) DebugLogWithID ("FuelUpdateAmountsFromVolume", "Started for RF or MFT");
                 if (part.Modules.Contains ("ModuleFuelTanks"))
                 {
                     PartModule module = part.Modules["ModuleFuelTanks"];
                     Type type = module.GetType ();
 
-                    double volumeRF = (double) volume * 1000; // liters instead of cubic meters
+                    double volumeRF = (double) volume;
+                    if (assemblyRFUsed) volume *= 1000;     // RF requests units in liters instead of cubic meters
+                    else if (assemblyMFTUsed) volume *= 173;  // MFT requests volume in units
                     type.GetField ("volume").SetValue (module, volumeRF); 
                     type.GetMethod ("ChangeVolume").Invoke (module, new object[] { volumeRF } );
                 }
@@ -2975,74 +2855,62 @@ namespace WingProcedural
             else
             {
                 if (WingProceduralDebugValues.logFuel) DebugLogWithID ("FuelUpdateAmountsFromVolume", "Started for stock fuel");
-                for (int i = 0; i < fuelTankList.Count; ++i)
+                for (int i = 0; i < fuelConfigurationsList.Count; ++i)
                 {
-                    for (int r = 0; r < fuelTankList[i].resources.Count; ++r)
+                    for (int r = 0; r < fuelConfigurationsList[i].resources.Count; ++r)
                     {
                         float newAmount = fuelPerCubicMeter[i][r] * volume * 0.7f; // since not all volume is used
-                        fuelTankList[i].resources[r].maxAmount = newAmount;
-                        fuelTankList[i].resources[r].amount = Mathf.Min (fuelTankList[i].resources[r].amount, newAmount);
+                        fuelConfigurationsList[i].resources[r].maxAmount = newAmount;
+                        fuelConfigurationsList[i].resources[r].amount = Mathf.Min (fuelConfigurationsList[i].resources[r].amount, newAmount);
                     }
                 }
                 fuelVolumeOld = volume;
-                if (reassignAfter) FuelAssignResourcesToPart (true);
+                if (reassignAfter) FuelSetConfigurationToParts (false);
             }
         }
 
         private void FuelOnStart ()
         {
             if (WingProceduralDebugValues.logFuel) DebugLogWithID ("FuelOnStart", "Started");
-            if (isCtrlSrf || isWingAsCtrlSrf || assemblyRFUsed) return;
-            else
+            if (isCtrlSrf || isWingAsCtrlSrf || assemblyRFUsed || assemblyMFTUsed) return;
+
+            if (fuelGUI) FuelGUICheckEvent ();
+            FuelInitializeData ();
+            if (fuelSelectedTankSetup == -1)
             {
-                if (Events.Contains ("NextConfiguration"))
-                {
-                    if (WingProceduralDebugValues.logFuel) DebugLogWithID ("FuelOnStart", "Event found and enabled");
-                    Events["NextConfiguration"].active = true;
-                    Events["NextConfiguration"].guiActiveEditor = true;
-                }
-                else if (WingProceduralDebugValues.logFuel) DebugLogWithID ("FuelOnStart", "Event not found");
-                FuelInitializeData ();
-                FuelAssignResourcesToPart (false);
-                fuelBrandNewPart = false;
-                FuelUpdateAmountsFromVolume (aeroStatVolume, true);
+                FuelSetConfigurationToParts (false);
+                fuelSelectedTankSetup = 0;
             }
+            fuelBrandNewPart = false;
+            FuelUpdateAmountsFromVolume (aeroStatVolume, false);
         }
+
+        // Runs only once per scene
+        // Sets up GUI and calls setup of fuel configuration list
 
         private void FuelInitializeData ()
         {
             if (WingProceduralDebugValues.logFuel) DebugLogWithID ("FuelInitializeData", "Started");
             if (isCtrlSrf || isWingAsCtrlSrf) return;
+
             if (!fuelInitialized)
             {
-                FuelSetupTankList (false);
-                if (HighLogic.LoadedSceneIsFlight) fuelFlightSceneStarted = true;
-
-                if (fuelGUI) Events["NextConfiguration"].guiActiveEditor = true;
-                else Events["NextConfiguration"].guiActiveEditor = false;
+                FuelSetupConfigurationList (false);
                 fuelInitialized = true;
             }
         }
 
-        public void FuelSelectTankSetup (int i, bool calledByPlayer)
-        {
-            if (WingProceduralDebugValues.logFuel) DebugLogWithID ("FuelSelectTankSetup", "Started");
-            if (isCtrlSrf || isWingAsCtrlSrf) return;
-            FuelInitializeData ();
-            fuelSelectedTankSetup = i;
-            FuelAssignResourcesToPart (calledByPlayer);
-        }
-
-        private void FuelAssignResourcesToPart (bool calledByPlayer)
+        private void FuelSetConfigurationToParts (bool calledByPlayer)
         {
             if (WingProceduralDebugValues.logFuel) DebugLogWithID ("FuelAssignResourcesToPart", "Started");
-            if (isCtrlSrf || isWingAsCtrlSrf || assemblyRFUsed) return;
-            FuelSetupTankInPart (part, calledByPlayer);
+            if (isCtrlSrf || isWingAsCtrlSrf || assemblyRFUsed || assemblyMFTUsed) return;
+
+            FuelSetResourcesToPart (part, calledByPlayer);
             if (HighLogic.LoadedSceneIsEditor)
             {
                 for (int s = 0; s < part.symmetryCounterparts.Count; s++)
                 {
-                    FuelSetupTankInPart (part.symmetryCounterparts[s], calledByPlayer);
+                    FuelSetResourcesToPart (part.symmetryCounterparts[s], calledByPlayer);
                     WingProcedural wing = part.symmetryCounterparts[s].GetComponent<WingProcedural> ();
                     if (wing != null)
                     {
@@ -3053,37 +2921,39 @@ namespace WingProcedural
             if (fuelSelectedTankSetup != 0) updateRequiredOnWindow = true;
         }
 
-        private void FuelSetupTankInPart (Part currentPart, bool calledByPlayer)
+        private void FuelSetResourcesToPart (Part currentPart, bool calledByPlayer)
         {
             if (WingProceduralDebugValues.logFuel) DebugLogWithID ("FuelSetupTankInPart", "Started");
-            if (isCtrlSrf || isWingAsCtrlSrf || assemblyRFUsed) return;
+            if (isCtrlSrf || isWingAsCtrlSrf || assemblyRFUsed || assemblyMFTUsed) return;
+
             currentPart.Resources.list.Clear ();
             PartResource[] partResources = currentPart.GetComponents<PartResource> ();
-            for (int i = 0; i < partResources.Length; i++)
-            {
-                DestroyImmediate (partResources[i]);
-            }
+            for (int i = 0; i < partResources.Length; i++) DestroyImmediate (partResources[i]);
+
             if (fuelVolumeOld != aeroStatVolume) FuelUpdateAmountsFromVolume (aeroStatVolume, false);
-            for (int tankIndex = 0; tankIndex < fuelTankList.Count; tankIndex++)
+            for (int tankIndex = 0; tankIndex < fuelConfigurationsList.Count; tankIndex++)
             {
                 if (fuelSelectedTankSetup == tankIndex)
                 {
-                    for (int resourceIndex = 0; resourceIndex < fuelTankList[tankIndex].resources.Count; resourceIndex++)
+                    for (int resourceIndex = 0; resourceIndex < fuelConfigurationsList[tankIndex].resources.Count; resourceIndex++)
                     {
-                        if (fuelTankList[tankIndex].resources[resourceIndex].name != "Structural")
+                        if (fuelConfigurationsList[tankIndex].resources[resourceIndex].name != "Structural")
                         {
+                            if (WingProceduralDebugValues.logFuel) DebugLogWithID ("FuelSetResourcesToPart", "Found wing with fuel | Stored amounts: " + fuelCurrentAmount);
                             ConfigNode newResourceNode = new ConfigNode ("RESOURCE");
-                            newResourceNode.AddValue ("name", fuelTankList[tankIndex].resources[resourceIndex].name);
-                            if (calledByPlayer || fuelBrandNewPart)
+                            newResourceNode.AddValue ("name", fuelConfigurationsList[tankIndex].resources[resourceIndex].name);
+                            if (calledByPlayer) // || fuelBrandNewPart)
                             {
-                                newResourceNode.AddValue ("amount", fuelTankList[tankIndex].resources[resourceIndex].maxAmount);
-                                FuelSetResource (resourceIndex, fuelTankList[tankIndex].resources[resourceIndex].amount);
+                                if (WingProceduralDebugValues.logFuel) DebugLogWithID ("FuelSetResourcesToPart", "CBP, setting amount from max of " + fuelConfigurationsList[tankIndex].resources[resourceIndex].maxAmount);
+                                newResourceNode.AddValue ("amount", fuelConfigurationsList[tankIndex].resources[resourceIndex].maxAmount);
+                                FuelSetResource (resourceIndex, fuelConfigurationsList[tankIndex].resources[resourceIndex].amount);
                             }
                             else
                             {
+                                if (WingProceduralDebugValues.logFuel) DebugLogWithID ("FuelSetResourcesToPart", "Setting amount from stored value of " + FuelGetResource (resourceIndex));
                                 newResourceNode.AddValue ("amount", FuelGetResource (resourceIndex));
                             }
-                            newResourceNode.AddValue ("maxAmount", fuelTankList[tankIndex].resources[resourceIndex].maxAmount);
+                            newResourceNode.AddValue ("maxAmount", fuelConfigurationsList[tankIndex].resources[resourceIndex].maxAmount);
                             currentPart.AddResource (newResourceNode);
                         }
                     }
@@ -3096,11 +2966,11 @@ namespace WingProcedural
         private float FuelGetAddedCost ()
         {
             float result = 0f;
-            if (fuelSelectedTankSetup < fuelCostPerUnit.Length && fuelSelectedTankSetup < fuelTankList.Count)
+            if (fuelSelectedTankSetup < fuelCostPerUnit.Length && fuelSelectedTankSetup < fuelConfigurationsList.Count)
             {
-                for (int i = 0; i < fuelTankList[fuelSelectedTankSetup].resources.Count; ++i)
+                for (int i = 0; i < fuelConfigurationsList[fuelSelectedTankSetup].resources.Count; ++i)
                 {
-                    result += fuelCostPerUnit[fuelSelectedTankSetup] * fuelTankList[fuelSelectedTankSetup].resources[i].maxAmount;
+                    result += fuelCostPerUnit[fuelSelectedTankSetup] * fuelConfigurationsList[fuelSelectedTankSetup].resources[i].maxAmount;
                 }
             }
             return result;
@@ -3108,20 +2978,14 @@ namespace WingProcedural
 
         private void FuelOnUpdate ()
         {
-            if (fuelSelectedTankSetup < fuelTankList.Count) 
+            if (fuelSelectedTankSetup < fuelConfigurationsList.Count) 
             {
-                if (fuelTankList[fuelSelectedTankSetup] != null)
+                if (fuelConfigurationsList[fuelSelectedTankSetup] != null)
                 {
-                    for (int i = 0; i < fuelTankList[fuelSelectedTankSetup].resources.Count; i++)
+                    for (int i = 0; i < fuelConfigurationsList[fuelSelectedTankSetup].resources.Count; i++)
                     {
-                        if (fuelTankList[fuelSelectedTankSetup].resources[i].name == "Structural")
-                        {
-
-                        }
-                        else
-                        {
-                            FuelSetResource (i, (float) part.Resources[fuelTankList[fuelSelectedTankSetup].resources[i].name].amount);
-                        }
+                        if (fuelConfigurationsList[fuelSelectedTankSetup].resources[i].name != "Structural")
+                            FuelSetResource (i, (float) part.Resources[fuelConfigurationsList[fuelSelectedTankSetup].resources[i].name].amount);
                     }
                 }
             }
@@ -3146,6 +3010,7 @@ namespace WingProcedural
 
         private void FuelSetResource (int number, float amount)
         {
+            // Vector4 fuelCurrentAmountCached = fuelCurrentAmount;
             switch (number)
             {
                 case 0:
@@ -3161,47 +3026,52 @@ namespace WingProcedural
                     fuelCurrentAmount.w = amount;
                     break;
             }
+            // if (WingProceduralDebugValues.logFuel) DebugLogWithID ("FuelSetResource", "Old: " + fuelCurrentAmountCached + " | New: " + fuelCurrentAmount);
         }
 
-        private void FuelSetupTankList (bool calledByPlayer)
+        // Sets up fuel configuration list
+        // Argument determines the source of fetched resource amount
+
+        private void FuelSetupConfigurationList (bool calledByPlayer)
         {
             if (WingProceduralDebugValues.logFuel) DebugLogWithID ("FuelSetupTankList", "Started");
-            if (isCtrlSrf || isWingAsCtrlSrf || assemblyRFUsed) return;
-            fuelTankList.Clear ();
+            if (isCtrlSrf || isWingAsCtrlSrf || assemblyRFUsed || assemblyMFTUsed) return;
 
             // First find the amounts each tank type is filled with
+            // The created list contains configurations with amount of fuel per volume
 
-            List<List<float>> resourceList = new List<List<float>> ();
-            for (int tankIndex = 0; tankIndex < fuelPerCubicMeter.Length; tankIndex++)
+            fuelConfigurationsList.Clear ();
+            List<List<float>> configList = new List<List<float>> ();
+            for (int configID = 0; configID < fuelPerCubicMeter.Length; configID++)
             {
-                resourceList.Add (new List<float> ());
-                for (int amountIndex = 0; amountIndex < fuelPerCubicMeter[tankIndex].Length; amountIndex++)
+                configList.Add (new List<float> ());
+                for (int amountIndex = 0; amountIndex < fuelPerCubicMeter[configID].Length; amountIndex++)
                 {
-                    resourceList[tankIndex].Add (fuelPerCubicMeter[tankIndex][amountIndex]);
+                    configList[configID].Add (fuelPerCubicMeter[configID][amountIndex]);
                 }
             }
 
             // Then find the kinds of resources each tank holds, and fill them with the amounts found previously, or the amount hey held last (values kept in save persistence/craft)
 
-            for (int tankIndex = 0; tankIndex < fuelResourceNames.Length; tankIndex++)
+            for (int configID = 0; configID < fuelResourceNames.Length; configID++)
             {
                 WPInnerTank newTank = new WPInnerTank ();
-                fuelTankList.Add (newTank);
-                for (int nameIndex = 0; nameIndex < fuelResourceNames[tankIndex].Length; nameIndex++)
+                fuelConfigurationsList.Add (newTank);
+                for (int nameID = 0; nameID < fuelResourceNames[configID].Length; nameID++)
                 {
-                    WPResource newResource = new WPResource (fuelResourceNames[tankIndex][nameIndex].Trim (' '));
-                    if (resourceList[tankIndex] != null)
+                    WPResource newResource = new WPResource (fuelResourceNames[configID][nameID].Trim (' '));
+                    if (configList[configID] != null)
                     {
-                        if (nameIndex < resourceList[tankIndex].Count)
+                        if (nameID < configList[configID].Count)
                         {
-                            newResource.maxAmount = resourceList[tankIndex][nameIndex];
+                            newResource.maxAmount = configList[configID][nameID];
                             if (calledByPlayer)
                             {
-                                newResource.amount = resourceList[tankIndex][nameIndex]; 
+                                newResource.amount = configList[configID][nameID]; 
                             }
                             else
                             {
-                                newResource.amount = FuelGetResource (nameIndex);
+                                newResource.amount = FuelGetResource (nameID);
                             }
                         }
                     }
@@ -3217,13 +3087,13 @@ namespace WingProcedural
 
         public float GetModuleCost ()
         {
-            if (assemblyRFUsed) return aeroUICost;
+            if (assemblyRFUsed || assemblyMFTUsed) return aeroUICost;
             else return FuelGetAddedCost () + aeroUICost;
         }
 
         public float GetModuleCost (float modifier)
         {
-            if (assemblyRFUsed) return aeroUICost;
+            if (assemblyRFUsed || assemblyMFTUsed) return aeroUICost;
             else return FuelGetAddedCost () + aeroUICost;
         }
 
@@ -3343,7 +3213,6 @@ namespace WingProcedural
 
         public void DumpState ()
         {
-            // string[] fieldNames = Array.ConvertAll(fields, field => field.Name);
             string report = "State report on part " + this.GetInstanceID () + ":\n\n";
             Type type = this.GetType ();
             FieldInfo[] fields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
@@ -3361,10 +3230,7 @@ namespace WingProcedural
                     else report += "Field " + i.ToString () + " name not available\n";
                 }
             }
-            else
-            {
-                report += "Field info size mismatch, list can't be printed";
-            }
+            else report += "Field info size mismatch, list can't be printed";
             Debug.Log (report);
         }
     }

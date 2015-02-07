@@ -304,7 +304,7 @@ namespace WingProcedural
         public static bool logMeshReferences = false;
         public static bool logCheckMeshFilter = false;
 
-        public static bool logPropertyWindow = true;
+        public static bool logPropertyWindow = false;
         public static bool logFlightSetup = false;
         public static bool logFieldSetup = false;
 

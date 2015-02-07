@@ -2978,7 +2978,7 @@ namespace WingProcedural
 
         private void FuelOnUpdate ()
         {
-            if (fuelSelectedTankSetup < fuelConfigurationsList.Count) 
+            if (fuelSelectedTankSetup < fuelConfigurationsList.Count && fuelSelectedTankSetup >= 0) 
             {
                 if (fuelConfigurationsList[fuelSelectedTankSetup] != null)
                 {

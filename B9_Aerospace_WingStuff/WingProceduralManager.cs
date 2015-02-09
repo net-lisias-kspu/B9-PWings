@@ -17,7 +17,9 @@ namespace WingProcedural
 
         private bool inputLocked = false;
         private bool windowOpen = false;
-        private Rect windowPos = new Rect (50, 50, 700, 250);
+
+        public static Rect uiRectWindowDebug = new Rect (50, 50, 700, 250);
+        public static Rect uiRectWindowEditor = new Rect ();
 
         public static GUIStyle uiStyleWindow = new GUIStyle ();
         public static GUIStyle uiStyleLabelMedium = new GUIStyle ();
@@ -66,11 +68,13 @@ namespace WingProcedural
 
         private void OnAppLaunchToggleOn ()
         {
+            LoadConfigs ();
             windowOpen = true;
         }
 
         private void OnAppLaunchToggleOff ()
         {
+            SaveConfigs ();
             windowOpen = false;
         }
 
@@ -180,13 +184,13 @@ namespace WingProcedural
             {
                 if (windowOpen)
                 {
-                    windowPos = GUILayout.Window ("WingProceduralManagerWindow".GetHashCode (), windowPos, debugWindow, "B9 Procedural Part Options", GUILayout.ExpandWidth (true), GUILayout.ExpandHeight (true));
-                    if (!inputLocked && windowPos.Contains (UIUtility.GetMousePos ()))
+                    uiRectWindowDebug = GUILayout.Window ("WingProceduralManagerWindow".GetHashCode (), uiRectWindowDebug, debugWindow, "B9 Procedural Part Options", GUILayout.ExpandWidth (true), GUILayout.ExpandHeight (true));
+                    if (!inputLocked && uiRectWindowDebug.Contains (UIUtility.GetMousePos ()))
                     {
                         InputLockManager.SetControlLock (ControlTypes.KSC_ALL, "WingProceduralManagerLock");
                         inputLocked = true;
                     }
-                    else if (inputLocked && !windowPos.Contains (UIUtility.GetMousePos ()))
+                    else if (inputLocked && !uiRectWindowDebug.Contains (UIUtility.GetMousePos ()))
                     {
                         InputLockManager.RemoveControlLock ("WingProceduralManagerLock");
                         inputLocked = false;
@@ -220,7 +224,7 @@ namespace WingProcedural
             if (activeTab == MenuTab.DebugAndData) DebugAndDataTab ();
 
             GUI.DragWindow ();
-            windowPos = UIUtility.ClampToScreen (windowPos);
+            uiRectWindowDebug = UIUtility.ClampToScreen (uiRectWindowDebug);
         }
 
         private void DebugAndDataTab ()
@@ -233,21 +237,21 @@ namespace WingProcedural
                 "Upon doing so, check the Debug tab of Alt+F12 window or KSP.log files for results. Be aware that some of these toggles might lead to thousands of messages being generated, so don't keep them enabled in normal play if you are having performance issues."
             , uiStyleLabelHint);
 
-            WingProceduralDebugValues.logCAV = GUILayout.Toggle (WingProceduralDebugValues.logCAV, "  Log aerodynamic setup", uiStyleToggle);
-            WingProceduralDebugValues.logUpdate = GUILayout.Toggle (WingProceduralDebugValues.logUpdate, "  Log value detection", uiStyleToggle);
-            WingProceduralDebugValues.logUpdateGeometry = GUILayout.Toggle (WingProceduralDebugValues.logUpdateGeometry, "  Log geometry updates", uiStyleToggle);
+            WPDebug.logCAV = GUILayout.Toggle (WPDebug.logCAV, "  Log aerodynamic setup", uiStyleToggle);
+            WPDebug.logUpdate = GUILayout.Toggle (WPDebug.logUpdate, "  Log value detection", uiStyleToggle);
+            WPDebug.logUpdateGeometry = GUILayout.Toggle (WPDebug.logUpdateGeometry, "  Log geometry updates", uiStyleToggle);
 
-            WingProceduralDebugValues.logUpdateMaterials = GUILayout.Toggle (WingProceduralDebugValues.logUpdateMaterials, "  Log material updates", uiStyleToggle);
-            WingProceduralDebugValues.logMeshReferences = GUILayout.Toggle (WingProceduralDebugValues.logMeshReferences, "  Log mesh reference setup", uiStyleToggle);
-            WingProceduralDebugValues.logCheckMeshFilter = GUILayout.Toggle (WingProceduralDebugValues.logCheckMeshFilter, "  Log mesh filter setup", uiStyleToggle);
+            WPDebug.logUpdateMaterials = GUILayout.Toggle (WPDebug.logUpdateMaterials, "  Log material updates", uiStyleToggle);
+            WPDebug.logMeshReferences = GUILayout.Toggle (WPDebug.logMeshReferences, "  Log mesh reference setup", uiStyleToggle);
+            WPDebug.logCheckMeshFilter = GUILayout.Toggle (WPDebug.logCheckMeshFilter, "  Log mesh filter setup", uiStyleToggle);
 
-            WingProceduralDebugValues.logPropertyWindow = GUILayout.Toggle (WingProceduralDebugValues.logPropertyWindow, "  Log property window", uiStyleToggle);
-            WingProceduralDebugValues.logFlightSetup = GUILayout.Toggle (WingProceduralDebugValues.logFlightSetup, "  Log pre-flight setup", uiStyleToggle);
-            WingProceduralDebugValues.logFieldSetup = GUILayout.Toggle (WingProceduralDebugValues.logFieldSetup, "  Log field setup", uiStyleToggle);
+            WPDebug.logPropertyWindow = GUILayout.Toggle (WPDebug.logPropertyWindow, "  Log property window", uiStyleToggle);
+            WPDebug.logFlightSetup = GUILayout.Toggle (WPDebug.logFlightSetup, "  Log pre-flight setup", uiStyleToggle);
+            WPDebug.logFieldSetup = GUILayout.Toggle (WPDebug.logFieldSetup, "  Log field setup", uiStyleToggle);
 
-            WingProceduralDebugValues.logFuel = GUILayout.Toggle (WingProceduralDebugValues.logFuel, "  Log fuel setup", uiStyleToggle);
-            WingProceduralDebugValues.logLimits = GUILayout.Toggle (WingProceduralDebugValues.logLimits, "  Log field limits", uiStyleToggle);
-            WingProceduralDebugValues.logEvents = GUILayout.Toggle (WingProceduralDebugValues.logEvents, "  Log event invocation", uiStyleToggle);
+            WPDebug.logFuel = GUILayout.Toggle (WPDebug.logFuel, "  Log fuel setup", uiStyleToggle);
+            WPDebug.logLimits = GUILayout.Toggle (WPDebug.logLimits, "  Log field limits", uiStyleToggle);
+            WPDebug.logEvents = GUILayout.Toggle (WPDebug.logEvents, "  Log event invocation", uiStyleToggle);
 
             GUILayout.EndVertical ();
             GUILayout.EndHorizontal ();
@@ -258,40 +262,46 @@ namespace WingProcedural
             config = KSP.IO.PluginConfiguration.CreateForType<WingProceduralManager> ();
             config.load ();
 
-            WingProceduralDebugValues.logCAV = Convert.ToBoolean (config.GetValue ("logCAV", "false"));
-            WingProceduralDebugValues.logUpdate = Convert.ToBoolean (config.GetValue ("logUpdate", "false"));
-            WingProceduralDebugValues.logUpdateGeometry = Convert.ToBoolean (config.GetValue ("logUpdateGeometry", "false"));
+            WingProceduralManager.uiRectWindowEditor = config.GetValue<Rect> ("uiRectWindowEditor");
+            WingProceduralManager.uiRectWindowDebug = config.GetValue<Rect> ("uiRectWindowDebug");
 
-            WingProceduralDebugValues.logUpdateMaterials = Convert.ToBoolean (config.GetValue ("logUpdateMaterials", "false"));
-            WingProceduralDebugValues.logMeshReferences = Convert.ToBoolean (config.GetValue ("logMeshReferences", "false"));
-            WingProceduralDebugValues.logCheckMeshFilter = Convert.ToBoolean (config.GetValue ("logCheckMeshFilter", "false"));
+            WPDebug.logCAV = Convert.ToBoolean (config.GetValue ("logCAV", "false"));
+            WPDebug.logUpdate = Convert.ToBoolean (config.GetValue ("logUpdate", "false"));
+            WPDebug.logUpdateGeometry = Convert.ToBoolean (config.GetValue ("logUpdateGeometry", "false"));
 
-            WingProceduralDebugValues.logPropertyWindow = Convert.ToBoolean (config.GetValue ("logPropertyWindow", "false"));
-            WingProceduralDebugValues.logFlightSetup = Convert.ToBoolean (config.GetValue ("logFlightSetup", "false"));
-            WingProceduralDebugValues.logFieldSetup = Convert.ToBoolean (config.GetValue ("logFieldSetup", "false"));
+            WPDebug.logUpdateMaterials = Convert.ToBoolean (config.GetValue ("logUpdateMaterials", "false"));
+            WPDebug.logMeshReferences = Convert.ToBoolean (config.GetValue ("logMeshReferences", "false"));
+            WPDebug.logCheckMeshFilter = Convert.ToBoolean (config.GetValue ("logCheckMeshFilter", "false"));
 
-            WingProceduralDebugValues.logFuel = Convert.ToBoolean (config.GetValue ("logFuel", "false"));
-            WingProceduralDebugValues.logLimits = Convert.ToBoolean (config.GetValue ("logLimits", "false"));
-            WingProceduralDebugValues.logEvents = Convert.ToBoolean (config.GetValue ("logEvents", "false"));
+            WPDebug.logPropertyWindow = Convert.ToBoolean (config.GetValue ("logPropertyWindow", "false"));
+            WPDebug.logFlightSetup = Convert.ToBoolean (config.GetValue ("logFlightSetup", "false"));
+            WPDebug.logFieldSetup = Convert.ToBoolean (config.GetValue ("logFieldSetup", "false"));
+
+            WPDebug.logFuel = Convert.ToBoolean (config.GetValue ("logFuel", "false"));
+            WPDebug.logLimits = Convert.ToBoolean (config.GetValue ("logLimits", "false"));
+            WPDebug.logEvents = Convert.ToBoolean (config.GetValue ("logEvents", "false"));
         }
 
         public static void SaveConfigs ()
         {
-            config.SetValue ("logCAV", WingProceduralDebugValues.logCAV.ToString ());
-            config.SetValue ("logUpdate", WingProceduralDebugValues.logUpdate.ToString ());
-            config.SetValue ("logUpdateGeometry", WingProceduralDebugValues.logUpdateGeometry.ToString ());
+            config.SetValue ("uiRectWindowEditor", uiRectWindowEditor);
+            config.SetValue ("uiRectWindowDebug", uiRectWindowDebug);
 
-            config.SetValue ("logUpdateMaterials", WingProceduralDebugValues.logUpdateMaterials.ToString ());
-            config.SetValue ("logMeshReferences", WingProceduralDebugValues.logMeshReferences.ToString ());
-            config.SetValue ("logCheckMeshFilter", WingProceduralDebugValues.logCheckMeshFilter.ToString ());
+            config.SetValue ("logCAV", WPDebug.logCAV.ToString ());
+            config.SetValue ("logUpdate", WPDebug.logUpdate.ToString ());
+            config.SetValue ("logUpdateGeometry", WPDebug.logUpdateGeometry.ToString ());
 
-            config.SetValue ("logPropertyWindow", WingProceduralDebugValues.logPropertyWindow.ToString ());
-            config.SetValue ("logFlightSetup", WingProceduralDebugValues.logFlightSetup.ToString ());
-            config.SetValue ("logFieldSetup", WingProceduralDebugValues.logFieldSetup.ToString ());
+            config.SetValue ("logUpdateMaterials", WPDebug.logUpdateMaterials.ToString ());
+            config.SetValue ("logMeshReferences", WPDebug.logMeshReferences.ToString ());
+            config.SetValue ("logCheckMeshFilter", WPDebug.logCheckMeshFilter.ToString ());
 
-            config.SetValue ("logFuel", WingProceduralDebugValues.logFuel.ToString ());
-            config.SetValue ("logLimits", WingProceduralDebugValues.logLimits.ToString ());
-            config.SetValue ("logEvents", WingProceduralDebugValues.logEvents.ToString ());
+            config.SetValue ("logPropertyWindow", WPDebug.logPropertyWindow.ToString ());
+            config.SetValue ("logFlightSetup", WPDebug.logFlightSetup.ToString ());
+            config.SetValue ("logFieldSetup", WPDebug.logFieldSetup.ToString ());
+
+            config.SetValue ("logFuel", WPDebug.logFuel.ToString ());
+            config.SetValue ("logLimits", WPDebug.logLimits.ToString ());
+            config.SetValue ("logEvents", WPDebug.logEvents.ToString ());
 
             config.save ();
         }
@@ -305,7 +315,7 @@ namespace WingProcedural
 
     }
 
-    public static class WingProceduralDebugValues
+    public static class WPDebug
     {
         public static bool logCAV = false;
         public static bool logUpdate = false;

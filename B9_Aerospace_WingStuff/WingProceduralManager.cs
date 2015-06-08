@@ -9,7 +9,7 @@ namespace WingProcedural
     // Referenced from FAR debug manager
     // Credit goes to ferram4
 
-    [KSPAddon (KSPAddon.Startup.SpaceCentre, false)]
+    [KSPAddon (KSPAddon.Startup.SpaceCentre, true)]
     public class WingProceduralManager : MonoBehaviour
     {
         public static KSP.IO.PluginConfiguration config;
@@ -45,7 +45,8 @@ namespace WingProcedural
         public void Awake ()
         {
             LoadConfigs ();
-            GameEvents.onGUIApplicationLauncherReady.Add (OnGUIAppLauncherReady);
+            if (ApplicationLauncher.Instance != null)
+                OnGUIAppLauncherReady();
         }
 
         private void OnGUIAppLauncherReady ()
@@ -262,7 +263,7 @@ namespace WingProcedural
             config = KSP.IO.PluginConfiguration.CreateForType<WingProceduralManager> ();
             config.load ();
 
-            WingProceduralManager.uiRectWindowEditor = config.GetValue<Rect> ("uiRectWindowEditor");
+            WingProceduralManager.uiRectWindowEditor = config.GetValue("uiRectWindowEditor", UIUtility.SetToScreenCenter(new Rect()));
             WingProceduralManager.uiRectWindowDebug = config.GetValue<Rect> ("uiRectWindowDebug");
 
             WPDebug.logCAV = Convert.ToBoolean (config.GetValue ("logCAV", "false"));
@@ -309,8 +310,6 @@ namespace WingProcedural
         private void OnDestroy ()
         {
             SaveConfigs ();
-            GameEvents.onGUIApplicationLauncherReady.Remove (OnGUIAppLauncherReady);
-            if (debugButtonStock != null) ApplicationLauncher.Instance.RemoveModApplication (debugButtonStock);
         }
 
     }

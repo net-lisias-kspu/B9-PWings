@@ -31,14 +31,14 @@ namespace WingProcedural
             if (GUI.Button(rectButtonL, "", WingProceduralManager.uiStyleButton))
             {
                 if (Input.GetMouseButtonUp(0) || !allowFine)
-                    value01 -= incrementLarge;
+                    value01 -= incrementLarge / range;
                 else if (Input.GetMouseButtonUp(1) && allowFine)
                     value01 -= incrementLarge * increment01;
             }
             if (GUI.Button(rectButtonR, "", WingProceduralManager.uiStyleButton))
             {
                 if (Input.GetMouseButtonUp(0) || !allowFine)
-                    value01 += incrementLarge;
+                    value01 += incrementLarge / range;
                 else if (Input.GetMouseButtonUp(1) && allowFine)
                     value01 += incrementLarge * increment01;
             }

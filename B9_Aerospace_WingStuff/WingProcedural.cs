@@ -61,7 +61,6 @@ namespace WingProcedural
         }
 
         ArrowPointer pointer;
-
         void DrawArrow(Vector3 dir)
         {
             if (pointer == null)
@@ -644,7 +643,6 @@ namespace WingProcedural
 
         public static bool assembliesChecked = false;
         public static bool assemblyFARUsed = false;
-        public static bool assemblyFARMass = false;
         public static bool assemblyDREUsed = false;
         public static bool assemblyRFUsed = false;
         public static bool assemblyMFTUsed = false;
@@ -657,19 +655,9 @@ namespace WingProcedural
                 assemblyRFUsed = AssemblyLoader.loadedAssemblies.Any (a => a.assembly.GetName ().Name.Equals ("RealFuels", StringComparison.InvariantCultureIgnoreCase));
                 assemblyMFTUsed = AssemblyLoader.loadedAssemblies.Any (a => a.assembly.GetName ().Name.Equals ("modularFuelTanks", StringComparison.InvariantCultureIgnoreCase));
                 assemblyDREUsed = AssemblyLoader.loadedAssemblies.Any (a => a.assembly.GetName ().Name.Equals ("DeadlyReentry", StringComparison.InvariantCultureIgnoreCase));
-                if (assemblyFARUsed)
-                {
-                    ConfigNode[] nodes = GameDatabase.Instance.GetConfigNodes ("FARAeroData");
-                    for (int i = 0; i < nodes.Length; ++i)
-                    {
-                        if (nodes[i] == null)
-                            continue;
-                        if (nodes[i].HasValue ("massPerWingAreaSupported"))
-                            assemblyFARMass = true;
-                    }
-                }
+
                 if (WPDebug.logEvents)
-                    DebugLogWithID ("CheckAssemblies", "Search results | FAR: " + assemblyFARUsed + " | FAR mass: " + assemblyFARMass + " | DRE: " + assemblyDREUsed + " | RF: " + assemblyRFUsed + " | MFT: " + assemblyMFTUsed);
+                    DebugLogWithID ("CheckAssemblies", "Search results | FAR: " + assemblyFARUsed + " | DRE: " + assemblyDREUsed + " | RF: " + assemblyRFUsed + " | MFT: " + assemblyMFTUsed);
                 if (isCtrlSrf && isWingAsCtrlSrf && WPDebug.logEvents)
                     DebugLogWithID ("CheckAssemblies", "WARNING | PART IS CONFIGURED INCORRECTLY, BOTH BOOL PROPERTIES SHOULD NEVER BE SET TO TRUE");
                 if (assemblyRFUsed && assemblyMFTUsed && WPDebug.logEvents) 
@@ -788,7 +776,7 @@ namespace WingProcedural
                 if (parentModule != null)
                 {
                     parentModule.CalculateVolume();
-                    parentModule.CalculateAerodynamicValues();
+                    parentModule.StartCoroutine(parentModule.updateAeroDelayed());
                 }
             }
             isAttached = false;
@@ -1373,7 +1361,7 @@ namespace WingProcedural
             if (HighLogic.LoadedSceneIsEditor)
                 CalculateVolume ();
             if (updateAerodynamics)
-                CalculateAerodynamicValues();
+                StartCoroutine(updateAeroDelayed());
         }
 
         private int getSingleTriCount(int edgeType)
@@ -2018,30 +2006,27 @@ namespace WingProcedural
                 DebugLogWithID ("CalculateAerodynamicValues", "Passed cost/force/torque");
 
             // Stock-only values
-
-            if (!assemblyFARUsed || !assemblyFARMass)
-            {
-                if (WPDebug.logCAV)
-                    DebugLogWithID ("CalculateAerodynamicValues", "FAR/NEAR is inactive or FAR mass is not enabled, calculating stock part mass");
-                part.mass = Mathf.Round ((float) aeroStatMass * 100f) / 100f;
-            }
             if (!assemblyFARUsed)
             {
+                float stockLiftCoefficient = (float)aeroStatSurfaceArea / 3.52f;
                 if (!isCtrlSrf && !isWingAsCtrlSrf)
                 {
                     if (WPDebug.logCAV)
                         DebugLogWithID ("CalculateAerodynamicValues", "FAR/NEAR is inactive, calculating values for winglet part type");
-                    ((ModuleLiftingSurface)this.part.Modules["ModuleLiftingSurface"]).deflectionLiftCoeff = Mathf.Round ((float) aeroStatCl * 100f) / 100f;
+                    ((ModuleLiftingSurface)this.part.Modules["ModuleLiftingSurface"]).deflectionLiftCoeff = (float)Math.Round(stockLiftCoefficient, 2);
+                    part.mass = stockLiftCoefficient * 0.1f;
                 }
                 else
                 {
                     if (WPDebug.logCAV)
                         DebugLogWithID ("CalculateAerodynamicValues", "FAR/NEAR is inactive, calculating stock control surface module values");
-                    var mCtrlSrf = part.Modules.OfType<ModuleControlSurface> ().FirstOrDefault ();
-                    mCtrlSrf.deflectionLiftCoeff = Mathf.Round ((float) aeroStatCl * 100f) / 100f;
+                    ModuleControlSurface mCtrlSrf = part.Modules.OfType<ModuleControlSurface> ().FirstOrDefault ();
+                    mCtrlSrf.deflectionLiftCoeff = (float)Math.Round(stockLiftCoefficient, 2);
                     mCtrlSrf.ctrlSurfaceArea = aeroConstControlSurfaceFraction;
+                    part.mass = stockLiftCoefficient * (1 + mCtrlSrf.ctrlSurfaceArea) * 0.1f;
                 }
             }
+
             if (WPDebug.logCAV)
                 DebugLogWithID ("CalculateAerodynamicValues", "Passed stock drag/deflection/area");
 
@@ -2122,19 +2107,7 @@ namespace WingProcedural
                             if (WPDebug.logCAV)
                                 DebugLogWithID ("CalculateAerodynamicValues", "FAR/NEAR | All values set, invoking the method");
                             aeroFARMethodInfoUsed.Invoke (aeroFARModuleReference, null);
-
-                            StartCoroutine(updateFARGeometry());
                         }
-
-                        //Debug.Log("=========================================");
-                        //Debug.Log("b_2: " + aeroStatSemispan + ", " + aeroFARFieldInfoSemispan.GetValue(aeroFARModuleReference));
-                        //Debug.Log("b_2_actual: " + aeroStatSemispan + ", " + aeroFARFieldInfoSemispan_Actual.GetValue(aeroFARModuleReference));
-                        //Debug.Log("MAC: " + aeroStatMeanAerodynamicChord + ", " + aeroFARFieldInfoMAC.GetValue(aeroFARModuleReference));
-                        //Debug.Log("MAC_actual: " + aeroStatMeanAerodynamicChord + ", " + aeroFARFieldInfoMAC_Actual.GetValue(aeroFARModuleReference));
-                        //Debug.Log("S: " + aeroStatSurfaceArea + ", " + aeroFARFieldInfoSurfaceArea.GetValue(aeroFARModuleReference));
-                        //Debug.Log("MidChordSweep: " + aeroStatMidChordSweep + ", " + aeroFARFieldInfoMidChordSweep.GetValue(aeroFARModuleReference));
-                        //Debug.Log("TaperRatio: " + aeroStatTaperRatio + ", " + aeroFARFieldInfoTaperRatio.GetValue(aeroFARModuleReference));
-                        //Debug.Log("ctrl fraction: " + aeroConstControlSurfaceFraction + ", " + aeroFARFieldInfoControlSurfaceFraction.GetValue(aeroFARModuleReference));
                     }
                 }
             }
@@ -2148,7 +2121,7 @@ namespace WingProcedural
                 aeroUICd = Mathf.Round ((float) aeroStatCd * 100f) / 100f;
                 aeroUICl = Mathf.Round ((float) aeroStatCl * 100f) / 100f;
             }
-            if (!assemblyFARUsed || !assemblyFARMass)
+            if (!assemblyFARUsed)
                 aeroUIMass = part.mass;
 
             aeroUIMeanAerodynamicChord = (float) aeroStatMeanAerodynamicChord;
@@ -2163,7 +2136,12 @@ namespace WingProcedural
             if (WPDebug.logCAV)
                 DebugLogWithID ("CalculateAerodynamicValues", "Finished");
 
-            if (!assemblyFARUsed)
+            if (assemblyFARUsed)
+            {
+                UpdateCollidersForFAR();
+                part.SendMessage("GeometryPartModuleRebuildMeshData"); // notify FAR that geometry has changed
+            }
+            else
             {
                 DragCube DragCube = DragCubeSystem.Instance.RenderProceduralDragCube(part);
                 part.DragCubes.ClearCubes();
@@ -2173,7 +2151,7 @@ namespace WingProcedural
         }
 
         float updateTimeDelay = 0;
-        IEnumerator updateFARGeometry()
+        IEnumerator updateAeroDelayed()
         {
             bool running = updateTimeDelay > 0;
             updateTimeDelay = 0.5f;
@@ -2184,8 +2162,7 @@ namespace WingProcedural
                 updateTimeDelay -= TimeWarp.deltaTime;
                 yield return null;
             }
-            UpdateCollidersForFAR();
-            part.SendMessage("GeometryPartModuleRebuildMeshData"); // notify FAR that geometry has changed
+            CalculateAerodynamicValues();
             updateTimeDelay = 0;
         }
 
@@ -2241,12 +2218,8 @@ namespace WingProcedural
                 {
                     Fields["aeroUICd"].guiActiveEditor = showWingData;
                     Fields["aeroUICl"].guiActiveEditor = showWingData;
-                }
-
-                // If FAR|NEAR are not present, or its a version without wing mass calculations, toggle wing mass
-                if (!assemblyFARUsed || !assemblyFARMass)
                     Fields["aeroUIMass"].guiActive = showWingData;
-
+                }
                 // Toggle the rest of the info values
                 Fields["aeroUICost"].guiActiveEditor = showWingData;
                 Fields["aeroUIMeanAerodynamicChord"].guiActiveEditor = showWingData;

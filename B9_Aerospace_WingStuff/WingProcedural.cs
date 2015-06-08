@@ -61,6 +61,7 @@ namespace WingProcedural
         }
 
         ArrowPointer pointer;
+
         void DrawArrow(Vector3 dir)
         {
             if (pointer == null)
@@ -1642,8 +1643,8 @@ namespace WingProcedural
         public static Texture materialLayeredEdgeTextureMain;
         public static Texture materialLayeredEdgeTextureMask;
 
-        private float materialPropertyShininess = 0.078125f;
-        private Color materialPropertySpecular = new Color (0.5f, 0.5f, 0.5f, 1.0f);
+        private float materialPropertyShininess = 0.4f; // 0.078125f;
+        private Color materialPropertySpecular = new Color (0.62109375f, 0.62109375f, 0.62109375f, 1.0f); // new Color (0.5f, 0.5f, 0.5f, 1.0f);
 
         public void UpdateMaterials ()
         {

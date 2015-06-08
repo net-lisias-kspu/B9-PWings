@@ -98,10 +98,12 @@ Shader "KSP/Specular Layered"
 
 			o.Albedo = composite;
 			o.Emission = emission;
-			o.Gloss = albedoGrayscaleAndMask.x; // lerp (albedoGrayscaleAndMask.xxx, IN.color.x + IN.color.y + IN.color.z) / 3, factorMask);
+
+			o.Gloss = (pow (1 - albedoGrayscaleAndMask.y + 0.4, 3) + 0.2) * albedoGrayscaleAndMask.y;
+			// Gloss output is weird - it's a workaround to extracting a decent-looking specular map out of colormask and some constants, required for the wing to look right next to stock parts
+
 			o.Specular = _Shininess;
 			o.Normal = normal;
-
 			o.Emission *= _Opacity;
 			o.Alpha = _Opacity;
 		}

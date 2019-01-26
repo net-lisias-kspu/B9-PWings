@@ -1,18 +1,22 @@
-{"NAME":"B9 Aerospace Procedural Parts","URL":"https://raw.githubusercontent.com/Crzyrndm/B9-PWings-Fork/master/GameData/B9_Aerospace_ProceduralWings/Plugins/B9_Aerospace_WingStuff.version","DOWNLOAD":"https://github.com/jrodrigv/B9-PWings-Fork/releases","VERSION":{"MAJOR":0,"MINOR":50,"PATCH":0},"KSP_VERSION":
-    {
-        "MAJOR":1,
-        "MINOR":5,
-        "PATCH":0
-    },
-    "KSP_VERSION_MIN":
-    {
-        "MAJOR":1,
-        "MINOR":5,
-        "PATCH":0
-    },
-    "KSP_VERSION_MAX":
-    {
-        "MAJOR":1,
-        "MINOR":5,
-        "PATCH":9
-    }}
+{
+	"NAME":		"B9 Aerospace Procedural Parts /L Unofficial",
+	"URL":		"https://raw.githubusercontent.com/net-lisias-kspu/B9-PWings/master/B9_Aerospace_WingStuff.version",
+	"DOWNLOAD":	"https://github.com/net-lisias-kspu/B9-PWings/releases",
+	"CHANGE_LOG":	"https://raw.githubusercontent.com/net-lisias-kspu/B9-PWings/master/CHANGE_LOG.md",
+	"CHANGE_LOG_URL":"https://raw.githubusercontent.com/net-lisias-kspu/B9-PWings/master/CHANGES.md",
+	"VERSION":{
+		"MAJOR":0,
+		"MINOR":71,
+		"PATCH":0,
+		"BUILD":0
+		},
+	"KSP_VERSION":{
+		"MAJOR":1,
+		"MINOR":4
+		},
+	"KSP_VERSION_MIN":{
+		"MAJOR":1,
+		"MINOR":4,
+		"PATCH":1
+		}
+}

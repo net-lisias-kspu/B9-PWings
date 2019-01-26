@@ -96,6 +96,7 @@ Thanks, [bac9](https://forum.kerbalspaceprogram.com/index.php?/profile/57757-bac
 * [Crzyrndm﻿](https://forum.kerbalspaceprogram.com/index.php?/profile/92871-crzyrndm/) 
 	+ [Forum](https://forum.kerbalspaceprogram.com/index.php?/topic/117236-13-procedural-wings/)
 	+ [GitHub](https://github.com/Crzyrndm/B9-PWings-Fork)
+	+ [BitBucket](https://bitbucket.org/Crzyrndm/b9_aerospace_plugins/overview) (Historical)
 * [jrodrigv](https://github.com/jrodrigv)
 	+ [GitHub](https://github.com/jrodrigv/B9-PWings-Fork)
 * [bac9](https://forum.kerbalspaceprogram.com/index.php?/profile/57757-bac9/)

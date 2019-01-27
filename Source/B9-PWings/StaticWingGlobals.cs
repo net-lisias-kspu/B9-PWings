@@ -20,17 +20,13 @@ namespace WingProcedural
                 switch (Application.platform)
                 {
                     case RuntimePlatform.OSXPlayer:
-                        return _bundlePath + Path.DirectorySeparatorChar +
-                               "pwings_macosx.bundle";
+                        return _bundlePath + Path.DirectorySeparatorChar + "pwings_macosx.bundle";
                     case RuntimePlatform.WindowsPlayer:
-                        return _bundlePath + Path.DirectorySeparatorChar +
-                               "pwings_windows.bundle";
+                        return _bundlePath + Path.DirectorySeparatorChar + "pwings_windows.bundle";
                     case RuntimePlatform.LinuxPlayer:
-                        return _bundlePath + Path.DirectorySeparatorChar +
-                               "pwings_linux.bundle";
+                        return _bundlePath + Path.DirectorySeparatorChar + "pwings_linux.bundle";
                     default:
-                        return _bundlePath + Path.DirectorySeparatorChar +
-                               "pwings_windows.bundle";
+                        return _bundlePath + Path.DirectorySeparatorChar + "pwings_windows.bundle";
                 }
             }
         }

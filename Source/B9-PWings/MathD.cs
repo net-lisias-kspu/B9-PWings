@@ -124,17 +124,10 @@ namespace WingProcedural
                 return 0.0d;
             }
 
-            if (value > 1.0)
-            {
-                return 1d;
-            }
-            else
-            {
-                return value;
-            }
-        }
+			return value > 1.0 ? 1d : value;
+		}
 
-        public static double Lerp(double from, double to, double t)
+		public static double Lerp(double from, double to, double t)
         {
             return from + (to - from) * MathD.Clamp01(t);
         }
@@ -152,17 +145,13 @@ namespace WingProcedural
 
         public static double MoveTowards(double current, double target, double maxDelta)
         {
-            if (Math.Abs(target - current) <= maxDelta)
-            {
-                return target;
-            }
-            else
-            {
-                return current + Math.Sign(target - current) * maxDelta;
-            }
-        }
+			return Math.Abs(target - current) <= maxDelta 
+                ? target 
+                : current + Math.Sign(target - current) * maxDelta
+            ;
+		}
 
-        public static double MoveTowardsAngle(double current, double target, double maxDelta)
+		public static double MoveTowardsAngle(double current, double target, double maxDelta)
         {
             target = current + MathD.DeltaAngle(current, target);
             return MathD.MoveTowards(current, target, maxDelta);
@@ -177,37 +166,19 @@ namespace WingProcedural
 
         public static double Gamma(double value, double absmax, double gamma)
         {
-            bool flag = false;
-            if (value < 0.0)
-            {
-                flag = true;
-            }
+            bool flag = value < 0.0;
 
-            double num1 = Math.Abs(value);
+			double num1 = Math.Abs(value);
             if (num1 > absmax)
             {
-                if (flag)
-                {
-                    return -num1;
-                }
-                else
-                {
-                    return num1;
-                }
-            }
-            else
+				return flag ? -num1 : num1;
+			}
+			else
             {
                 double num2 = Math.Pow(num1 / absmax, gamma) * absmax;
-                if (flag)
-                {
-                    return -num2;
-                }
-                else
-                {
-                    return num2;
-                }
-            }
-        }
+				return flag ? -num2 : num2;
+			}
+		}
 
         public static bool Approximately(double a, double b)
         {
@@ -292,26 +263,17 @@ namespace WingProcedural
             }
             else
             {
-                if (from <= to)
-                {
-                    return 0d;
-                }
-
-                if (value < to)
-                {
-                    return 1d;
-                }
-
-                if (value > from)
-                {
-                    return 0d;
-                }
-                else
-                {
-                    return (1.0d - (value - to) / (from - to));
-                }
-            }
-        }
+				return 
+                    from <= to 
+                        ? 0d 
+                    : value < to 
+                        ? 1d 
+                    : value > from 
+                        ? 0d 
+                    : 1.0d - (value - to) / (from - to)
+                ;
+			}
+		}
 
         public static double DeltaAngle(double current, double target)
         {

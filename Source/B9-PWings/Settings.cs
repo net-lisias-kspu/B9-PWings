@@ -40,49 +40,16 @@ namespace WingProcedural
         [GameParameters.CustomParameterUI("Enable Events Logging")]
         public bool logEvents = false;
 
-        public override string Title
-        {
-            get
-            {
-                return "B9 Procedural Wings";
-            }
-        }
+		public override string Title => "B9 Procedural Wings";
 
-        public override string Section
-        {
-            get
-            {
-                return "Editor Settings";
-            }
-        }
+		public override string Section => "Editor Settings";
 
-        public override int SectionOrder
-        {
-            get
-            {
-                return 20;
-            }
-        }
+		public override int SectionOrder => 20;
 
-        public override GameParameters.GameMode GameMode
-        {
-            get
-            {
-                return GameParameters.GameMode.ANY;
-            }
-        }
+		public override GameParameters.GameMode GameMode => GameParameters.GameMode.ANY;
 
-        public override bool HasPresets
-        {
-            get
-            {
-                return false;
-            }
-        }
+		public override bool HasPresets => false;
 
-        public override string DisplaySection
-        {
-            get { return "Graphics"; }
-        }
-    }
+		public override string DisplaySection => "Graphics";
+	}
 }

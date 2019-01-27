@@ -131,11 +131,11 @@ namespace WingProcedural
 
             GUILayout.Label(string.Empty, UIUtility.uiStyleLabelHint);
             Rect rectLast = GUILayoutUtility.GetLastRect();
-            var rectSlider = new Rect(rectLast.xMin + buttonWidth + spaceWidth, rectLast.yMin, rectLast.width - 2 * (buttonWidth + spaceWidth), rectLast.height);
-            var rectSliderValue = new Rect(rectSlider.xMin, rectSlider.yMin, rectSlider.width * (float)value01, rectSlider.height - 3f);
-            var rectButtonL = new Rect(rectLast.xMin, rectLast.yMin, buttonWidth, rectLast.height);
-            var rectButtonR = new Rect(rectLast.xMin + rectLast.width - buttonWidth, rectLast.yMin, buttonWidth, rectLast.height);
-            var rectLabelValue = new Rect(rectSlider.xMin + rectSlider.width * 0.75f, rectSlider.yMin, rectSlider.width * 0.25f, rectSlider.height);
+			Rect rectSlider = new Rect(rectLast.xMin + buttonWidth + spaceWidth, rectLast.yMin, rectLast.width - 2 * (buttonWidth + spaceWidth), rectLast.height);
+			Rect rectSliderValue = new Rect(rectSlider.xMin, rectSlider.yMin, rectSlider.width * (float)value01, rectSlider.height - 3f);
+			Rect rectButtonL = new Rect(rectLast.xMin, rectLast.yMin, buttonWidth, rectLast.height);
+			Rect rectButtonR = new Rect(rectLast.xMin + rectLast.width - buttonWidth, rectLast.yMin, buttonWidth, rectLast.height);
+			Rect rectLabelValue = new Rect(rectSlider.xMin + rectSlider.width * 0.75f, rectSlider.yMin, rectSlider.width * 0.25f, rectSlider.height);
 
             if (GUI.Button(rectButtonL, string.Empty, UIUtility.uiStyleButton))
             {
@@ -225,15 +225,14 @@ namespace WingProcedural
             string valString = prevValue.ToString();
             TextEntryField(label, labelWidth, ref valString);
 
-            if (!double.TryParse(valString, out double temp))
-            {
-                return prevValue;
-            }
+			return
+				!double.TryParse(valString, out double temp) 
+					? prevValue
+					: temp
+			;
+		}
 
-            return temp;
-        }
-
-        public static void TextEntryField(string label, int labelWidth, ref string inputOutput)
+		public static void TextEntryField(string label, int labelWidth, ref string inputOutput)
         {
             GUILayout.BeginHorizontal();
             GUILayout.Label(label, GUILayout.Width(labelWidth));
@@ -258,20 +257,18 @@ namespace WingProcedural
             return mousepos;
         }
 
-        private static readonly string[][] stringIDs = new string[][] { new string[] { "Uniform", "Standard", "Reinforced", "LRSI", "HRSI" },
-                                                               new string[] { "", "No Edge", "Rounded", "Biconvex", "Triangular" },
-                                                               new string[] { "", "No Edge", "Rounded", "Biconvex", "Triangular" }}; // yup, I'm feeling lazy here...
+        private static readonly string[][] stringIDs = new string[][] {
+																new string[] { "Uniform", "Standard", "Reinforced", "LRSI", "HRSI" },
+                                                                new string[] { "", "No Edge", "Rounded", "Biconvex", "Triangular" },
+                                                                new string[] { "", "No Edge", "Rounded", "Biconvex", "Triangular" }
+                                                        }; // yup, I'm feeling lazy here...
 
         public static string GetValueTranslation(float value, int type)
         {
-            if (type < 1 || type > 3)
-            {
-                return value.ToString("F3");
-            }
-            else
-            {
-                return stringIDs[type - 1][(int)value]; // dont check for range errors, any range exceptions need to be visible in testing
-            }
+            return (type < 1 || type > 3)
+	                ? value.ToString("F3")
+	                : stringIDs[type - 1][(int)value] // dont check for range errors, any range exceptions need to be visible in testing
+                ;
         }
     }
 }

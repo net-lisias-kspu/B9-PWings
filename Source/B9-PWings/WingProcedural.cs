@@ -106,23 +106,23 @@ namespace WingProcedural
 
         public MeshFilter meshFilterWingSection;
         public MeshFilter meshFilterWingSurface;
-        public List<MeshFilter> meshFiltersWingEdgeTrailing = new List<MeshFilter>();
-        public List<MeshFilter> meshFiltersWingEdgeLeading = new List<MeshFilter>();
+        public readonly List<MeshFilter> meshFiltersWingEdgeTrailing = new List<MeshFilter>();
+        public readonly List<MeshFilter> meshFiltersWingEdgeLeading = new List<MeshFilter>();
 
         public MeshFilter meshFilterCtrlFrame;
         public MeshFilter meshFilterCtrlSurface;
-        public List<MeshFilter> meshFiltersCtrlEdge = new List<MeshFilter>();
+        public readonly List<MeshFilter> meshFiltersCtrlEdge = new List<MeshFilter>();
 
         public static MeshReference meshReferenceWingSection;
         public static MeshReference meshReferenceWingSurface;
-        public static List<MeshReference> meshReferencesWingEdge = new List<MeshReference>();
+        public static readonly List<MeshReference> meshReferencesWingEdge = new List<MeshReference>();
 
         public static MeshReference meshReferenceCtrlFrame;
         public static MeshReference meshReferenceCtrlSurface;
-        public static List<MeshReference> meshReferencesCtrlEdge = new List<MeshReference>();
+        public static readonly List<MeshReference> meshReferencesCtrlEdge = new List<MeshReference>();
 
-        private static int meshTypeCountEdgeWing = 4;
-        private static int meshTypeCountEdgeCtrl = 3;
+        private static readonly int meshTypeCountEdgeWing = 4;
+        private static readonly int meshTypeCountEdgeCtrl = 3;
 
         #endregion Mesh properties
 
@@ -135,29 +135,15 @@ namespace WingProcedural
                 DebugLogWithID("GetLimitsFromType", "Using set: " + set);
             }
 
-            if (!isCtrlSrf)
-            {
-                return new Vector2(set.x, set.y);
-            }
-            else
-            {
-                return new Vector2(set.z, set.w);
-            }
-        }
+            return isCtrlSrf ? new Vector2(set.z, set.w) : new Vector2(set.x, set.y);
+		}
 
-        private float GetIncrementFromType(float incrementWing, float incrementCtrl)
+		private float GetIncrementFromType(float incrementWing, float incrementCtrl)
         {
-            if (!isCtrlSrf)
-            {
-                return incrementWing;
-            }
-            else
-            {
-                return incrementCtrl;
-            }
-        }
+            return isCtrlSrf ? incrementCtrl : incrementWing;
+		}
 
-        private static Vector4 sharedBaseLengthLimits = new Vector4(0.125f, 20f, 0.04f, 10f);
+		private static Vector4 sharedBaseLengthLimits = new Vector4(0.125f, 20f, 0.04f, 10f);
         private static Vector2 sharedBaseThicknessLimits = new Vector2(0.04f, 1f);
         private static Vector4 sharedBaseWidthRootLimits = new Vector4(0.125f, 20f, 0.04f, 2f);
         private static Vector4 sharedBaseWidthTipLimits = new Vector4(0.0001f, 20f, 0.04f, 2f);
@@ -167,12 +153,12 @@ namespace WingProcedural
         private static Vector2 sharedMaterialLimits = new Vector2(0f, 4f);
         private static Vector2 sharedColorLimits = new Vector2(0f, 1f);
 
-        private static float sharedIncrementColor = 0.01f;
-        private static float sharedIncrementColorLarge = 0.10f;
-        private static float sharedIncrementMain = 0.125f;
-        private static float sharedIncrementSmall = 0.05f;
-        private static float sharedIncrementTiny = 0.005f;
-        private static float sharedIncrementInt = 1f;
+        private static readonly float sharedIncrementColor = 0.01f;
+        private static readonly float sharedIncrementColorLarge = 0.10f;
+        private static readonly float sharedIncrementMain = 0.125f;
+        private static readonly float sharedIncrementSmall = 0.05f;
+        private static readonly float sharedIncrementTiny = 0.005f;
+        private static readonly float sharedIncrementInt = 1f;
 
         #endregion Shared properties / Limits and increments
 
@@ -181,8 +167,8 @@ namespace WingProcedural
         [KSPField(guiActiveEditor = false, guiActive = false, guiName = "| Base")]
         public static bool sharedFieldGroupBaseStatic = true;
 
-        private static string[] sharedFieldGroupBaseArray = new string[] { "sharedBaseLength", "sharedBaseWidthRoot", "sharedBaseWidthTip", "sharedBaseThicknessRoot", "sharedBaseThicknessTip", "sharedBaseOffsetTip" };
-        private static string[] sharedFieldGroupBaseArrayCtrl = new string[] { "sharedBaseOffsetRoot" };
+        private static readonly string[] sharedFieldGroupBaseArray = new string[] { "sharedBaseLength", "sharedBaseWidthRoot", "sharedBaseWidthTip", "sharedBaseThicknessRoot", "sharedBaseThicknessTip", "sharedBaseOffsetTip" };
+        private static readonly string[] sharedFieldGroupBaseArrayCtrl = new string[] { "sharedBaseOffsetRoot" };
 
         [KSPField(isPersistant = true, guiActiveEditor = false, guiActive = false, guiName = "Length", guiFormat = "S4")]
         public float sharedBaseLength = 4f;
@@ -233,7 +219,7 @@ namespace WingProcedural
         [KSPField(guiActiveEditor = false, guiActive = false, guiName = "| Lead. edge")]
         public static bool sharedFieldGroupEdgeLeadingStatic = false;
 
-        private static string[] sharedFieldGroupEdgeLeadingArray = new string[] { "sharedEdgeTypeLeading", "sharedEdgeWidthLeadingRoot", "sharedEdgeWidthLeadingTip" };
+        private static readonly string[] sharedFieldGroupEdgeLeadingArray = new string[] { "sharedEdgeTypeLeading", "sharedEdgeWidthLeadingRoot", "sharedEdgeWidthLeadingTip" };
 
         [KSPField(isPersistant = true, guiActive = false, guiActiveEditor = false, guiName = "Shape", guiFormat = "F3")]
         public float sharedEdgeTypeLeading = 2f;
@@ -260,7 +246,7 @@ namespace WingProcedural
         [KSPField(guiActiveEditor = false, guiActive = false, guiName = "| Trail. edge")]
         public static bool sharedFieldGroupEdgeTrailingStatic = false;
 
-        private static string[] sharedFieldGroupEdgeTrailingArray = new string[] { "sharedEdgeTypeTrailing", "sharedEdgeWidthTrailingRoot", "sharedEdgeWidthTrailingTip" };
+        private static readonly string[] sharedFieldGroupEdgeTrailingArray = new string[] { "sharedEdgeTypeTrailing", "sharedEdgeWidthTrailingRoot", "sharedEdgeWidthTrailingTip" };
 
         [KSPField(isPersistant = true, guiActive = false, guiActiveEditor = false, guiName = "Shape", guiFormat = "F3")]
         public float sharedEdgeTypeTrailing = 3f;
@@ -287,7 +273,7 @@ namespace WingProcedural
         [KSPField(guiActiveEditor = false, guiActive = false, guiName = "| Material A")]
         public static bool sharedFieldGroupColorSTStatic = false;
 
-        private static string[] sharedFieldGroupColorSTArray = new string[] { "sharedMaterialST", "sharedColorSTOpacity", "sharedColorSTHue", "sharedColorSTSaturation", "sharedColorSTBrightness" };
+        private static readonly string[] sharedFieldGroupColorSTArray = new string[] { "sharedMaterialST", "sharedColorSTOpacity", "sharedColorSTHue", "sharedColorSTSaturation", "sharedColorSTBrightness" };
 
         [KSPField(isPersistant = true, guiActive = false, guiActiveEditor = false, guiName = "Material", guiFormat = "F3")]
         public float sharedMaterialST = 1f;
@@ -326,7 +312,7 @@ namespace WingProcedural
         [KSPField(guiActiveEditor = false, guiActive = false, guiName = "| Material B")]
         public static bool sharedFieldGroupColorSBStatic = false;
 
-        private static string[] sharedFieldGroupColorSBArray = new string[] { "sharedMaterialSB", "sharedColorSBOpacity", "sharedColorSBHue", "sharedColorSBSaturation", "sharedColorSBBrightness" };
+        private static readonly string[] sharedFieldGroupColorSBArray = new string[] { "sharedMaterialSB", "sharedColorSBOpacity", "sharedColorSBHue", "sharedColorSBSaturation", "sharedColorSBBrightness" };
 
         [KSPField(isPersistant = true, guiActive = false, guiActiveEditor = false, guiName = "Material", guiFormat = "F3")]
         public float sharedMaterialSB = 4f;
@@ -365,7 +351,7 @@ namespace WingProcedural
         [KSPField(guiActiveEditor = false, guiActive = false, guiName = "| Material T")]
         public static bool sharedFieldGroupColorETStatic = false;
 
-        private static string[] sharedFieldGroupColorETArray = new string[] { "sharedMaterialET", "sharedColorETOpacity", "sharedColorETHue", "sharedColorETSaturation", "sharedColorETBrightness" };
+        private static readonly string[] sharedFieldGroupColorETArray = new string[] { "sharedMaterialET", "sharedColorETOpacity", "sharedColorETHue", "sharedColorETSaturation", "sharedColorETBrightness" };
 
         [KSPField(isPersistant = true, guiActive = false, guiActiveEditor = false, guiName = "Material", guiFormat = "F3")]
         public float sharedMaterialET = 4f;
@@ -404,7 +390,7 @@ namespace WingProcedural
         [KSPField(guiActiveEditor = false, guiActive = false, guiName = "| Material L")]
         public static bool sharedFieldGroupColorELStatic = false;
 
-        private static string[] sharedFieldGroupColorELArray = new string[] { "sharedMaterialEL", "sharedColorELOpacity", "sharedColorELHue", "sharedColorELSaturation", "sharedColorELBrightness" };
+        private static readonly string[] sharedFieldGroupColorELArray = new string[] { "sharedMaterialEL", "sharedColorELOpacity", "sharedColorELHue", "sharedColorELSaturation", "sharedColorELBrightness" };
 
         [KSPField(isPersistant = true, guiActive = false, guiActiveEditor = false, guiName = "Material", guiFormat = "F3")]
         public float sharedMaterialEL = 4f;
@@ -433,7 +419,7 @@ namespace WingProcedural
         [KSPField(isPersistant = true, guiActive = false, guiActiveEditor = false, guiName = "Color (B)", guiFormat = "F3")]
         public float sharedColorELBrightness = 0.6f;
 
-        public float sharedColorELBrightnessCached = 0.6f;
+		public float sharedColorELBrightnessCached = 0.6f;
         public static Vector4 sharedColorELBrightnessDefaults = new Vector4(0.6f, 0.6f, 0.6f, 0.6f);
 
         #endregion Shared properties / Surface / leading edge
@@ -487,17 +473,10 @@ namespace WingProcedural
 
         private void ReplaceDefault(ref Vector4 set, float value)
         {
-            if (!isCtrlSrf)
-            {
-                set = new Vector4(value, set.w, set.z, set.w);
-            }
-            else
-            {
-                set = new Vector4(set.z, value, set.z, set.w);
-            }
-        }
+			set = !isCtrlSrf ? new Vector4(value, set.w, set.z, set.w) : new Vector4(set.z, value, set.z, set.w);
+		}
 
-        private void RestoreDefaults()
+		private void RestoreDefaults()
         {
             RestoreDefault(ref sharedBaseLengthDefaults);
             RestoreDefault(ref sharedBaseWidthRootDefaults);
@@ -547,22 +526,15 @@ namespace WingProcedural
 
         private float GetDefault(Vector4 set)
         {
-            if (!isCtrlSrf)
-            {
-                return set.x;
-            }
-            else
-            {
-                return set.y;
-            }
-        }
+			return !isCtrlSrf ? set.x : set.y;
+		}
 
-        #endregion Default values
+		#endregion Default values
 
-        #region Fuel configuration switching
+		#region Fuel configuration switching
 
-        // Has to be situated here as this KSPEvent is not correctly added Part.Events otherwise
-        [KSPEvent(guiActive = false, guiActiveEditor = true, guiName = "Next configuration", active = true)]
+		// Has to be situated here as this KSPEvent is not correctly added Part.Events otherwise
+		[KSPEvent(guiActive = false, guiActiveEditor = true, guiName = "Next configuration", active = true)]
         public void NextConfiguration()
         {
             if (HighLogic.CurrentGame.Parameters.CustomParams<WPDebug>().logFuel)
@@ -609,11 +581,8 @@ namespace WingProcedural
                 if (!parentModule.isCtrlSrf)
                 {
                     inheritancePossibleOnMaterials = true;
-                    if (!isCtrlSrf)
-                    {
-                        inheritancePossibleOnShape = true;
-                    }
-                }
+					inheritancePossibleOnShape |= !isCtrlSrf;
+				}
             }
         }
 
@@ -928,9 +897,7 @@ namespace WingProcedural
             UpdateUI();
 
             DeformWing();
-
-            bool updateGeo, updateAero;
-            CheckAllFieldValues(out updateGeo, out updateAero);
+			CheckAllFieldValues(out bool updateGeo, out bool updateAero);
 
             if (updateGeo)
             {
@@ -947,16 +914,13 @@ namespace WingProcedural
                 DebugLogWithID("UpdateOnEditorAttach", "Setup started");
             }
 
-            if (part.symMethod == SymmetryMethod.Mirror)
-            {
-                isMirrored = Vector3.Dot(EditorLogic.SortedShipList[0].transform.right, part.transform.position - EditorLogic.SortedShipList[0].transform.position) < 0;
-            }
-            else
-            {
-                isMirrored = false;
-            }
+			isMirrored = 
+				( part.symMethod == SymmetryMethod.Mirror )
+				&&
+				Vector3.Dot(EditorLogic.SortedShipList[0].transform.right, part.transform.position - EditorLogic.SortedShipList[0].transform.position) < 0
+			;
 
-            isAttached = true;
+			isAttached = true;
             UpdateGeometry(true);
             if (HighLogic.CurrentGame.Parameters.CustomParams<WPDebug>().logEvents)
             {
@@ -1354,18 +1318,13 @@ namespace WingProcedural
 
                     for (int i = 0; i < vp.Length; ++i)
                     {
-                        // Thickness correction (X), edge width correction (Y) and span-based offset (Z)
-                        if (vp[i].z < 0f)
-                        {
-                            vp[i] = new Vector3(vp[i].x * ctrlThicknessDeviationTip, vp[i].y, vp[i].z + 0.5f - geometricLength / 2f); // if (vp[i].z < 0f) vp[i] = new Vector3 (vp[i].x * ctrlThicknessDeviationTip, ((vp[i].y + 0.5f) * ctrlEdgeWidthDeviationTip), vp[i].z + 0.5f - sharedBaseLength / 2f);
-                        }
-                        else
-                        {
-                            vp[i] = new Vector3(vp[i].x * ctrlThicknessDeviationRoot, vp[i].y, vp[i].z - 0.5f + geometricLength / 2f); // else vp[i] = new Vector3 (vp[i].x * ctrlThicknessDeviationRoot, ((vp[i].y + 0.5f) * ctrlEdgeWidthDeviationRoot), vp[i].z - 0.5f + sharedBaseLength / 2f);
-                        }
+						// Thickness correction (X), edge width correction (Y) and span-based offset (Z)
+						vp[i] = vp[i].z < 0f
+							? new Vector3(vp[i].x * ctrlThicknessDeviationTip, vp[i].y, vp[i].z + 0.5f - geometricLength / 2f)
+							: new Vector3(vp[i].x * ctrlThicknessDeviationRoot, vp[i].y, vp[i].z - 0.5f + geometricLength / 2f);
 
-                        // Left/right sides
-                        if (nm[i] == new Vector3(0f, 0f, 1f) || nm[i] == new Vector3(0f, 0f, -1f))
+						// Left/right sides
+						if (nm[i] == new Vector3(0f, 0f, 1f) || nm[i] == new Vector3(0f, 0f, -1f))
                         {
                             // Filtering out trailing edge cross sections
                             if (uv[i].y > 0.185f)
@@ -1396,18 +1355,13 @@ namespace WingProcedural
                         // Trailing edge
                         else if (vp[i].y < -0.1f)
                         {
-                            if (vp[i].z < 0f)
-                            {
-                                vp[i] = new Vector3(vp[i].x, vp[i].y + 0.5f - ctrlTipWidth, vp[i].z);
-                            }
-                            else
-                            {
-                                vp[i] = new Vector3(vp[i].x, vp[i].y + 0.5f - ctrlRootWidth, vp[i].z);
-                            }
-                        }
+							vp[i] = vp[i].z < 0f
+								? new Vector3(vp[i].x, vp[i].y + 0.5f - ctrlTipWidth, vp[i].z)
+								: new Vector3(vp[i].x, vp[i].y + 0.5f - ctrlRootWidth, vp[i].z);
+						}
 
-                        // Offset-based distortion
-                        if (vp[i].z < 0f)
+						// Offset-based distortion
+						if (vp[i].z < 0f)
                         {
                             vp[i] = new Vector3(vp[i].x, vp[i].y, vp[i].z + vp[i].y * ctrlOffsetTipClamped);
                             if (nm[i] != new Vector3(0f, 0f, 1f) && nm[i] != new Vector3(0f, 0f, -1f))
@@ -1490,45 +1444,30 @@ namespace WingProcedural
 
                     for (int i = 0; i < vp.Length; ++i)
                     {
-                        // Thickness correction (X), edge width correction (Y) and span-based offset (Z)
-                        if (vp[i].z < 0f)
-                        {
-                            vp[i] = new Vector3(vp[i].x * ctrlThicknessDeviationTip, ((vp[i].y + 0.5f) * ctrlEdgeWidthDeviationTip) - 0.5f, vp[i].z + 0.5f - geometricLength / 2f);
-                        }
-                        else
-                        {
-                            vp[i] = new Vector3(vp[i].x * ctrlThicknessDeviationRoot, ((vp[i].y + 0.5f) * ctrlEdgeWidthDeviationRoot) - 0.5f, vp[i].z - 0.5f + geometricLength / 2f);
-                        }
+						// Thickness correction (X), edge width correction (Y) and span-based offset (Z)
+						vp[i] = vp[i].z < 0f
+							? new Vector3(vp[i].x * ctrlThicknessDeviationTip, ((vp[i].y + 0.5f) * ctrlEdgeWidthDeviationTip) - 0.5f, vp[i].z + 0.5f - geometricLength / 2f)
+							: new Vector3(vp[i].x * ctrlThicknessDeviationRoot, ((vp[i].y + 0.5f) * ctrlEdgeWidthDeviationRoot) - 0.5f, vp[i].z - 0.5f + geometricLength / 2f);
 
-                        // Left/right sides
-                        if (nm[i] == new Vector3(0f, 0f, 1f) || nm[i] == new Vector3(0f, 0f, -1f))
+						// Left/right sides
+						if (nm[i] == new Vector3(0f, 0f, 1f) || nm[i] == new Vector3(0f, 0f, -1f))
                         {
-                            if (vp[i].z < 0f)
-                            {
-                                vp[i] = new Vector3(vp[i].x, vp[i].y + 0.5f - ctrlTipWidth, vp[i].z);
-                            }
-                            else
-                            {
-                                vp[i] = new Vector3(vp[i].x, vp[i].y + 0.5f - ctrlRootWidth, vp[i].z);
-                            }
-                        }
+							vp[i] = vp[i].z < 0f
+								? new Vector3(vp[i].x, vp[i].y + 0.5f - ctrlTipWidth, vp[i].z)
+								: new Vector3(vp[i].x, vp[i].y + 0.5f - ctrlRootWidth, vp[i].z);
+						}
 
-                        // Trailing edge
-                        else
+						// Trailing edge
+						else
                         {
                             // Filtering out root neighbours
                             if (vp[i].y < -0.1f)
                             {
-                                if (vp[i].z < 0f)
-                                {
-                                    vp[i] = new Vector3(vp[i].x, vp[i].y + 0.5f - ctrlTipWidth, vp[i].z);
-                                }
-                                else
-                                {
-                                    vp[i] = new Vector3(vp[i].x, vp[i].y + 0.5f - ctrlRootWidth, vp[i].z);
-                                }
-                            }
-                        }
+								vp[i] = vp[i].z < 0f
+									? new Vector3(vp[i].x, vp[i].y + 0.5f - ctrlTipWidth, vp[i].z)
+									: new Vector3(vp[i].x, vp[i].y + 0.5f - ctrlRootWidth, vp[i].z);
+							}
+						}
 
                         // Offset-based distortion
                         if (vp[i].z < 0f)
@@ -1551,17 +1490,10 @@ namespace WingProcedural
                         // Trailing edge (UV adjustment, has to be the last as it's based on cumulative vertex positions)
                         if (nm[i] != new Vector3(0f, 1f, 0f) && nm[i] != new Vector3(0f, 0f, 1f) && nm[i] != new Vector3(0f, 0f, -1f) && uv[i].y < 0.3f)
                         {
-                            if (vp[i].z < 0f)
-                            {
-                                uv[i] = new Vector2(vp[i].z, uv[i].y);
-                            }
-                            else
-                            {
-                                uv[i] = new Vector2(vp[i].z, uv[i].y);
-                            }
+							uv[i] = vp[i].z < 0f ? new Vector2(vp[i].z, uv[i].y) : new Vector2(vp[i].z, uv[i].y);
 
-                            // Color has to be applied there to avoid blanking out cross sections
-                            cl[i] = GetVertexColor(2);
+							// Color has to be applied there to avoid blanking out cross sections
+							cl[i] = GetVertexColor(2);
                             uv2[i] = GetVertexUV2(sharedMaterialET);
                         }
                     }
@@ -1782,22 +1714,16 @@ namespace WingProcedural
             {
                 if (meshReferenceWingSection != null && meshReferenceWingSurface != null && meshReferencesWingEdge[meshTypeCountEdgeWing - 1] != null)
                 {
-                    if (meshReferenceWingSection.vp.Length > 0 && meshReferenceWingSurface.vp.Length > 0 && meshReferencesWingEdge[meshTypeCountEdgeWing - 1].vp.Length > 0)
-                    {
-                        required = false;
-                    }
-                }
-            }
+					required &= (meshReferenceWingSection.vp.Length <= 0 || meshReferenceWingSurface.vp.Length <= 0 || meshReferencesWingEdge[meshTypeCountEdgeWing - 1].vp.Length <= 0);
+				}
+			}
             else
             {
                 if (meshReferenceCtrlFrame != null && meshReferenceCtrlSurface != null && meshReferencesCtrlEdge[meshTypeCountEdgeCtrl - 1] != null)
                 {
-                    if (meshReferenceCtrlFrame.vp.Length > 0 && meshReferenceCtrlSurface.vp.Length > 0 && meshReferencesCtrlEdge[meshTypeCountEdgeCtrl - 1].vp.Length > 0)
-                    {
-                        required = false;
-                    }
-                }
-            }
+					required &= (meshReferenceCtrlFrame.vp.Length <= 0 || meshReferenceCtrlSurface.vp.Length <= 0 || meshReferencesCtrlEdge[meshTypeCountEdgeCtrl - 1].vp.Length <= 0);
+				}
+			}
             if (required)
             {
                 if (HighLogic.CurrentGame.Parameters.CustomParams<WPDebug>().logMeshReferences)
@@ -1911,7 +1837,7 @@ namespace WingProcedural
 
         private MeshReference FillMeshRefererence(MeshFilter source)
         {
-            var reference = new MeshReference();
+			MeshReference reference = new MeshReference();
             if (source != null)
             {
                 int length = source.mesh.vertices.Length;
@@ -1942,7 +1868,7 @@ namespace WingProcedural
         public static Texture materialLayeredEdgeTextureMain;
         public static Texture materialLayeredEdgeTextureMask;
 
-        private float materialPropertyShininess = 0.4f;
+        private readonly float materialPropertyShininess = 0.4f;
         private Color materialPropertySpecular = new Color(0.62109375f, 0.62109375f, 0.62109375f, 1.0f);
 
         public void UpdateMaterials()
@@ -2135,7 +2061,7 @@ namespace WingProcedural
                 }
 
                 vesselList[vesselStatusIndex].isUpdated = true;
-                var moduleList = new List<WingProcedural>();
+				List<WingProcedural> moduleList = new List<WingProcedural>();
 
                 // First we get a list of all relevant parts in the vessel
                 // Found modules are added to a list
@@ -2304,16 +2230,9 @@ namespace WingProcedural
                 float D_tp = b_tp * b_tp - 4.0f * a_tp * c_tp;
                 float x1 = (-b_tp + Mathf.Sqrt(D_tp)) / 2.0f / a_tp;
                 float x2 = (-b_tp - Mathf.Sqrt(D_tp)) / 2.0f / a_tp;
-                if ((x1 >= 0.0f) && (x1 <= 1.0f))
-                {
-                    pseudotaper_ratio = x1;
-                }
-                else
-                {
-                    pseudotaper_ratio = x2;
-                }
-            }
-            else
+				pseudotaper_ratio = (x1 >= 0.0f) && (x1 <= 1.0f) ? x1 : x2;
+			}
+			else
             {
                 pseudotaper_ratio = 0.5f;
             }
@@ -2410,17 +2329,12 @@ namespace WingProcedural
                     mCtrlSrf.deflectionLiftCoeff = (float)Math.Round(stockLiftCoefficient, 2);
                     mCtrlSrf.ctrlSurfaceArea = aeroConstControlSurfaceFraction;
                     aeroUIMass = stockLiftCoefficient * (1 + mCtrlSrf.ctrlSurfaceArea) * 0.1f;
-                    if (isWingAsCtrlSrf)
-                    {
-                        part.CoLOffset = new Vector3(y_col, -x_col, 0.0f);
-                    }
-                    else
-                    {
-                        part.CoLOffset = new Vector3(y_col - 0.5f * sharedBaseLength, -0.25f * (sharedBaseWidthTip + sharedBaseWidthRoot), 0.0f);
-                    }
-                }
+					part.CoLOffset = isWingAsCtrlSrf
+						? new Vector3(y_col, -x_col, 0.0f)
+						: new Vector3(y_col - 0.5f * sharedBaseLength, -0.25f * (sharedBaseWidthTip + sharedBaseWidthRoot), 0.0f);
+				}
 
-                if (HighLogic.CurrentGame.Parameters.CustomParams<WPDebug>().logCAV)
+				if (HighLogic.CurrentGame.Parameters.CustomParams<WPDebug>().logCAV)
                 {
                     DebugLogWithID("CalculateAerodynamicValues", "Passed stock drag/deflection/area");
                 }
@@ -2627,17 +2541,10 @@ namespace WingProcedural
             if (isAttached && part.parent != null)
             {
                 showWingData = !showWingData;
-                if (showWingData)
-                {
-                    Events["InfoToggleEvent"].guiName = "Hide wing data";
-                }
-                else
-                {
-                    Events["InfoToggleEvent"].guiName = "Show wing data";
-                }
+				Events["InfoToggleEvent"].guiName = showWingData ? "Hide wing data" : "Show wing data";
 
-                // If FAR/NEAR aren't present, toggle Cl/Cd
-                if (!assemblyFARUsed)
+				// If FAR/NEAR aren't present, toggle Cl/Cd
+				if (!assemblyFARUsed)
                 {
                     Fields["aeroUICd"].guiActiveEditor = showWingData;
                     Fields["aeroUICl"].guiActiveEditor = showWingData;
@@ -2712,7 +2619,7 @@ namespace WingProcedural
         public static bool uiEditMode = false;
         public static bool uiAdjustWindow = true;
         public static bool uiEditModeTimeout = false;
-        private float uiEditModeTimeoutDuration = 0.25f;
+        private readonly float uiEditModeTimeoutDuration = 0.25f;
         private float uiEditModeTimer = 0f;
 
         // Supposed to fix context menu updates
@@ -3021,45 +2928,30 @@ namespace WingProcedural
 
         private int GetFieldMode()
         {
-            if (!isCtrlSrf)
-            {
-                return 1;
-            }
-            else
-            {
-                return 2;
-            }
-        }
+			return !isCtrlSrf ? 1 : 2;
+		}
 
-        private float SetupFieldValue(float value, Vector2 limits, float defaultValue)
+		private float SetupFieldValue(float value, Vector2 limits, float defaultValue)
         {
-            if (!isSetToDefaultValues)
-            {
-                return defaultValue;
-            }
-            else
-            {
-                return Mathf.Clamp(value, limits.x, limits.y);
-            }
-        }
+			return !isSetToDefaultValues ? defaultValue : Mathf.Clamp(value, limits.x, limits.y);
+		}
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="field">the value to draw</param>
-        /// <param name="increment">mouse drag increment</param>
-        /// <param name="incrementLarge">button increment</param>
-        /// <param name="limits">min/max value</param>
-        /// <param name="name">the field name to display</param>
-        /// <param name="hsbColor">field colour</param>
-        /// <param name="fieldID">tooltip stuff</param>
-        /// <param name="fieldType">tooltip stuff</param>
-        /// <param name="allowFine">Whether right click drag behaves as fine control or not</param>
-        private void DrawField(ref float field, float increment, float incrementLarge, Vector2 limits, string name, Vector4 hsbColor, int fieldID, int fieldType, bool allowFine = true)
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="field">the value to draw</param>
+		/// <param name="increment">mouse drag increment</param>
+		/// <param name="incrementLarge">button increment</param>
+		/// <param name="limits">min/max value</param>
+		/// <param name="name">the field name to display</param>
+		/// <param name="hsbColor">field colour</param>
+		/// <param name="fieldID">tooltip stuff</param>
+		/// <param name="fieldType">tooltip stuff</param>
+		/// <param name="allowFine">Whether right click drag behaves as fine control or not</param>
+		private void DrawField(ref float field, float increment, float incrementLarge, Vector2 limits, string name, Vector4 hsbColor, int fieldID, int fieldType, bool allowFine = true)
         {
-            bool changed;
-            field = UIUtility.FieldSlider(field, increment, incrementLarge, limits, name, out changed, ColorHSBToRGB(hsbColor), fieldType, allowFine);
-            if (changed)
+			field = UIUtility.FieldSlider(field, increment, incrementLarge, limits, name, out bool changed, ColorHSBToRGB(hsbColor), fieldType, allowFine);
+			if (changed)
             {
                 uiLastFieldName = name;
                 uiLastFieldTooltip = UpdateTooltipText(fieldID);
@@ -3099,207 +2991,115 @@ namespace WingProcedural
             // Base descriptions
             if (fieldID == 0) // sharedBaseLength))
             {
-                if (!isCtrlSrf)
-                {
-                    return "Lateral measurement of the wing, \nalso referred to as semispan";
-                }
-                else
-                {
-                    return "Lateral measurement of the control \nsurface at it's root";
-                }
-            }
-            else if (fieldID == 1) // sharedBaseWidthRoot))
+				return !isCtrlSrf
+					? "Lateral measurement of the wing, \nalso referred to as semispan"
+					: "Lateral measurement of the control \nsurface at it's root";
+			}
+			else if (fieldID == 1) // sharedBaseWidthRoot))
             {
-                if (!isCtrlSrf)
-                {
-                    return "Longitudinal measurement of the wing \nat the root cross section";
-                }
-                else
-                {
-                    return "Longitudinal measurement of \nthe root chord";
-                }
-            }
-            else if (fieldID == 2) // sharedBaseWidthTip))
+				return !isCtrlSrf
+					? "Longitudinal measurement of the wing \nat the root cross section"
+					: "Longitudinal measurement of \nthe root chord";
+			}
+			else if (fieldID == 2) // sharedBaseWidthTip))
             {
-                if (!isCtrlSrf)
-                {
-                    return "Longitudinal measurement of the wing \nat the tip cross section";
-                }
-                else
-                {
-                    return "Longitudinal measurement of \nthe tip chord";
-                }
-            }
-            else if (fieldID == 3) // sharedBaseOffsetRoot))
+				return !isCtrlSrf ? "Longitudinal measurement of the wing \nat the tip cross section" : "Longitudinal measurement of \nthe tip chord";
+			}
+			else if (fieldID == 3) // sharedBaseOffsetRoot))
             {
-                if (!isCtrlSrf)
-                {
-                    return "This property shouldn't be accessible \non a wing";
-                }
-                else
-                {
-                    return "Offset of the trailing edge \nroot corner on the lateral axis";
-                }
-            }
-            else if (fieldID == 4) // sharedBaseOffsetTip))
+				return !isCtrlSrf
+					? "This property shouldn't be accessible \non a wing"
+					: "Offset of the trailing edge \nroot corner on the lateral axis";
+			}
+			else if (fieldID == 4) // sharedBaseOffsetTip))
             {
-                if (!isCtrlSrf)
-                {
-                    return "Distance between midpoints of the cross \nsections on the longitudinal axis";
-                }
-                else
-                {
-                    return "Offset of the trailing edge \ntip corner on the lateral axis";
-                }
-            }
-            else if (fieldID == 5) // sharedBaseThicknessRoot))
+				return !isCtrlSrf
+					? "Distance between midpoints of the cross \nsections on the longitudinal axis"
+					: "Offset of the trailing edge \ntip corner on the lateral axis";
+			}
+			else if (fieldID == 5) // sharedBaseThicknessRoot))
             {
-                if (!isCtrlSrf)
-                {
-                    return "Thickness at the root cross section \nUsually kept proportional to edge width";
-                }
-                else
-                {
-                    return "Thickness at the root cross section \nUsually kept proportional to edge width";
-                }
-            }
-            else if (fieldID == 6) // sharedBaseThicknessTip))
+				return !isCtrlSrf
+					? "Thickness at the root cross section \nUsually kept proportional to edge width"
+					: "Thickness at the root cross section \nUsually kept proportional to edge width";
+			}
+			else if (fieldID == 6) // sharedBaseThicknessTip))
             {
-                if (!isCtrlSrf)
-                {
-                    return "Thickness at the tip cross section \nUsually kept proportional to edge width";
-                }
-                else
-                {
-                    return "Thickness at the tip cross section \nUsually kept proportional to edge width";
-                }
-            }
+				return !isCtrlSrf
+					? "Thickness at the tip cross section \nUsually kept proportional to edge width"
+					: "Thickness at the tip cross section \nUsually kept proportional to edge width";
+			}
 
-            // Edge descriptions
-            else if (fieldID == 7) // sharedEdgeTypeTrailing))
+			// Edge descriptions
+			else if (fieldID == 7) // sharedEdgeTypeTrailing))
             {
-                if (!isCtrlSrf)
-                {
-                    return "Shape of the trailing edge cross \nsection (round/biconvex/sharp)";
-                }
-                else
-                {
-                    return "Shape of the trailing edge cross \nsection (round/biconvex/sharp)";
-                }
-            }
-            else if (fieldID == 8) // sharedEdgeWidthTrailingRoot))
+				return !isCtrlSrf
+					? "Shape of the trailing edge cross \nsection (round/biconvex/sharp)"
+					: "Shape of the trailing edge cross \nsection (round/biconvex/sharp)";
+			}
+			else if (fieldID == 8) // sharedEdgeWidthTrailingRoot))
             {
-                if (!isCtrlSrf)
-                {
-                    return "Longitudinal measurement of the trailing \nedge cross section at wing root";
-                }
-                else
-                {
-                    return "Longitudinal measurement of the trailing \nedge cross section at with root";
-                }
-            }
-            else if (fieldID == 9) // sharedEdgeWidthTrailingTip))
+				return !isCtrlSrf
+					? "Longitudinal measurement of the trailing \nedge cross section at wing root"
+					: "Longitudinal measurement of the trailing \nedge cross section at with root";
+			}
+			else if (fieldID == 9) // sharedEdgeWidthTrailingTip))
             {
-                if (!isCtrlSrf)
-                {
-                    return "Longitudinal measurement of the trailing \nedge cross section at wing tip";
-                }
-                else
-                {
-                    return "Longitudinal measurement of the trailing \nedge cross section at with tip";
-                }
-            }
-            else if (fieldID == 10) // sharedEdgeTypeLeading))
+				return !isCtrlSrf
+					? "Longitudinal measurement of the trailing \nedge cross section at wing tip"
+					: "Longitudinal measurement of the trailing \nedge cross section at with tip";
+			}
+			else if (fieldID == 10) // sharedEdgeTypeLeading))
             {
-                if (!isCtrlSrf)
-                {
-                    return "Shape of the leading edge cross \nsection (round/biconvex/sharp)";
-                }
-                else
-                {
-                    return "Shape of the leading edge cross \nsection (round/biconvex/sharp)";
-                }
-            }
-            else if (fieldID == 11) // sharedEdgeWidthLeadingRoot))
+				return !isCtrlSrf
+					? "Shape of the leading edge cross \nsection (round/biconvex/sharp)"
+					: "Shape of the leading edge cross \nsection (round/biconvex/sharp)";
+			}
+			else if (fieldID == 11) // sharedEdgeWidthLeadingRoot))
             {
-                if (!isCtrlSrf)
-                {
-                    return "Longitudinal measurement of the leading \nedge cross section at wing root";
-                }
-                else
-                {
-                    return "Longitudinal measurement of the leading \nedge cross section at wing root";
-                }
-            }
-            else if (fieldID == 12) // sharedEdgeWidthLeadingTip))
+				return !isCtrlSrf
+					? "Longitudinal measurement of the leading \nedge cross section at wing root"
+					: "Longitudinal measurement of the leading \nedge cross section at wing root";
+			}
+			else if (fieldID == 12) // sharedEdgeWidthLeadingTip))
             {
-                if (!isCtrlSrf)
-                {
-                    return "Longitudinal measurement of the leading \nedge cross section at with tip";
-                }
-                else
-                {
-                    return "Longitudinal measurement of the leading \nedge cross section at with tip";
-                }
-            }
+				return !isCtrlSrf
+					? "Longitudinal measurement of the leading \nedge cross section at with tip"
+					: "Longitudinal measurement of the leading \nedge cross section at with tip";
+			}
 
-            // Surface descriptions
-            else if (fieldID == 13)
+			// Surface descriptions
+			else if (fieldID == 13)
             {
-                if (!isCtrlSrf)
-                {
-                    return "Surface material (uniform fill, plating, \nLRSI/HRSI tiles and so on)";
-                }
-                else
-                {
-                    return "Surface material (uniform fill, plating, \nLRSI/HRSI tiles and so on)";
-                }
-            }
-            else if (fieldID == 14)
+				return !isCtrlSrf
+					? "Surface material (uniform fill, plating, \nLRSI/HRSI tiles and so on)"
+					: "Surface material (uniform fill, plating, \nLRSI/HRSI tiles and so on)";
+			}
+			else if (fieldID == 14)
             {
-                if (!isCtrlSrf)
-                {
-                    return "Fairly self-explanatory, controls the paint \nopacity: no paint at 0, full coverage at 1";
-                }
-                else
-                {
-                    return "Fairly self-explanatory, controls the paint \nopacity: no paint at 0, full coverage at 1";
-                }
-            }
-            else if (fieldID == 15)
+				return !isCtrlSrf
+					? "Fairly self-explanatory, controls the paint \nopacity: no paint at 0, full coverage at 1"
+					: "Fairly self-explanatory, controls the paint \nopacity: no paint at 0, full coverage at 1";
+			}
+			else if (fieldID == 15)
             {
-                if (!isCtrlSrf)
-                {
-                    return "Controls the paint hue (HSB axis): \nvalues from zero to one make full circle";
-                }
-                else
-                {
-                    return "Controls the paint hue (HSB axis): \nvalues from zero to one make full circle";
-                }
-            }
-            else if (fieldID == 16)
+				return !isCtrlSrf
+					? "Controls the paint hue (HSB axis): \nvalues from zero to one make full circle"
+					: "Controls the paint hue (HSB axis): \nvalues from zero to one make full circle";
+			}
+			else if (fieldID == 16)
             {
-                if (!isCtrlSrf)
-                {
-                    return "Controls the paint saturation (HSB axis): \ncolorless at 0, full color at 1";
-                }
-                else
-                {
-                    return "Controls the paint saturation (HSB axis): \ncolorless at 0, full color at 1";
-                }
-            }
-            else if (fieldID == 17)
+				return !isCtrlSrf
+					? "Controls the paint saturation (HSB axis): \ncolorless at 0, full color at 1"
+					: "Controls the paint saturation (HSB axis): \ncolorless at 0, full color at 1";
+			}
+			else if (fieldID == 17)
             {
-                if (!isCtrlSrf)
-                {
-                    return "Controls the paint brightness (HSB axis): black at 0, white at 1, primary at 0.5";
-                }
-                else
-                {
-                    return "Controls the paint brightness (HSB axis): black at 0, white at 1, primary at 0.5";
-                }
-            }
-            else // This should not really happen
+				return !isCtrlSrf
+					? "Controls the paint brightness (HSB axis): black at 0, white at 1, primary at 0.5"
+					: "Controls the paint brightness (HSB axis): black at 0, white at 1, primary at 0.5";
+			}
+			else // This should not really happen
             {
                 return "Unknown field\n";
             }
@@ -3351,7 +3151,7 @@ namespace WingProcedural
             }
         }
 
-        private static KeyCode keyTranslation = KeyCode.G, keyTipWidth = KeyCode.T, keyRootWidth = KeyCode.B, keyLeading = KeyCode.LeftAlt, keyTrailing = KeyCode.LeftControl;
+        private static readonly KeyCode keyTranslation = KeyCode.G, keyTipWidth = KeyCode.T, keyRootWidth = KeyCode.B, keyLeading = KeyCode.LeftAlt, keyTrailing = KeyCode.LeftControl;
         private Vector3 lastMousePos;
         private int state = 0; // 0 == nothing, 1 == translate, 2 == tipScale, 3 == rootScale
         public static Camera editorCam;
@@ -3566,71 +3366,43 @@ namespace WingProcedural
 
         private string GetWindowTitle()
         {
-            if (uiEditMode)
-            {
-                if (!isCtrlSrf)
-                {
-                    if (isWingAsCtrlSrf)
-                    {
-                        return "All-moving control surface";
-                    }
-                    else
-                    {
-                        return "Wing";
-                    }
-                }
-                else
-                {
-                    return "Control surface";
-                }
-            }
-            else
-            {
-                return "Inactive";
-            }
-        }
+			return 
+				!uiEditMode 
+					? "Inactive" 
+				: isCtrlSrf 
+					? "Control surface"
+				: isWingAsCtrlSrf 
+					? "All-moving control surface" 
+				: "Wing";
+		}
 
-        #endregion Alternative UI/input
+		#endregion Alternative UI/input
 
-        #region Coloration
+		#region Coloration
 
-        // XYZ
-        // HSB
-        // RGB
+		// XYZ
+		// HSB
+		// RGB
 
-        private Color GetVertexColor(int side)
+		private Color GetVertexColor(int side)
         {
-            if (side == 0)
-            {
-                return ColorHSBToRGB(new Vector4(sharedColorSTHue, sharedColorSTSaturation, sharedColorSTBrightness, sharedColorSTOpacity));
-            }
-            else if (side == 1)
-            {
-                return ColorHSBToRGB(new Vector4(sharedColorSBHue, sharedColorSBSaturation, sharedColorSBBrightness, sharedColorSBOpacity));
-            }
-            else if (side == 2)
-            {
-                return ColorHSBToRGB(new Vector4(sharedColorETHue, sharedColorETSaturation, sharedColorETBrightness, sharedColorETOpacity));
-            }
-            else
-            {
-                return ColorHSBToRGB(new Vector4(sharedColorELHue, sharedColorELSaturation, sharedColorELBrightness, sharedColorELOpacity));
-            }
-        }
+			return ColorHSBToRGB(
+				side == 0
+					? new Vector4(sharedColorSTHue, sharedColorSTSaturation, sharedColorSTBrightness, sharedColorSTOpacity)
+				: side == 1
+					? new Vector4(sharedColorSBHue, sharedColorSBSaturation, sharedColorSBBrightness, sharedColorSBOpacity)
+				: side == 2
+					? new Vector4(sharedColorETHue, sharedColorETSaturation, sharedColorETBrightness, sharedColorETOpacity)
+				: new Vector4(sharedColorELHue, sharedColorELSaturation, sharedColorELBrightness, sharedColorELOpacity)
+			);
+		}
 
-        private Vector2 GetVertexUV2(float selectedLayer)
-        {
-            if (selectedLayer == 0)
-            {
-                return new Vector2(0f, 1f);
-            }
-            else
-            {
-                return new Vector2((selectedLayer - 1f) / 3f, 0f);
-            }
-        }
+		private Vector2 GetVertexUV2(float selectedLayer)
+		{
+			return selectedLayer == 0 ? new Vector2(0f, 1f) : new Vector2((selectedLayer - 1f) / 3f, 0f);
+		}
 
-        private Color ColorHSBToRGB(Vector4 hsbColor)
+		private Color ColorHSBToRGB(Vector4 hsbColor)
         {
             float r = hsbColor.z;
             float g = hsbColor.z;
@@ -3746,15 +3518,14 @@ namespace WingProcedural
                 for (int i = 0; i < part.Resources.Count; ++i)
                 {
                     PartResource res = part.Resources[i];
-                    WingTankResource wres;
-                    if (StaticWingGlobals.wingTankConfigurations[fuelSelectedTankSetup].resources.TryGetValue(res.resourceName, out wres))
-                    {
-                        double fillPct = res.maxAmount > 0 ? res.amount / res.maxAmount : 1.0;
-                        res.maxAmount = aeroStatVolume * StaticWingGlobals.wingTankConfigurations[fuelSelectedTankSetup].resources[res.resourceName].unitsPerVolume;
-                        res.amount = res.maxAmount * fillPct;
-                    }
-                }
-                UpdateWindow();
+					if (StaticWingGlobals.wingTankConfigurations[fuelSelectedTankSetup].resources.TryGetValue(res.resourceName, out WingTankResource wres))
+					{
+						double fillPct = res.maxAmount > 0 ? res.amount / res.maxAmount : 1.0;
+						res.maxAmount = aeroStatVolume * StaticWingGlobals.wingTankConfigurations[fuelSelectedTankSetup].resources[res.resourceName].unitsPerVolume;
+						res.amount = res.maxAmount * fillPct;
+					}
+				}
+				UpdateWindow();
             }
             else
             {
@@ -3812,9 +3583,9 @@ namespace WingProcedural
 
             if (!UseStockFuel)
             {
-                // send public event OnPartVolumeChanged, like ProceduralParts does
-                // MFT/RT also support this event
-                var data = new BaseEventDetails(BaseEventDetails.Sender.USER);
+				// send public event OnPartVolumeChanged, like ProceduralParts does
+				// MFT/RT also support this event
+				BaseEventDetails data = new BaseEventDetails(BaseEventDetails.Sender.USER);
                 // PP uses two volume types: Tankage for resources and Habitation
                 data.Set<string>("volName", "Tankage");
                 // aeroStatVolume should be in m3
@@ -3832,7 +3603,7 @@ namespace WingProcedural
 
                 foreach (KeyValuePair<string, WingTankResource> kvp in StaticWingGlobals.wingTankConfigurations[fuelSelectedTankSetup].resources)
                 {
-                    var newResourceNode = new ConfigNode("RESOURCE");
+					ConfigNode newResourceNode = new ConfigNode("RESOURCE");
                     newResourceNode.AddValue("name", kvp.Value.resource.name);
                     newResourceNode.AddValue("amount", kvp.Value.unitsPerVolume * aeroStatVolume);
                     newResourceNode.AddValue("maxAmount", kvp.Value.unitsPerVolume * aeroStatVolume);
@@ -3883,27 +3654,14 @@ namespace WingProcedural
             }
         }
 
-        public bool CanBeFueled
-        {
-            get
-            {
-                return !isCtrlSrf && !isWingAsCtrlSrf && !isPanel;
-            }
-        }
+		public bool CanBeFueled => !isCtrlSrf && !isWingAsCtrlSrf && !isPanel;
+		public bool UseStockFuel => !(assemblyRFUsed || assemblyMFTUsed || moduleCCUsed);
 
-        public bool UseStockFuel
-        {
-            get
-            {
-                return !(assemblyRFUsed || assemblyMFTUsed || moduleCCUsed);
-            }
-        }
+		#endregion Resources
 
-        #endregion Resources
+		#region Interfaces
 
-        #region Interfaces
-
-        public float GetModuleCost(float defaultCost, ModifierStagingSituation sit)
+		public float GetModuleCost(float defaultCost, ModifierStagingSituation sit)
         {
             return FuelGetAddedCost() + aeroUICost - part.partInfo.cost;
         }
@@ -3915,15 +3673,10 @@ namespace WingProcedural
 
         public float GetModuleMass(float defaultMass, ModifierStagingSituation sit)
         {
-            if (assemblyFARUsed)
-            {
-                return 0;
-            }
+			return assemblyFARUsed ? 0 : aeroUIMass - part.partInfo.partPrefab.mass;
+		}
 
-            return aeroUIMass - part.partInfo.partPrefab.mass;
-        }
-
-        public ModifierChangeWhen GetModuleMassChangeWhen()
+		public ModifierChangeWhen GetModuleMassChangeWhen()
         {
             return ModifierChangeWhen.FIXED;
         }
@@ -3970,12 +3723,9 @@ namespace WingProcedural
 
             foreach (WingProcedural c in components)
             {
-                if (c != null)
-                {
-                    stockButtonCanBeRemoved = false;
-                }
-            }
-            if (stockButtonCanBeRemoved)
+				stockButtonCanBeRemoved &= c == null;
+			}
+			if (stockButtonCanBeRemoved)
             {
                 uiInstanceIDTarget = 0;
                 if (stockButton != null)

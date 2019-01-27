@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace WingProcedural
+namespace B9_Aerospace_ProceduralWings
 {
     public static class UIUtility
     {

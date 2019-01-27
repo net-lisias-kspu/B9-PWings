@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace WingProcedural
+namespace B9_Aerospace_ProceduralWings
 {
     // Credit goes to R4m0n
     // Originally released with Procedural Dynamics mod

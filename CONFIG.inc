@@ -1,7 +1,7 @@
 source ../CONFIG.inc
 
-PACKAGE=B9_Aerospace_WingStuff
-TARGETDIR="B9_Aerospace_ProceduralWings"
+PACKAGE=B9_Aerospace_ProceduralWings
+TARGETDIR="$PACKAGE"
 TARGETBINDIR="$TARGETDIR"
 PROJECTSDIR="B9-PWings/"
 

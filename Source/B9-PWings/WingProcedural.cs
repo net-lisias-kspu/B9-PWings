@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 
-namespace WingProcedural
+namespace B9_Aerospace_ProceduralWings
 {
     using KSP.UI.Screens;
 

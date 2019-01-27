@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace WingProcedural
+namespace B9_Aerospace_ProceduralWings
 {
     public class WingTankConfiguration : IConfigNode
     {

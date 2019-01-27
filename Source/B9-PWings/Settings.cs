@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WingProcedural
+namespace B9_Aerospace_ProceduralWings
 {
     public class WPDebug : GameParameters.CustomParameterNode
     {

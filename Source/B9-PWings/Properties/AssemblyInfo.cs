@@ -31,7 +31,7 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion(WingProcedural.Version.Number)]
-[assembly: AssemblyFileVersion(WingProcedural.Version.Number)]
+[assembly: AssemblyVersion(B9_Aerospace_ProceduralWings.Version.Number)]
+[assembly: AssemblyFileVersion(B9_Aerospace_ProceduralWings.Version.Number)]
 
 [assembly: KSPAssemblyDependency("KSPe", 2, 1)]

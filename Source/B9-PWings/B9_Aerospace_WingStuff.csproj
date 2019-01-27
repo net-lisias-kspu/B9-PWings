@@ -74,6 +74,9 @@
     <Compile Include="Settings.cs" />
     <Compile Include="WingTankConfiguration.cs" />
     <Compile Include="WingTankResource.cs" />
+    <Compile Include="Properties\Version.cs">
+      <DependentUpon>Version.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -84,6 +87,10 @@
   <ItemGroup />
   <ItemGroup>
     <None Include="shaders\SpecularLayered.shader" />
+    <None Include="Properties\Version.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Version.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

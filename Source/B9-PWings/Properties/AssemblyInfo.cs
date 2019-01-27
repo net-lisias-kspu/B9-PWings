@@ -34,3 +34,4 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyVersion(WingProcedural.Version.Number)]
 [assembly: AssemblyFileVersion(WingProcedural.Version.Number)]
 
+[assembly: KSPAssemblyDependency("KSPe", 2, 1)]

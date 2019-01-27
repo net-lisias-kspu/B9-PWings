@@ -48,14 +48,14 @@ namespace B9_Aerospace_ProceduralWings
                     wingTankConfigurations.Add(new WingTankConfiguration(fuelNodes[i]));
                 }
             }
-            Debug.Log("[B9PW] start bundle load process");
+            LOG.trace("start bundle load process");
 
             StartCoroutine(LoadBundleAssets());
         }
 
         public IEnumerator LoadBundleAssets()
         {
-            Debug.Log("[B9PW] Aquiring bundle data");
+            LOG.trace("Aquiring bundle data");
             AssetBundle shaderBundle = AssetBundle.LoadFromFile(BundlePath);
 
             if (shaderBundle != null)
@@ -66,20 +66,22 @@ namespace B9_Aerospace_ProceduralWings
                     if (objects[i].name == "KSP/Specular Layered")
                     {
                         wingShader = objects[i];
-                        Debug.Log($"[B9 PWings] Wing shader \"{wingShader.name}\" loaded. Shader supported? {wingShader.isSupported}");
+                        LOG.info($"Wing shader \"{wingShader.name}\" loaded. Shader supported? {wingShader.isSupported}");
                     }
                 }
 
                 yield return null;
                 yield return null; // unknown how neccesary this is
 
-                Debug.Log("[B9PW] unloading bundle");
+                LOG.trace("unloading bundle");
                 shaderBundle.Unload(false); // unload the raw asset bundle
             }
             else
             {
-                Debug.Log("[B9PW] Error: Found no asset bundle to load");
+                LOG.error("Found no asset bundle to load");
             }
         }
+ 
+        private static readonly KSPe.Util.Log.Logger LOG = KSPe.Util.Log.Logger.CreateForType<StaticWingGlobals>("B9 PWings", "StaticWingGlobals");
     }
 }

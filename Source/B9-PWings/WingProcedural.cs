@@ -62,7 +62,7 @@ namespace B9_Aerospace_ProceduralWings
             }
 
             debugTimeLast = DateTime.UtcNow;
-            Debug.Log(m);
+            LOG.info(m);
         }
 
         private string DebugVectorToString(Vector3 v)
@@ -865,9 +865,9 @@ namespace B9_Aerospace_ProceduralWings
                     }
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                Debug.Log("B9 PWings - Failed to save settings");
+                LOG.error(ex, "B9 PWings - Failed to save settings");
             }
         }
 
@@ -3749,5 +3749,7 @@ namespace B9_Aerospace_ProceduralWings
             }
             return default(T);
         }
+        
+        private static readonly KSPe.Util.Log.Logger LOG = KSPe.Util.Log.Logger.CreateForType<WingProcedural>("B9 PWings", "WingProcedural");
     }
 }

@@ -3699,7 +3699,7 @@ namespace B9_Aerospace_ProceduralWings
 
         private void OnStockButtonSetup()
         {
-            stockButton = ApplicationLauncher.Instance.AddModApplication(OnStockButtonClick, OnStockButtonClick, null, null, null, null, ApplicationLauncher.AppScenes.SPH, (Texture)GameDatabase.Instance.GetTexture("B9_Aerospace_ProceduralWings/Plugins/icon_stock", false));
+            stockButton = ApplicationLauncher.Instance.AddModApplication(OnStockButtonClick, OnStockButtonClick, null, null, null, null, ApplicationLauncher.AppScenes.SPH, UtilityTexture.Load("icon_stock.png", 36));
         }
 
         public void OnStockButtonClick()

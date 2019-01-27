@@ -36,5 +36,13 @@ namespace B9_Aerospace_ProceduralWings
         {
             return new Color(c.r, c.g, c.b, a);
         }
-    }
+        
+        public static Texture2D Load(string filename, int x, int y = 0, TextureFormat format = TextureFormat.RGBA32, bool mipmap = false)
+		{
+            y = y < 1 ? x : y;
+            Texture2D tex = new Texture2D(x, y, format, mipmap);
+            tex.LoadImage(KSPe.IO.File<WingProcedural>.Asset.ReadAllBytes(filename));
+            return tex;
+		}
+	}
 }

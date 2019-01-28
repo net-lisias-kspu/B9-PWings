@@ -44,7 +44,6 @@ namespace B9_Aerospace_ProceduralWings
 
         private DateTime debugTime;
         private DateTime debugTimeLast;
-        private List<DebugMessage> debugMessageList = new List<DebugMessage>();
 
         private void DebugTimerUpdate()
         {
@@ -56,11 +55,6 @@ namespace B9_Aerospace_ProceduralWings
             debugTime = DateTime.UtcNow;
             string m = "WP | ID: " + part.gameObject.GetInstanceID() + " | " + method + " | " + message;
             string i = (debugTime - debugTimeLast).TotalMilliseconds + " ms.";
-            if (debugMessageList.Count <= 150)
-            {
-                debugMessageList.Add(new DebugMessage(m, i));
-            }
-
             debugTimeLast = DateTime.UtcNow;
             LOG.info(m);
         }

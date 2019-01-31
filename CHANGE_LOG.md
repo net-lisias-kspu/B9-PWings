@@ -1,5 +1,7 @@
 # B9 Procedural Wings (/L Unofficial) :: Change Log
 
+* 2015-0124: 0.28 (bac9) for KSP 0
+	+ No changelog provided
 * 2015-0124: 0.27 (bac9) for KSP 0
 	+ No changelog provided
 * 2015-0124: 0.26 (bac9) for KSP 0

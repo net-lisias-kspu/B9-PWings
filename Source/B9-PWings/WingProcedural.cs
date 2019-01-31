@@ -520,7 +520,7 @@ namespace B9_Aerospace_ProceduralWings
 
         private float GetDefault(Vector4 set)
         {
-			return !isCtrlSrf ? set.x : set.y;
+			return isCtrlSrf ? set.y : set.x;
 		}
 
 		#endregion Default values
@@ -1412,14 +1412,7 @@ namespace B9_Aerospace_ProceduralWings
                 int ctrlEdgeTypeInt = Mathf.RoundToInt(sharedEdgeTypeTrailing - 1);
                 for (int i = 0; i < meshTypeCountEdgeCtrl; ++i)
                 {
-                    if (i != ctrlEdgeTypeInt)
-                    {
-                        meshFiltersCtrlEdge[i].gameObject.SetActive(false);
-                    }
-                    else
-                    {
-                        meshFiltersCtrlEdge[i].gameObject.SetActive(true);
-                    }
+                    meshFiltersCtrlEdge[i].gameObject.SetActive(i == ctrlEdgeTypeInt);
                 }
 
                 // Now we can modify geometry
@@ -2957,12 +2950,12 @@ namespace B9_Aerospace_ProceduralWings
 
         private int GetFieldMode()
         {
-			return !isCtrlSrf ? 1 : 2;
+			return isCtrlSrf ? 2 : 1;
 		}
 
 		private float SetupFieldValue(float value, Vector2 limits, float defaultValue)
         {
-			return !isSetToDefaultValues ? defaultValue : Mathf.Clamp(value, limits.x, limits.y);
+			return isSetToDefaultValues ? Mathf.Clamp(value, limits.x, limits.y) : defaultValue;
 		}
 
 		/// <summary>
@@ -3167,18 +3160,15 @@ namespace B9_Aerospace_ProceduralWings
             if (state == 0)
             {
                 lastMousePos = Input.mousePosition;
-                if (Input.GetKeyDown(keyTranslation))
-                {
-                    state = 1;
-                }
-                else if (Input.GetKeyDown(keyTipWidth))
-                {
-                    state = 2;
-                }
-                else if (Input.GetKeyDown(keyRootWidth))
-                {
-                    state = 3;
-                }
+                state =
+                    Input.GetKeyDown(keyTranslation)
+                        ? 1
+                    : Input.GetKeyDown(keyTipWidth)
+                        ? 2
+                    : Input.GetKeyDown(keyRootWidth)
+                        ? 3
+                    : state
+                ;
             }
         }
 
@@ -3335,10 +3325,7 @@ namespace B9_Aerospace_ProceduralWings
             geometryUpdate |= CheckFieldValue(sharedEdgeWidthLeadingRoot, ref sharedEdgeWidthLeadingRootCached);
             geometryUpdate |= CheckFieldValue(sharedEdgeWidthLeadingTip, ref sharedEdgeWidthLeadingTipCached);
 
-            if (geometryUpdate)
-            {
-                aeroUpdate = true;
-            }
+			aeroUpdate |= geometryUpdate;
 
 			// all the fields that have no aero effects
 

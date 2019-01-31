@@ -953,10 +953,7 @@ namespace B9_Aerospace_ProceduralWings
         /// </summary>
         public void Setup()
         {
-            SetupMeshFilters();
             SetupFields();
-            SetupMeshReferences();
-            ReportOnMeshReferences();
             FuelStart(); // shifted from Setup() to fix NRE caused by reattaching a single part that wasn't originally mirrored. Shifted back now Setup is called from Start
             RefreshGeometry();
         }
@@ -966,6 +963,9 @@ namespace B9_Aerospace_ProceduralWings
         /// </summary>
         public void RefreshGeometry()
         {
+            SetupMeshFilters();
+            SetupMeshReferences();
+            ReportOnMeshReferences();
             UpdateMaterials();
             UpdateGeometry(true);
             UpdateWindow();

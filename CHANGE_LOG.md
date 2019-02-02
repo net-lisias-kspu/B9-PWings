@@ -1,5 +1,7 @@
 # B9 Procedural Wings (/L Unofficial) :: Change Log
 
+* 2016-0502: 0.40.7 (Crzyrndm) for KSP 1.1 Patch 4
+	+ Fix fuel capacity not updating correctly
 * 2016-0501: 0.40.6 (Crzyrndm) for KSP 1.1 Patch 3
 	+ No changelog provided
 * 2016-0427: 0.40.5 (Crzyrndm) for KSP 1.1 Patch 2

@@ -1,5 +1,7 @@
 # B9 Procedural Wings (/L Unofficial) :: Change Log
 
+* 2017-0225: 0.40.11 (Crzyrndm) for KSP 1.2
+	+ Stock aero calculations by Boris-Barboris
 * 2016-1031: 0.40.10 (Crzyrndm) for KSP 1.2
 	+ Fix part compilation error
 * 2016-1023: 0.40.9 (Crzyrndm) for KSP 1.2

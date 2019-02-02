@@ -1,5 +1,8 @@
 # B9 Procedural Wings (/L Unofficial) :: Change Log
 
+* 2018-1213: 0.70 (Rafterman82) for KSP 0.7.3
+	+ Release Notes:
+	+ Compiled against 1.5.1 DLL files
 * 2018-0522: 0.60 (Rafterman82) for KSP 0.7.3
 	+ Release Notes:
 			- Compiled against 1.4.3 DLL files

@@ -1,5 +1,7 @@
 # B9 Procedural Wings (/L Unofficial) :: Change Log
 
+* 2018-1216: 0.71 (Rafterman82) for KSP 0.7.3
+	+ Fixed and issue where textures were incorrectly scaled.
 * 2018-1213: 0.70 (Rafterman82) for KSP 0.7.3
 	+ Release Notes:
 	+ Compiled against 1.5.1 DLL files

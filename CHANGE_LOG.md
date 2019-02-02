@@ -1,5 +1,18 @@
 # B9 Procedural Wings (/L Unofficial) :: Change Log
 
+* 2018-0522: 0.60 (Rafterman82) for KSP 0.7.3
+	+ Release Notes:
+			- Compiled against 1.4.3 DLL files
+			- Increase root width of main wing / all moving control surface from 16 to 20 units
+			- Increase tip width of main wing / all moving control surface from 16 to 20 units
+			- Increase length of main wing / all moving control surface from 16 to 20 units
+			- Increase length of main wing / all moving control surface from 8 to 10 units
+			- In length of control surface from 8 to 10 units
+			- Added tiny increment as float for control surface offset root and tip increment
+			- Reduced limits of control surface root and tip offset from -6 units/6 units to -0.5 units/0.5 units
+			- Changed control surface offset root/width calls to use tiny float (0.0.5f)
+	+ Known Issues:
+			- When using stock aero control surfaces set as spoilers/flaps will move in opposite directions. Interim Fix: Disable symmetry in the editor, place the control surface, press ALT + Mouse 1 on the part, duplicate, then roll/flip as needed with the QWEASD keys and place as close as you can to the opposite side of your craft. Or even better use FAR and enjoy full flap support
 * 2015-1111: 2.1 (Crzyrndm) for KSP 1.0.5
 	+ No changelog provided
 * 2015-1003: 2.0.0 (Crzyrndm) for KSP 1.3

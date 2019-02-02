@@ -1,5 +1,8 @@
 # B9 Procedural Wings (/L Unofficial) :: Change Log
 
+* 2016-0427: 0.40.5 (Crzyrndm) for KSP 1.1 Patch 2
+	+ Fix MFT/RF integration issues
+	+ Skip the MM patch in hope of having less reports of inverted control surfaces
 * 2016-0422: 0.40.4 (Crzyrndm) for KSP 1.1 Patch 1
 	+ Fix fuel switch creating NaN fuel quantities
 * 2016-0421: 0.40.3 (Crzyrndm) for KSP 1.1

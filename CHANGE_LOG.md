@@ -1,5 +1,7 @@
 # B9 Procedural Wings (/L Unofficial) :: Change Log
 
+* 2016-0422: 0.40.4 (Crzyrndm) for KSP 1.1 Patch 1
+	+ Fix fuel switch creating NaN fuel quantities
 * 2016-0421: 0.40.3 (Crzyrndm) for KSP 1.1
 	+ No changelog provided
 * 2018-0407: 0.50 (jrodrigv) for KSP 1.4.

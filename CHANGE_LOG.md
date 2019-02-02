@@ -1,5 +1,7 @@
 # B9 Procedural Wings (/L Unofficial) :: Change Log
 
+* 2016-1031: 0.40.10 (Crzyrndm) for KSP 1.2
+	+ Fix part compilation error
 * 2016-1023: 0.40.9 (Crzyrndm) for KSP 1.2
 	+ Fix bad mirroring behaviour of control surfaces
 * 2016-1012: 0.40.8 (Crzyrndm) for KSP 1.2

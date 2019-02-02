@@ -1,5 +1,7 @@
 # B9 Procedural Wings (/L Unofficial) :: Change Log
 
+* 2016-0501: 0.40.6 (Crzyrndm) for KSP 1.1 Patch 3
+	+ No changelog provided
 * 2016-0427: 0.40.5 (Crzyrndm) for KSP 1.1 Patch 2
 	+ Fix MFT/RF integration issues
 	+ Skip the MM patch in hope of having less reports of inverted control surfaces

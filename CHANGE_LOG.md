@@ -1,5 +1,7 @@
 # B9 Procedural Wings (/L Unofficial) :: Change Log
 
+* 2017-0614: 0.40.13 (Crzyrndm) for KSP 1.3
+	+ Add support for Configurable Containers Fuel tanks (module support from Configurable Containers) - by Allista
 * 2017-0528: 0.40.12.0 (Crzyrndm) for KSP 1.3
 	+ Rebuild for KSP 1.3
 * 2017-0225: 0.40.11 (Crzyrndm) for KSP 1.2

@@ -1,5 +1,7 @@
 # B9 Procedural Wings (/L Unofficial) :: Change Log
 
+* 2016-0421: 0.40.3 (Crzyrndm) for KSP 1.1
+	+ No changelog provided
 * 2018-0407: 0.50 (jrodrigv) for KSP 1.4.
 	+ Compatible with KSP 1.4.X
 * 2015-0609: 0.40 (bac9) for KSP 0

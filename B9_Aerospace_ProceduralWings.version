@@ -6,8 +6,8 @@
 	"CHANGE_LOG_URL":"https://raw.githubusercontent.com/net-lisias-kspu/B9-PWings/master/CHANGES.md",
 	"VERSION":{
 		"MAJOR":0,
-		"MINOR":71,
-		"PATCH":0,
+		"MINOR":80,
+		"PATCH":1,
 		"BUILD":0
 		},
 	"KSP_VERSION":{

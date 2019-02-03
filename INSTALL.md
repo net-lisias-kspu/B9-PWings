@@ -16,6 +16,8 @@ To install, place the GameData folder inside your Kerbal Space Program folder. O
 * Extract the package's `PluginData` folder (if available) into your KSP's root, taking precautions to do not overwrite your custom settings if this is not what you want to.
 	+ `<PACKAGE>/PluginData` --> `<KSP_ROOT>/PluginData`
 	+ You can safely ignore this step if you already had installed it previously and didn't deleted your custom configurable files.
+* **Optionally**, extract `GameData_AlternativeTexture/` contents into `<KSP_ROOT>/GameData` overwriting any content for a alternative set of textures	
+	+ Beware, don't copy `GameData_AlternativeTexture` itself into your game's `GameData`, but its contents!
 
 The following file layout must be present after installation:
 
@@ -46,6 +48,17 @@ The following file layout must be present after installation:
 	...
 ```
 
+The following file layout **IS WRONG** and **SHOOUD NOT** be found on your's `GameData`
+
+```
+<KSP_ROOT>
+	[GameData]
+		[B9_Aerospace_ProceduralWings]
+			[AssetBundles]
+				...
+		[GameData_AlternativeTexture] <-- NO!!! 
+			...
+```
 
 ### Dependencies
 

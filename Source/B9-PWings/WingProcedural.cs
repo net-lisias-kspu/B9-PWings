@@ -924,6 +924,8 @@ namespace B9_Aerospace_ProceduralWings
 
 			isAttached = true;
             UpdateGeometry(true);
+            SetupMirroredCntrlSrf();
+
             if (HighLogic.CurrentGame.Parameters.CustomParams<WPDebug>().logEvents)
             {
                 DebugLogWithID("UpdateOnEditorAttach", "Setup ended");
@@ -1859,7 +1861,22 @@ namespace B9_Aerospace_ProceduralWings
             return reference;
         }
 
-        #endregion Mesh Setup and Checking
+        private void SetupMirroredCntrlSrf()
+		{
+            if (this.isCtrlSrf && part.symMethod == SymmetryMethod.Mirror && part.symmetryCounterparts.Count > 0)
+            {
+                ModuleControlSurface m = this.part.Modules["ModuleControlSurface"] as ModuleControlSurface;
+                m.usesMirrorDeploy = true;
+                {
+                    Part other = part.symmetryCounterparts[0];
+                    m.mirrorDeploy = this.part.transform.position.x > other.transform.position.x;
+                    m.partDeployInvert = !m.mirrorDeploy;
+                }
+                
+			}
+		}
+
+		#endregion Mesh Setup and Checking
 
 		#region Materials
 

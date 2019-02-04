@@ -1860,7 +1860,8 @@ namespace B9_Aerospace_ProceduralWings
 		{
             if (this.isCtrlSrf && part.symMethod == SymmetryMethod.Mirror && part.symmetryCounterparts.Count > 0)
             {
-                ModuleControlSurface m = this.part.Modules["ModuleControlSurface"] as ModuleControlSurface;
+                string modulename = this.part.Modules.Contains("SyncModuleControlSurface") ? "SyncModuleControlSurface" : "ModuleControlSurface";
+                ModuleControlSurface m = this.part.Modules[modulename] as ModuleControlSurface;
                 m.usesMirrorDeploy = true;
                 {
                     Part other = part.symmetryCounterparts[0];

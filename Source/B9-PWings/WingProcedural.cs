@@ -843,21 +843,16 @@ namespace B9_Aerospace_ProceduralWings
         // unnecesary save/load. config is static so it will be initialised as you pass through the space center, and there is no way to change options in the editor scene
         // may resolve errors reported by Hodo
         public override void OnSave(ConfigNode node)
-        {
+        {            
+            node.SetValue("mirrorTexturing", this.isMirrored, true);
             // try...catch block for a method that just loves to throw and kill the onsave callback chain (there's nothing throwing there atm, doesn't mean it will always be the way)
             try
             {
-                node.RemoveValues("mirrorTexturing");
-                node.AddValue("mirrorTexturing", isMirrored);
-                if (HighLogic.CurrentGame.Parameters.CustomParams<WPDebug>().logEvents)
-                {
-                    DebugLogWithID("OnSave", "Invoked");
-                }
                 foreach (VesselStatus v in vesselList)
                 {
                     if (v.vessel == vessel)
                     {
-                        v.isUpdated = false;
+                        // v.isUpdated = false;
                     }
                 }
             }
@@ -873,13 +868,13 @@ namespace B9_Aerospace_ProceduralWings
         }
 
         public override void OnLoad(ConfigNode node)
-        {
-            node.TryGetValue("mirrorTexturing", ref isMirrored);
+        {           
+            node.TryGetValue("mirrorTexturing", ref this.isMirrored);
             
             if (HighLogic.LoadedScene != GameScenes.LOADING && HighLogic.CurrentGame.Parameters.CustomParams<WPDebug>().logEvents)
             {
                 DebugLogWithID("OnLoad", "Invoked");
-            }
+            }            
         }
 
         public void OnDestroy()

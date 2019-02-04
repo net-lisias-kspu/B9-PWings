@@ -807,7 +807,6 @@ namespace B9_Aerospace_ProceduralWings
                 return;
             }
 
-            DebugLogWithID("OnStart", "Setup started");
             StartCoroutine(SetupReorderedForFlight()); // does all setup neccesary for flight
             isStarted = true;
             GameEvents.onGameSceneLoadRequested.Add(OnSceneSwitch);
@@ -865,6 +864,11 @@ namespace B9_Aerospace_ProceduralWings
             catch (Exception ex)
             {
                 LOG.error(ex, "B9 PWings - Failed to save settings");
+            }
+
+            if (HighLogic.CurrentGame.Parameters.CustomParams<WPDebug>().logEvents)
+            {
+                DebugLogWithID("OnSave", "Invoked");
             }
         }
 
@@ -1857,9 +1861,9 @@ namespace B9_Aerospace_ProceduralWings
 
         #endregion Mesh Setup and Checking
 
-        #region Materials
+		#region Materials
 
-        public static Material materialLayeredSurface;
+		public static Material materialLayeredSurface;
         public static Texture materialLayeredSurfaceTextureMain;
         public static Texture materialLayeredSurfaceTextureMask;
 

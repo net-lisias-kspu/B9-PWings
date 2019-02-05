@@ -1860,15 +1860,18 @@ namespace B9_Aerospace_ProceduralWings
 		{
             if (this.isCtrlSrf && part.symMethod == SymmetryMethod.Mirror && part.symmetryCounterparts.Count > 0)
             {
-                string modulename = this.part.Modules.Contains("SyncModuleControlSurface") ? "SyncModuleControlSurface" : "ModuleControlSurface";
-                ModuleControlSurface m = this.part.Modules[modulename] as ModuleControlSurface;
-                m.usesMirrorDeploy = true;
-                {
-                    Part other = part.symmetryCounterparts[0];
-                    m.mirrorDeploy = this.part.transform.position.x > other.transform.position.x;
-                    m.partDeployInvert = !m.mirrorDeploy;
-                }
-                
+                if (this.part.Modules.Contains<ModuleControlSurface>())
+				{ 
+                    ModuleControlSurface m = this.part.Modules.GetModule<ModuleControlSurface>();
+                    m.usesMirrorDeploy = true;
+                    {
+                        Part other = part.symmetryCounterparts[0];
+                        m.mirrorDeploy = this.part.transform.position.x > other.transform.position.x;
+                        m.partDeployInvert = !m.mirrorDeploy;
+                    }
+				}
+                else
+                    LOG.error("Part [{0}] named [{1}] is a Control Surface but a ModuleControlSurface wasn't found on its module list!", this.part.ClassName, this.part.partName);
 			}
 		}
 

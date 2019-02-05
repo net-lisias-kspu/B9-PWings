@@ -1,6 +1,6 @@
 # B9 Procedural Wings (/L Unofficial) :: Change Log
 
-* 2019-0204: 0.80.1 (Lisias) for KSP >= 1.4.1
+* 2019-0205: 0.80.1.1 (Lisias) for KSP >= 1.4.1
 	+ Ensured compatibility to every KSP version from 1.4.1
 	+ Added KSPe as Hard Dependency
 		- Added Logging facilities
@@ -9,6 +9,9 @@
 	+ Fixed NFE on the KSP's asynchronous events
 	+ Implemented Mirrored Deploy for Control Surfaces. #HURRAY
 		- [Atmospheric AutoPilot](https://github.com/net-lisias-kspu/AtmosphereAutopilot) is supported! :) 
+		- Support for FAR is preserved.
+* 2019-0204: 0.80.1 (Lisias) for KSP >= 1.4.1
+	+ **DITCHED **
 * 2018-1216: 0.71 (Rafterman82) for KSP 1.5.1
 	+ Fixed and issue where textures were incorrectly scaled.
 * 2018-1213: 0.70 (Rafterman82) for KSP 1.5.1

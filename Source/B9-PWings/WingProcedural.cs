@@ -911,13 +911,13 @@ namespace B9_Aerospace_ProceduralWings
                 DebugLogWithID("UpdateOnEditorAttach", "Setup started");
             }
 
-			isMirrored = 
-				( part.symMethod == SymmetryMethod.Mirror )
-				&&
-				Vector3.Dot(EditorLogic.SortedShipList[0].transform.right, part.transform.position - EditorLogic.SortedShipList[0].transform.position) < 0
-			;
+            isMirrored = 
+               ( part.symMethod == SymmetryMethod.Mirror )
+			    &&
+               Vector3.Dot(EditorLogic.SortedShipList[0].transform.right, part.transform.position - EditorLogic.SortedShipList[0].transform.position) < 0
+            ;
 
-			isAttached = true;
+            isAttached = true;
             UpdateGeometry(true);
             SetupMirroredCntrlSrf();
 

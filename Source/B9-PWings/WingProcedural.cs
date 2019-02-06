@@ -830,8 +830,8 @@ namespace B9_Aerospace_ProceduralWings
             uiInstanceIDLocal = uiInstanceIDTarget = 0;
 
             Setup();
-            part.OnEditorAttach += new Callback(UpdateOnEditorAttach);
-            part.OnEditorDetach += new Callback(UpdateOnEditorDetach);
+            part.OnEditorAttach += UpdateOnEditorAttach;
+            part.OnEditorDetach += UpdateOnEditorDetach;
 
             if (!UIUtility.uiStyleConfigured)
             {
@@ -1863,7 +1863,7 @@ namespace B9_Aerospace_ProceduralWings
             if (this.isCtrlSrf && part.symMethod == SymmetryMethod.Mirror && part.symmetryCounterparts.Count > 0)
             {
                 if (this.part.Modules.Contains<ModuleControlSurface>())
-				{ 
+				 { 
                     ModuleControlSurface m = this.part.Modules.GetModule<ModuleControlSurface>();
                     m.usesMirrorDeploy = true;
                     {
@@ -1871,8 +1871,8 @@ namespace B9_Aerospace_ProceduralWings
                         m.mirrorDeploy = this.part.transform.position.x > other.transform.position.x;
                         m.partDeployInvert = !m.mirrorDeploy;
                     }
-				}
-                else
+				 }
+            else
                     LOG.error("Part [{0}] named [{1}] is a Control Surface but a ModuleControlSurface wasn't found on its module list!", this.part.ClassName, this.part.partName);
 			}
 		}

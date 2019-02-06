@@ -13,6 +13,7 @@ Unofficial fork by Lisias.
 * Documentation
 	+ [Project's README](https://github.com/net-lisias-kspu/B9-PWings/blob/master/README.md)
 	+ [Install Instructions](https://github.com/net-lisias-kspu/B9-PWings/blob/master/INSTALL.md)
+	+ [Tech Docs](https://github.com/net-lisias-kspu/B9-PWings/blob/master/Docs/index.md)
 	+ [Change Log](./CHANGE_LOG.md)
 	+ [TODO](./TODO.md) list
 
@@ -84,7 +85,7 @@ I'm happy that B9 Parts Switch was kept up to date by the current Maintainer, ho
 > 
 > Or even better use FAR and enjoy full flap support.
 
-I fixed my plane (by editing the craft!) in 15 minutes, and spent less than an hour researching the matter. I fail to understand why this was lingering for so much time without a proper fix. No one is helping this guy? 
+I fixed my plane (by editing the craft!) in 15 minutes, and spent less than an hour researching the matter. I fail to understand why this was lingering for so much time without a proper fix. __No one is helping this guy?__
 
 More fixes are to come, and pull requests will be issued to the upstream. In the mean time, rescuing this Add'On history was a pleasure by itself, and I intent to pull it up to upstream too.
 

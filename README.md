@@ -76,11 +76,15 @@ Maintenance in the few last months *(note from L: the text is from about Dec/201
 
 ### from LisiasT
 
-I'm happy that B9 Parts Switch was kept up to date by the current Maintainer, however I'm also disappointed that something easy to fix was dismissed so easily, as in the current [OP on forum](https://forum.kerbalspaceprogram.com/index.php?/topic/175197-13114x151-b9-procedural-wings-fork-go-big-or-go-home-update-20-larger-wings/):
+I'm happy that B9 Parts Switch was kept up to date by the current Maintainer, however I'm also disappointed that something easy to fix but yet important was dismissed so easily, as in the current [OP on forum](https://forum.kerbalspaceprogram.com/index.php?/topic/175197-13114x151-b9-procedural-wings-fork-go-big-or-go-home-update-20-larger-wings/):
 
-> When using stock aero control surfaces set as spoilers/flaps will move in opposite directions. Interim Fix: Disable symmetry in the editor, place the control surface, press ALT + Mouse 1 on the part, duplicate, then roll/flip as needed with the QWEASD keys and place as close as you can to the opposite side of your craft. Or even better use FAR and enjoy full flap support.
+> When using stock aero control surfaces set as spoilers/flaps will move in opposite directions. 
+> 
+> Interim Fix: Disable symmetry in the editor, place the control surface, press ALT + Mouse 1 on the part, duplicate, then roll/flip as needed with the QWEASD keys and place as close as you can to the opposite side of your craft.
+> 
+> Or even better use FAR and enjoy full flap support.
 
-I fixed my plane (by editing the craft!) in 15 minutes, and spent less than an hour researching the matter. I fail to understand why this was lingering for so much time without a proper fix.
+I fixed my plane (by editing the craft!) in 15 minutes, and spent less than an hour researching the matter. I fail to understand why this was lingering for so much time without a proper fix. No one is helping this guy? 
 
 More fixes are to come, and pull requests will be issued to the upstream. In the mean time, rescuing this Add'On history was a pleasure by itself, and I intent to pull it up to upstream too.
 

@@ -48,7 +48,7 @@ Some important information on the current state of the mod:
 
 ## Installation
 
-Detailed installation instructions are now on its own file (see the [In a Hurry](#in-a-hurry) section) and on the distribution fi
+Detailed installation instructions are now on its own file (see the [In a Hurry](#in-a-hurry) section) and on the distribution file.
 
 ### License:
 

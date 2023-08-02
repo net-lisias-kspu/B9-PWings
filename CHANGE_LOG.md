@@ -1,4 +1,4 @@
-# B9 Procedural Wings (/L Unofficial) :: Change Log
+# B9 Procedural Wings /L Unleashed :: Change Log
 
 * 2019-0206: 0.80.1.2 (Lisias) for KSP >= 1.4.1
 	+ Ensured compatibility to every KSP version from 1.4.1

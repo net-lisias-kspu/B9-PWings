@@ -1,8 +1,8 @@
-# B9 Procedural Wings /L Unofficial
+# B9 Procedural Wings /L Unleashed
 
 The procedural dynamics procedural wing (pWing for short) is a wing piece that the user can procedurally manipulate, the wing automatically generates colliders and set its .cfg parameters accordingly.
 
-Unofficial fork by Lisias.
+Unleashed fork by Lisias.
 
 
 ## Installation Instructions
@@ -62,7 +62,7 @@ The following file layout **IS WRONG** and **SHOOUD NOT** be found on your's `Ga
 
 ### Dependencies
 
-* [KSP API Extensions/L](https://github.com/net-lisias-ksp/KSPAPIExtensions) 2.1 or later
+* [KSP Extended](https://github.com/net-lisias-ksp/KSPe) 2.5 or later
 	+ Hard Dependency - Plugin will not work without it.
 	+ Not Included
 
